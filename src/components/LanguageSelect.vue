@@ -1,3 +1,4 @@
+<!--      Todos los formatos estan puestos con numeros, definir patrones y hacerlos de un nivel superior-->
 <template>
   <div class="text-center">
     <v-menu offset-y>
@@ -6,10 +7,12 @@
             v-bind="attrs"
             v-on="on"
             :width=width
-            :height=height
-            class="dropdownFilters justify-space-between elevation-3"
+            class="dropdownFilters elevation-3"
             @click="changeMenu"
         >
+          <span class="material-icons">
+          public
+          </span>
           <span>{{title}}</span>
           <v-icon color='#27496D'>{{icon}}</v-icon>
         </v-btn>
@@ -27,7 +30,7 @@
 
 <script>
 export default {
-  name: "FilterMenu",
+  name: "FIlterMenu",
   data(){
     return{
       optionIndex:0,
@@ -43,11 +46,11 @@ export default {
       type:Array[String],
       required:true,
     },
-    width:{
-      type:Number,
-      require:true
+    abrev:{
+      type:Array[String],
+      required:true,
     },
-    height:{
+    width:{
       type:Number,
       require:true
     },
@@ -69,7 +72,7 @@ export default {
   },
   computed:{
     title(){
-      return this.options[this.optionIndex]
+      return this.abrev[this.optionIndex]
     }
   }
 }
