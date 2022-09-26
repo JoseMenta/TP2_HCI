@@ -5,9 +5,9 @@
   <div class="ml-4">
     <span class="description-style black--text d-flex font-weight-bold mb-2 mt-5">{{ getTitleText }}</span>
     <v-textarea v-if="readOnly" class="textarea-style ml-5 mr-2"
-                solo flat hide-details readonly :value="textareaValue"/>
+                solo flat hide-details readonly no-resize :value="textareaValue"/>
     <v-textarea v-if="!readOnly" class="textarea-style ml-5 mr-2"
-        solo flat hide-details :placeholder="getPlaceholderText"/>
+        solo flat hide-details no-resize :placeholder="getPlaceholderText"/>
   </div>
 </template>
 
