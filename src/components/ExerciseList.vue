@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: "ExerciseCard",
+  name: "ExerciseList",
   props:{
     id:{
       type:Number,

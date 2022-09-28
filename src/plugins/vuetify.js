@@ -38,8 +38,13 @@ export default new Vuetify({
             starEmpty:'star_border',
             up:'expand_less',
             down:'expand_more',
+            search: 'search',
+            keyboardArrowUp: 'keyboard_arrow_up',
+            keyboardArrowDown: 'keyboard_arrow_down',
+            replay: 'replay',
             next:'navigate_next',
-            prev:'navigate_before'
+            prev:'navigate_before',
+            add: 'add'
         }
     }
 });
