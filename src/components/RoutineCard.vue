@@ -1,11 +1,12 @@
 <template>
     <v-card class="d-flex flex-column rounded" :width="width" hover @click="touchCard">
     <v-card class="d-flex rounded-t" flat tile>
-      <v-img :src="img" :width="width" :alt="alt" height="100"></v-img>
+      <v-img :src="img" :width="width" :alt="alt" height="100">
+      </v-img>
     </v-card>
     <v-card class="d-flex rounded-b justify-space-between" :color="color" :width="width" flat tile>
       <v-card class="d-inline-flex" flat tile :color="color" >
-        <h2>{{name}}</h2>
+        <h2 class="text-truncate">{{name}}</h2>
         <v-icon v-show="favorite===true" color="black" v-text="$vuetify.icons.values.favoriteFull"
                     @click="touchFavorite"></v-icon>
         <v-icon v-show="favorite===false" color="black" @click="touchFavorite"
@@ -29,10 +30,17 @@
         ></v-rating>
 <!--        <v-icon v-text="$vuetify.icons.values.starFull" color="black" v-for="i in stars" :key="i"></v-icon>-->
 <!--        <v-icon v-text="$vuetify.icons.values.starEmpty" color="black" v-for="i in (5-stars)" :key="5-i"></v-icon>-->
-      </v-card>
-      <v-card class="d-inline-flex rounded-b" :width="width" flat tile :color="color">
-        <InfoTag v-for="tag in tags" :key="tag" :content="tag"></InfoTag>
-      </v-card>
+      </v-card >
+<!--      <v-card class="d-inline-flex rounded-b overflow-x-auto" :width="width" flat tile :color="color">-->
+<!--        <v-slide-group active-class="primary&#45;&#45;text" show-arrows color="black" max="4">-->
+<!--          <v-chip v-for="tag in tags" :key="tag" >{{tag}}</v-chip>-->
+<!--        </v-slide-group>-->
+<!--      </v-card>-->
+      <v-slide-group max="0" class="slide_infotag" :next-icon="$vuetify.icons.values.next" :prev-icon="$vuetify.icons.values.prev" >
+        <v-slide-item v-for="tag in tags" :key="tag">
+          <InfoTag :content="tag"></InfoTag>
+        </v-slide-item>
+      </v-slide-group>
     </v-card>
 </template>
 
@@ -109,11 +117,15 @@ export default {
 <style scoped>
 h2{
   display: inline;
+  max-width: 250px;
   padding: 0 4px 0 0;
 }
 .action_icon{
   padding-left: 4px;
   padding-right: 4px;
+}
+.slide_infotag{
+  background-color: var(--v-lightBlue-base);
 }
 </style>
 

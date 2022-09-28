@@ -37,7 +37,9 @@ export default new Vuetify({
             starFull:'star',
             starEmpty:'star_border',
             up:'expand_less',
-            down:'expand_more'
+            down:'expand_more',
+            next:'navigate_next',
+            prev:'navigate_before'
         }
     }
 });

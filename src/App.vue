@@ -41,13 +41,13 @@
 <!--      Usar v-bind cuando se quiere pasar algo que no sea un String-->
 <!--      Es equivalente a hacer : antes de la propiedad-->
 <!--      Uso de routine card-->
-      <RoutineCard img="lionel-messi.webp" name="Futbol para todos" v-bind:is-favorite="true" v-bind:id="1"
+      <RoutineCard img="lionel-messi.webp" name="Futbol para adsandasjkdbahkbjdsbasdhbahds" v-bind:is-favorite="true" v-bind:id="1"
       @favoriteTouched="changeFavorite" v-bind:stars="3"
-      v-bind:tags="['Hello','World']"></RoutineCard>
+      v-bind:tags="['hello','world','How','Are','You','Welcome','To','Fiti']"></RoutineCard>
       <ExerciseCard :name="'Abdominales'" :id="1" description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" img="estiramiento.png"></ExerciseCard>
 
       <ExerciseCardMin :id="1" img="lionel-messi.webp" name="Futbol para todos" :stars="3"></ExerciseCardMin>
-
+      <FilterMenu id="1" :options="['Hola','Como','Estas']"></FilterMenu>
       <!--  Componentes agregados       -->
       <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
                   @menuChanged="changeMenu"  width="100" ></LanguageSelect>
@@ -65,15 +65,16 @@
 
       <!-- Ejemplos de los componentes creados por Axel -->
       <!-- Primero se debe importar en <script> -->
-<!--      <IconTextCircle :size="160" icon="mdi-replay" :icon-size="38" text="10" :text-size="48"/>
+<!--      <IconTextCircle :size="160" icon="mdi-replay" :icon-size="38" text="10" :text-size="48"/> -->
       <IconTextCircleTimer :size="160" :seconds="10" :minutes="0" :text-size="48"/>
       <ViewSwitch :items="[ {text: 'Detalle'}, {text: 'Lista'} ]" :text-size="24" :border-radius="12"/>
       <LoginButton :text-size="30" text="Regístrate" :border-radius="12"/>
       <SearchBox language="en" :search-method="search" :search-box-width="450" :icon-size="40" :btn-border-radius="12" :text-size="20"/>
-      <ProfileButton :profile-method="profile" :btn-height="50" user-name="Raul Sarmiento" :user-name-img="require('@/assets/avatar.jpg')" :img-size="30" :btn-border-radius="12" :img-border-radius="4" :text-size="16"/>
+      <ProfileButton :profile-method="profile" :btn-height="50" user-name="Raul Sarmiento" :user-name-img="require('@/assets/Burpee.jpg')" :img-size="30" :btn-border-radius="12" :img-border-radius="4" :text-size="16"/>
       <NumberSelector :component-width="190" :text-size="16" :component-border-radius="4" data-text="Repeticiones" :data-value="5"/>
       <TimeSelector :text-size="16" :minutes="0" :seconds="0" :component-border-radius="4" :component-width="190" data-text="Tiempo"/>
-      <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>-->
+      <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>
+      <NavigationDrawer></NavigationDrawer>
     </v-main>
   </v-app>
 </template>
@@ -91,11 +92,15 @@ import newTask from "./components/NewTask";
 import TopBreadcrums from "./components/TopBreadcrums";
 import ExerciseCategory from "./components/ExerciseCategory";
 import ExerciseList from "@/components/ExerciseList";
+import NavigationDrawer from "@/components/NavigationDrawer";
+
 
 export default {
   name: 'App',
 
   components: {
+    NavigationDrawer,
+
     ExerciseCardMin,
     FilterMenu,
     RoutineCard,
