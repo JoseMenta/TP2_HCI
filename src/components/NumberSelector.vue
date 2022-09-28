@@ -5,14 +5,18 @@
     <div class="my-1">
       <div class="d-flex">
         <span class="text-style">{{ dataText }}</span>
-        <v-icon class="ml-auto black--text" @click="incrementValue">mdi-menu-up</v-icon>
+        <v-icon v-text="$vuetify.icons.values.keyboardArrowUp"
+                class="ml-auto black--text"
+                @click="incrementValue"/>
       </div>
       <div class="d-flex">
         <!-- El oninput sirve para que solo se puedan ingresar enteros no negativos -->
         <input class="pl-1 text-style input-style" type="number"
                oninput="this.value = (!!this.value && Math.abs(this.value) >= 0) ? Math.abs(this.value) : null"
                v-model="numberValue">
-        <v-icon class="ml-auto black--text" @click="decrementValue">mdi-menu-down</v-icon>
+        <v-icon v-text="$vuetify.icons.values.keyboardArrowDown"
+                class="ml-auto black--text"
+                @click="decrementValue"/>
       </div>
     </div>
   </v-sheet>

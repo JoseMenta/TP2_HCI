@@ -6,7 +6,9 @@
            color="#27496D"
            :height="size"
            :width="size">
-    <v-icon :size="iconSize" class="white--text mx-1"> {{icon}} </v-icon>
+    <v-icon v-text="icon"
+            :size="iconSize"
+            class="white--text mx-1"/>
     <span class="text-class white--text mx-1" > {{text}} </span>
   </v-sheet>
 </template>
