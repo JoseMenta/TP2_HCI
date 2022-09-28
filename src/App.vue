@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <!--
     <v-app-bar
       app
       color="primary"
@@ -36,7 +37,7 @@
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
-
+-->
     <v-main>
 <!--      Usar v-bind cuando se quiere pasar algo que no sea un String-->
 <!--      Es equivalente a hacer : antes de la propiedad-->
@@ -73,8 +74,10 @@
       <ProfileButton :profile-method="profile" :btn-height="50" user-name="Raul Sarmiento" :user-name-img="require('@/assets/avatar.jpg')" :img-size="30" :btn-border-radius="12" :img-border-radius="4" :text-size="16"/>
       <NumberSelector :component-width="190" :text-size="16" :component-border-radius="4" data-text="Repeticiones" :data-value="5"/>
       <TimeSelector :text-size="16" :minutes="0" :seconds="0" :component-border-radius="4" :component-width="190" data-text="Tiempo"/>
+      <PasswordInput password="FYTY"></PasswordInput>
       <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>
-
+      <TextInput label="hola"></TextInput>
+      <LoginView></LoginView>
     </v-main>
   </v-app>
 </template>
@@ -105,6 +108,9 @@ import SearchBox from "@/components/SearchBox";
 // import TimeObject from "@/components/TimeObject";
 import TimeSelector from "@/components/TimeSelector";
 import ViewSwitch from "@/components/ViewSwitch";
+import TextInput from "./components/TextInput";
+import PasswordInput from "@/components/PasswordInput";
+import LoginView from "./components/LoginView";
 
 export default {
   name: 'App',
@@ -132,7 +138,10 @@ export default {
     SearchBox,
     // TimeObject,
     TimeSelector,
-    ViewSwitch
+    ViewSwitch,
+    TextInput,
+    PasswordInput,
+    LoginView
   },
   data: () => ({
     //
