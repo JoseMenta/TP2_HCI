@@ -1,16 +1,15 @@
 <template>
-  <v-card class="d-inline-flex rounded flex-row" hover width="410" height="130" @click="touchCard">
+  <v-card class="d-inline-flex rounded flex-row main_card" outlined hover width="410" @click="touchCard">
     <v-card class="d-inline-flex rounded flex-column pa-1" flat tile width="250" >
       <v-card class="d-inline-flex rounded justify-space-between align-center" flat tile>
-        <h2 v-show="name.length<16">{{name}}</h2>
-        <h2 v-show="name.length>=16">{{name.substring(0,16)+ '..'}}</h2>
+        <h2 class="text-truncate" >{{name}}</h2>
         <v-icon v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon"></v-icon>
         <v-icon v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
       <p v-show="description.length<90">{{description}}</p>
       <p v-show="description.length>=90">{{description.substring(0,98)+'..'}}</p>
     </v-card >
-    <v-img :src="img" :alt="alt" class="rounded" height="130" width="100"></v-img>
+    <v-img :src="img" :alt="alt" class="rounded exercise_img" height="130"  width="100"></v-img>
   </v-card>
 </template>
 
@@ -70,7 +69,14 @@ h2{
   display: inline;
 }
 p{
+  display: inline-block;
   width:250px;
   height:70px;
 }
+.exercise_img{
+  border-left: var(--v-black-base) 2px solid;
+}
+/*.main_card{*/
+/*  border: var(--v-black-base) 2px solid;*/
+/*}*/
 </style>

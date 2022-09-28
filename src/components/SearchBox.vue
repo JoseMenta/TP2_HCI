@@ -12,8 +12,7 @@
               class="mx-3"
               color="#1C1B1F"
               :size="iconSize"
-              v-text="$vuetify.icons.values.search"
-              @click="searchMethod"/>
+              @click="searchMethod">mdi-magnify</v-icon>
     </v-text-field>
   </v-sheet>
 </template>

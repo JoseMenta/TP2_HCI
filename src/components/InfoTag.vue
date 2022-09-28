@@ -1,7 +1,7 @@
 <template>
   <v-chip
       label
-  class="tag"
+  class="tag rounded-lg"
   color="grey">{{content}}</v-chip>
 </template>
 

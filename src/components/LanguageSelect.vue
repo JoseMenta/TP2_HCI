@@ -30,7 +30,7 @@
 
 <script>
 export default {
-  name: "FIlterMenu",
+  name: "LanguageSelect",
   data(){
     return{
       optionIndex:0,

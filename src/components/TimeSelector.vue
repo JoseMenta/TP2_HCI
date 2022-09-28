@@ -5,15 +5,11 @@
     <div class="my-1 div-style">
       <div class="div-style">
         <span class="text-style">{{ dataText }}</span>
-        <v-icon v-text="$vuetify.icons.values.keyboardArrowUp"
-                class="float-right black--text"
-                @click="add5Seconds"/>
+        <v-icon class="float-right black--text" @click="add5Seconds">mdi-menu-up</v-icon>
       </div>
       <div class="div-style">
         <TimeObject :text-size="textSize" text-color="black" :seconds="getSeconds()" :minutes="getMinutes()"/>
-        <v-icon v-text="$vuetify.icons.values.keyboardArrowDown"
-                class="float-right black--text"
-                @click="reduce5Seconds"/>
+        <v-icon class="float-right black--text" @click="reduce5Seconds">mdi-menu-down</v-icon>
       </div>
     </div>
   </v-sheet>

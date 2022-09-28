@@ -41,7 +41,10 @@ export default new Vuetify({
             search: 'search',
             keyboardArrowUp: 'keyboard_arrow_up',
             keyboardArrowDown: 'keyboard_arrow_down',
-            replay: 'replay'
+            replay: 'replay',
+            next:'navigate_next',
+            prev:'navigate_before',
+            add: 'add'
         }
     }
 });

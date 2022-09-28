@@ -1,16 +1,15 @@
 <template>
-  <div class="text-center">
-    <v-menu offset-y>
+  <div class="text-center d-inline-flex">
+    <v-menu offset-y class="text-truncate">
       <template v-slot:activator="{on,attrs}">
         <v-btn
             v-bind="attrs"
             v-on="on"
-            :width=width
-            :height=height
-            class="dropdownFilters justify-space-between elevation-3"
+            :width="width"
+            class="dropdownFilters justify-space-between d-inline-block elevation-3 pl-2 pr-1 py-1"
             @click="changeMenu"
         >
-          <span>{{title}}</span>
+          <span class="text-style mr-4 text-truncate">{{title}}</span>
           <v-icon color='#27496D'>{{icon}}</v-icon>
         </v-btn>
       </template>
@@ -30,8 +29,10 @@ export default {
   name: "FilterMenu",
   data(){
     return{
-      optionIndex:0,
-      icon:"arrow_drop_down"
+      optionIndex: -1,
+      icon:"arrow_drop_down",
+      leftBorderRaidusCSS: this.leftBorderRadius + 'px',
+      rightBorderRadiusCSS: this.rightBorderRadius + 'px'
     }
   },
   props:{
@@ -44,13 +45,21 @@ export default {
       required:true,
     },
     width:{
-      type:Number,
-      require:true
+      type: Number,
+      required: true
     },
-    height:{
-      type:Number,
-      require:true
+    placeholder:{
+      type: String,
+      required: false
     },
+    rightBorderRadius: {
+      type: Number,
+      required: true
+    },
+    leftBorderRadius: {
+      type: Number,
+      required: true
+    }
   },
   methods:{
     clickOption(index){
@@ -65,11 +74,20 @@ export default {
       }
       this.icon = "arrow_drop_up"
 
-    },
+    }
+  },
+  created() {
+    if(this.placeholder === undefined){
+      this.optionIndex = 0
+    }
   },
   computed:{
     title(){
-      return this.options[this.optionIndex]
+      if(this.optionIndex === -1){
+        return this.placeholder
+      }
+      let str = this.options[this.optionIndex]
+      return str.charAt(0).toUpperCase() + str.slice(1)
     }
   }
 }
@@ -78,8 +96,15 @@ export default {
 <!--      Todos los formatos estan hardcodeados, definir patrones y hacerlos de una a todos-->
 <style scoped>
 .dropdownFilters{
-  border-radius: 4px;
+  border-radius: v-bind(leftBorderRaidusCSS) v-bind(rightBorderRadiusCSS) v-bind(rightBorderRadiusCSS) v-bind(leftBorderRaidusCSS);
   border: 2px solid #142850;
   background: white;
 }
+
+.text-style{
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 </style>
