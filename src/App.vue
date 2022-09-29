@@ -1,14 +1,18 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
 
+    <v-app-bar app color="white" prominent dense>
+      <TopBarMenu/>
     </v-app-bar>
 
     <v-main>
+      <div>
+        <TopBreadcrums :items="[{text: 'Lionel', disabled: false, href: 'Lionel',},
+      { text: 'Andres', disabled: false, href: 'Andres', },
+      { text: 'Messi', disabled: false, href: 'Messi', },]"
+                       class="ml-7 py-3"/>
+      </div>
+      <hr>
 <!--      Usar v-bind cuando se quiere pasar algo que no sea un String-->
 <!--      Es equivalente a hacer : antes de la propiedad-->
 <!--      Uso de routine card-->
@@ -48,8 +52,8 @@
       <TextInput label="hola"></TextInput>
       <LoginView></LoginView>
       <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>-->
-      <NavigationDrawer></NavigationDrawer>
 
+      <NavigationDrawer/>
       <MainPage language="en"/>
     </v-main>
   </v-app>
@@ -83,10 +87,9 @@ import NavigationDrawer from "@/components/NavigationDrawer";
 // import TimeSelector from "@/components/TimeSelector";
 // import ViewSwitch from "@/components/ViewSwitch";
 
-//import TextInput from "./components/TextInput";
-//import PasswordInput from "@/components/PasswordInput";
-//import LoginView from "./components/LoginView";
-//import MainPage from "@/components/MainPage";
+import MainPage from "@/components/MainPage";
+import TopBarMenu from "@/components/TopBarMenu";
+import TopBreadcrums from "@/components/TopBreadcrums";
 
 export default {
   name: 'App',
@@ -116,10 +119,10 @@ export default {
     // // TimeObject,
     // TimeSelector,
     // ViewSwitch,
-    //TextInput,
-    //PasswordInput,
-    //LoginView
-    //MainPage
+
+    MainPage,
+    TopBarMenu,
+    TopBreadcrums
   },
   data: () => ({
     //
@@ -142,3 +145,11 @@ export default {
   }
 };
 </script>
+
+<style>
+
+.app-bar-style{
+  height: 30vh;
+}
+
+</style>

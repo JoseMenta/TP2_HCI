@@ -1,6 +1,6 @@
 <template>
   <div class="ml-7">
-    <h1 class="title-style">{{getText(this.mainPageText)}}</h1>
+    <h1 class="title-style my-5">{{getText(this.mainPageText)}}</h1>
     <div class="div-filter-style mr-9">
       <div class="d-inline-flex">
         <FilterMenu :id="0"
@@ -49,7 +49,7 @@
             </v-card>
           </v-col>
           <v-spacer/>
-          <v-col v-for="i in 25" :key="i" cols="6">
+          <v-col v-for="i in 1" :key="i" cols="6">
             <RoutineCard img="lionel-messi.webp" name="Futbol para todos" v-bind:is-favorite="true" v-bind:id="1"
                          @favoriteTouched="changeFavorite" v-bind:stars="3"
                          v-bind:tags="['Hello','World', 'Dale', 'Messi', 'La', 'Scaloneta', 'Qatar', '2022']"/>
@@ -128,7 +128,6 @@ export default {
       console.log(status)
     },
     getText(componentText){
-      console.log(componentText)
       return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
     },
     getArrayTexts(componentArrayText){

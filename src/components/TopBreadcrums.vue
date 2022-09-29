@@ -3,7 +3,7 @@
   <div>
     <v-breadcrumbs
         :items="items"
-        divider=">"
+        divider=">" class="breadcrumb-style"
         large
     ></v-breadcrumbs>
   </div>
@@ -23,7 +23,13 @@
 
 
 <style scoped>
-.BreadcrumbsText{
 
+.breadcrumb-style {
+  padding: 0;
 }
+
+.breadcrumb-style:deep(a) {
+  font-size: 20px;
+}
+
 </style>
