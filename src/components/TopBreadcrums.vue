@@ -30,6 +30,7 @@
 
 .breadcrumb-style:deep(a) {
   font-size: 20px;
+  color: #808080;
 }
 
 </style>

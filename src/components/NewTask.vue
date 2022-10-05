@@ -1,10 +1,10 @@
 <template>
   <v-btn
       outlined
-      class="ma-2 TaskBtn elevation-3"
-      @click="SelectTask"
-      :height=height
-      :width="width"
+      class="TaskBtn elevation-3"
+      @click="action"
+      :height="height"
+      width="100%"
   >
     <v-icon color="black">{{icon}}</v-icon>
     <span class="pa-3">{{name}}</span>
@@ -23,20 +23,16 @@ export default {
       type:String,
       required: true
     },
-    width:{
-      type:Number,
-      require:true
-    },
     height:{
       type:Number,
       require:true
     },
+    action:{
+      type: Function,
+      required: true
+    }
   },
   methods:{
-    SelectTask(){
-      console.log(`Click in ${this.name}`)
-      this.$emit(`${this.name}`)
-    }
   }
 }
 </script>
@@ -45,5 +41,6 @@ export default {
 .TaskBtn{
   border-radius: 12px;
   border: 1px solid black;
+  background-color: white;
 }
 </style>

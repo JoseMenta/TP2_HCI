@@ -12,7 +12,7 @@
         <h1 class="d-flex justify-center mb-5">Inicio de Sesion</h1>
         <TextInput label="Correo Electronico" class="margin-style"></TextInput>
         <PasswordInput password="FYTY" class="margin-style"></PasswordInput>
-        <LoginButton class="margin-btn-style" :text-size="10" text="Ingresar" :border-radius="12"/>
+        <LoginButton class="d-flex margin-btn-style justify-center" :text-size="10" text="Ingresar" :border-radius="12"/>
         <a href="#"
             class="d-inline-flex text-decoration-underline justify-center mt-5"
         >Olvidaste tu contraseña</a>
