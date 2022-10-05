@@ -1,12 +1,10 @@
 <template>
-  <v-btn-toggle class="border-btn"
-                borderless
-                v-model="format">
+  <v-btn-toggle class="btn-toggle-style" mandatory borderless v-model="select">
     <v-btn v-for="(name, index) in filters" :key="index"
-           :width=width
-           :height=height
-           :class="{backgroundColor: format(index)}" @click="selectFilter(index)">
-      <span>{{name}}</span>
+           width="auto"
+           height="auto"
+           :class="format(index)">
+      <span class="span-style">{{capitalizeText(name)}}</span>
     </v-btn>
   </v-btn-toggle>
 </template>
@@ -18,15 +16,7 @@ export default {
     filters:{
       type:Array[String],
       required:true,
-    },
-    width:{
-      type:Number,
-      require:true
-    },
-    height:{
-      type:Number,
-      require:true
-    },
+    }
   },
   data(){
     return {
@@ -35,12 +25,10 @@ export default {
   },
   methods: {
     format(index){
-      return (this.select === index) ? '#FFFFFF' : '#DAE1E7'
+      return (this.select === index) ? 'active-btn-style' : 'nonactive-btn-style'
     },
-    selectFilter(index){
-        this.select=index
-        console.log(`Click in ${this.select}`)
-        this.$emit(`${this.select}`)
+    capitalizeText(text){
+      return text.charAt(0).toUpperCase() + text.slice(1)
     }
   },
 }
@@ -48,8 +36,25 @@ export default {
 
 <!--      Todos los formatos estan hardcodeados, definir patrones y hacerlos de una a todos-->
 <style scoped>
-.border-btn {
-  border-radius: 12px;
+
+.btn-toggle-style {
+  border-radius: 4px;
   border: 2px solid #142850;
 }
+
+.v-btn.active-btn-style {
+  background-color: #DAE1E7;
+}
+
+.v-btn.nonactive-btn-style {
+  background-color: white;
+}
+
+.span-style {
+  color: black;
+  letter-spacing: 0;
+  font-size: 12px;
+  text-transform: none;
+}
+
 </style>

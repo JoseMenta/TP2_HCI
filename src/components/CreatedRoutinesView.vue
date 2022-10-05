@@ -2,7 +2,11 @@
 <template>
   <div class="ml-7">
     <h1 class="title-style my-5">{{getText(this.mainPageText)}}</h1>
-    <RoutineFilter :language="language"/>
+    <RoutineFilter :language="language">
+      <template v-slot:firstFilter>
+        <RoutineFilterSearch :language="language"/>
+      </template>
+    </RoutineFilter>
 
     <div class="mt-12">
       <RoutineCardList>
@@ -22,11 +26,13 @@
 <script>
 import RoutineCardList from "@/components/RoutineCardList";
 import RoutineFilter from "@/components/RoutineFilter";
+import RoutineFilterSearch from "@/components/RoutineFilterSearch";
 
 export default {
   name: "CreatedRoutinesView",
   components: {
     RoutineFilter,
+    RoutineFilterSearch,
     RoutineCardList
   },
   props: {

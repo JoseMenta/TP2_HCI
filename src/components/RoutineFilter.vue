@@ -2,13 +2,7 @@
 <template>
   <div>
     <div class="div-filter-style mr-9">
-      <div class="d-inline-flex">
-        <FilterMenu :id="0"
-                    :options="getArrayTexts(this.searchNameFilterMenu)"
-                    :width="175"
-                    :left-border-radius="4" :right-border-radius="0"/>
-        <input class="text-field-style pl-1" type="text" v-model="filterSearchText"/>
-      </div>
+      <slot name="firstFilter"></slot>
       <FilterMenu :id="1"
                   :options="['⭐⭐⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐', '⭐⭐', '⭐']"
                   :width="150"
@@ -59,11 +53,6 @@ export default {
   },
   data() {
     return {
-      filterSearchText: '',
-      searchNameFilterMenu: [
-        {elements: ['Nombre de la rutina', 'Nombre del creador'], lang: 'es'},
-        {elements: ['Routine name', 'Creator name'], lang: 'en'}
-      ],
       ratingText: [
         {text: 'Puntuación', lang: 'es'}, {text: 'Rating', lang: 'en'}
       ],
@@ -109,14 +98,6 @@ export default {
 .div-filter-style {
   display: flex;
   justify-content: space-between;
-}
-
-.text-field-style {
-  border-radius: 0 4px 4px 0;
-  border: 2px solid #142850;
-  font-size: 12px;
-  height: 100%;
-  width: 100%;
 }
 
 .order-by-text-style {
