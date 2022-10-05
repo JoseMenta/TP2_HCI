@@ -1,6 +1,6 @@
+<!-- Componente para filtar rutinas -->
 <template>
-  <div class="ml-7">
-    <h1 class="title-style my-5">{{getText(this.mainPageText)}}</h1>
+  <div>
     <div class="div-filter-style mr-9">
       <div class="d-inline-flex">
         <FilterMenu :id="0"
@@ -26,7 +26,6 @@
                   :placeholder="getText(this.categoryText)"
                   :left-border-radius="4" :right-border-radius="4"/>
     </div>
-
     <div class="mt-12 d-flex">
       <h1 class="order-by-text-style d-inline-flex mr-6">{{getText(this.orderByText)}}</h1>
       <FilterMenu :id="4"
@@ -38,31 +37,16 @@
                   :width="150"
                   :left-border-radius="0" :right-border-radius="4"/>
     </div>
-
-    <div class="mt-12">
-      <RoutineCardList>
-        <template v-slot:header>
-          <v-col class="d-flex" cols="6">
-            <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="alert()">
-              <v-icon v-text="$vuetify.icons.values.add" color="#1C1B1F" :size="70"/>
-              <span class="new-routine-text-style">Nueva rutina</span>
-            </v-card>
-          </v-col>
-        </template>
-      </RoutineCardList>
-    </div>
   </div>
 </template>
 
 <script>
 import FilterMenu from "@/components/FilterMenu";
-import RoutineCardList from "@/components/RoutineCardList";
 
 export default {
-  name: "MainPage",
+  name: "RoutineFilter",
   components: {
-    FilterMenu,
-    RoutineCardList
+    FilterMenu
   },
   props: {
     language: {
@@ -73,12 +57,9 @@ export default {
       }
     },
   },
-  data(){
+  data() {
     return {
       filterSearchText: '',
-      mainPageText: [
-        {text: 'Rutinas creadas', lang: 'es'}, {text: 'Created routines', lang: 'en'}
-      ],
       searchNameFilterMenu: [
         {elements: ['Nombre de la rutina', 'Nombre del creador'], lang: 'es'},
         {elements: ['Routine name', 'Creator name'], lang: 'en'}
@@ -125,10 +106,6 @@ export default {
 
 <style scoped>
 
-.title-style {
-  font-size: 48px;
-}
-
 .div-filter-style {
   display: flex;
   justify-content: space-between;
@@ -144,15 +121,6 @@ export default {
 
 .order-by-text-style {
   font-size: 24px;
-}
-
-.new-routine-card-style {
-  width: 100%;
-}
-
-.new-routine-text-style {
-  font-size: 48px;
-  color: #1C1B1F;
 }
 
 </style>

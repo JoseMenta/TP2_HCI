@@ -54,7 +54,7 @@
       <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>-->
 
       <NavigationDrawer/>
-      <MainPage language="en"/>
+      <CreatedRoutinesView language="en"/>
     </v-main>
   </v-app>
 </template>
@@ -87,7 +87,7 @@ import NavigationDrawer from "@/components/NavigationDrawer";
 // import TimeSelector from "@/components/TimeSelector";
 // import ViewSwitch from "@/components/ViewSwitch";
 
-import MainPage from "@/components/MainPage";
+import CreatedRoutinesView from "@/components/CreatedRoutinesView";
 import TopBarMenu from "@/components/TopBarMenu";
 import TopBreadcrums from "@/components/TopBreadcrums";
 
@@ -120,7 +120,7 @@ export default {
     // TimeSelector,
     // ViewSwitch,
 
-    MainPage,
+    CreatedRoutinesView,
     TopBarMenu,
     TopBreadcrums
   },
