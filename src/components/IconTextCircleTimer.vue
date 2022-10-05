@@ -9,7 +9,7 @@
                          rotate="270"
                          :width="size/2"
                          class="progress-circular-style">
-      <TimeObject class="text-style" :text-size="textSize" text-color="white" :seconds="getSecondsLeft()" :minutes="getMinutesLeft()"/>
+      <span class="time-object-style ma-0">{{getTime()}}</span>
     </v-progress-circular>
 
   </v-sheet>
@@ -17,13 +17,9 @@
 </template>
 
 <script>
-import TimeObject from "@/components/TimeObject";
 
 export default {
   name: "IconTextCircleTimer",
-  components: {
-    TimeObject
-  },
   // --------------------------------------------
   // Number size: Tamaño del circulo (en px)
   // Number minutes: Minutos del contador
@@ -84,6 +80,10 @@ export default {
     },
     getMinutesLeft(){
       return ((this.timeLeft / 60) > 0 ? parseInt(this.timeLeft / 60) : 0)
+    },
+    // Funcion para dar formato al contador mm:ss
+    getTime(){
+      return this.getMinutesLeft().toString().padStart(2, '0') + ':' + this.getSecondsLeft().toString().padStart(2, '0')
     }
   }
 }
@@ -91,8 +91,10 @@ export default {
 
 <style scoped>
 
-.text-style {
+.time-object-style{
   z-index: 0;
+  font-size: v-bind(textSizeCSS);
+  color: white;
 }
 
 </style>
