@@ -32,7 +32,7 @@ export default {
 }
 
 .elements-style {
-  margin-top: 2%;
+  margin-top: 20px;
 }
 
 

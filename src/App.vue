@@ -148,8 +148,5 @@ export default {
 
 <style>
 
-.app-bar-style{
-  height: 30vh;
-}
 
 </style>

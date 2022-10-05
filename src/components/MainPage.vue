@@ -40,39 +40,29 @@
     </div>
 
     <div class="mt-12">
-      <v-container>
-        <v-row>
+      <RoutineCardList>
+        <template v-slot:header>
           <v-col class="d-flex" cols="6">
             <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="alert()">
               <v-icon v-text="$vuetify.icons.values.add" color="#1C1B1F" :size="70"/>
-              <span class="new-routine-text-style">{{getText(this.newRoutineText)}}</span>
+              <span class="new-routine-text-style">Nueva rutina</span>
             </v-card>
           </v-col>
-          <v-spacer/>
-          <v-col v-for="i in 1" :key="i" cols="6">
-            <RoutineCard img="lionel-messi.webp" name="Futbol para todos" v-bind:is-favorite="true" v-bind:id="1"
-                         @favoriteTouched="changeFavorite" v-bind:stars="3"
-                         v-bind:tags="['Hello','World', 'Dale', 'Messi', 'La', 'Scaloneta', 'Qatar', '2022']"/>
-
-
-          </v-col>
-        </v-row>
-      </v-container>
-
-
+        </template>
+      </RoutineCardList>
     </div>
   </div>
 </template>
 
 <script>
 import FilterMenu from "@/components/FilterMenu";
-import RoutineCard from "@/components/RoutineCard";
+import RoutineCardList from "@/components/RoutineCardList";
 
 export default {
   name: "MainPage",
   components: {
     FilterMenu,
-    RoutineCard
+    RoutineCardList
   },
   props: {
     language: {
@@ -123,10 +113,6 @@ export default {
     }
   },
   methods: {
-    changeFavorite(id,status){
-      console.log(id)
-      console.log(status)
-    },
     getText(componentText){
       return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
     },
