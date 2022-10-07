@@ -44,7 +44,10 @@ export default new Vuetify({
             replay: 'replay',
             next:'navigate_next',
             prev:'navigate_before',
-            add: 'add'
+            add: 'add',
+            arrowBack: 'arrow_back',
+            done: 'done',
+            playCircle: 'play_circle'
         }
     }
 });
