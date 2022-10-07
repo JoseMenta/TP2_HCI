@@ -4,12 +4,13 @@
   <v-btn class="d-inline-flex btn-style text-capitalize pa-0"
          width="auto" :height="btnHeight"
          @click="profileMethod">
-    <div class="d-inline-flex align-center py-2 px-1">
+    <v-row class="d-inline-flex py-2 px-1 row-style" align="center">
       <span class="font-weight-bold mr-3 text-style">{{userName}}</span>
+
       <v-img :src="userNameImg"
              contain :height="imgSize" :width="imgSize"
              class="image-style"/>
-    </div>
+    </v-row>
   </v-btn>
 </template>
 
@@ -72,7 +73,10 @@ export default {
 </script>
 
 <style scoped>
-
+.row-style{
+  align-items: center;
+  justify-content: space-between;
+}
 /* Con v-bind puedo utilizar una variable para parametrizar el valor de un estilo */
 .btn-style {
   letter-spacing: 0;

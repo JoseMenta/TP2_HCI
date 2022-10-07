@@ -6,13 +6,14 @@
         <v-icon v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon"></v-icon>
         <v-icon v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
-      <p v-show="description.length<90">{{description}}</p>
-      <p v-show="description.length>=90">{{description.substring(0,98)+'..'}}</p>
+      <p v-show="description.length<98">{{description}}</p>
+      <p v-show="description.length>=98">{{description.substring(0,98)+'..'}}</p>
     </v-card >
     <v-img :src="img" :alt="alt" class="rounded exercise_img" height="130"  width="30%"></v-img>
   </v-card>
 </template>
 
+<!--width 80% y margin auto para lo que decia gaston de centar -->
 <script>
 export default {
   name: "ExerciseCard",
