@@ -9,13 +9,13 @@
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="320" flat>
-        <h1 class="d-flex justify-center mb-2">Inicio de Sesion</h1>
-        <TextInput label="Correo Electronico" class="margin-style"></TextInput>
-        <PasswordInput password="FYTY" class="margin-style"></PasswordInput>
-        <LoginButton class="d-flex margin-btn-style" :text-size="10" text="Ingresar" :border-radius="12" :action="ingresarUsuario"/>
-        <a href="#"
-            class="d-inline-flex text-decoration-underline justify-center mt-5"
-        >Olvidaste tu contraseña</a>
+        <h1 class="d-flex justify-center mb-7">Olvidé mi cuenta</h1>
+        <TextInput label="Ingrese su Correo Electronico" class="margin-style"></TextInput>
+        <LoginButton class="d-flex margin-btn-style" :action="sendVerification" :text-size="10" text="Recuperar" :border-radius="12"/>
+        <v-sheet height="50">
+          <h3 v-show="send" class="margin-style">Se ha enviado un mail para restaurar su contraseña</h3>
+          <h3 v-show="send" class="margin-style">Verifique su casilla de correo electronico</h3>
+        </v-sheet>
       </v-card>
       <v-card class="d-inline-flex justify-center align-center justify-space-around" height="80" flat>
         <h2 class="d-flex justify-center">¿No tienes cuenta aún?</h2>
@@ -28,31 +28,31 @@
 
 <script>
 import TextInput from "@/components/TextInput";
-import PasswordInput from "@/components/PasswordInput";
 import LoginButton from "@/components/LoginButton";
 import LanguageSelect from "@/components/LanguageSelect";
 
 export default {
-  name: "LoginView",
+  name: "ForgotUser",
+  data(){
+    return {
+      send: false,
+    }
+  },
   components: {
     TextInput,
-    PasswordInput,
     LoginButton,
     LanguageSelect
   },
   methods:{
-    changeMenu(menuId,newValue){
-      console.log(menuId)
-      console.log(newValue)
-    },
-    ingresarUsuario(){
-      console.log("Revisar datos si da ok pasar pagina")
+    sendVerification(){
+        this.send = true
     },
     Registrarse(){
       console.log("Ir a la vista de registrarse")
     }
   }
 }
+
 </script>
 
 <style scoped>
@@ -76,6 +76,7 @@ export default {
 .margin-btn-style{
   margin-right: auto;
   margin-left: auto;
+  margin-bottom: 30px;
 }
 
 .margin-style{

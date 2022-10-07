@@ -1,6 +1,5 @@
 <template>
-  <v-sheet        width="auto"
-                  height="auto" >
+  <v-sheet width="auto" height="auto" >
     <v-text-field
         :label=label
         :placeholder=label
@@ -18,20 +17,12 @@ export default {
       type:String,
       required: true,
     },
-  },
-  data () {
-    return {
-      show1: false,
-      password: 'Password',
-      rules: {
-        required: value => !!value || 'Required.',
-        pass: v => v === "FYTY" || 'Contraseña incorrecta',
-      },
-    }
   }
 }
 </script>
 
 <style scoped>
-
+.input-group--text-field {
+  padding: 5px;
+}
 </style>
