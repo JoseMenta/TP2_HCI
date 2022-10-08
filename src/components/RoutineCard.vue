@@ -1,7 +1,7 @@
 <template>
     <v-card class="d-flex flex-column rounded" :width="width" hover @click="touchCard">
       <v-card class="d-flex rounded-t" flat tile>
-        <v-img :src="img" :width="width" :alt="alt" :height="100"></v-img>
+        <v-img :src="img" :width="width" :alt="alt" :height="100" @click="changeView({name: 'routineDetails'})"></v-img>
       </v-card>
     <v-card class="d-flex rounded-b justify-space-between px-2 pt-2" :color="color" :width="width" flat tile>
       <v-card class="d-inline-flex" flat tile :color="color" >
@@ -107,6 +107,9 @@ export default {
     touchCard(){
       console.log(`RoutineCard ${this.id} touched`)
       this.$emit('cardTouched',this.id)
+    },
+    changeView(nameView) {
+      this.$router.push(nameView)
     }
   },
 

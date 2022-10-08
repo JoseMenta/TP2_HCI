@@ -1,5 +1,5 @@
 <template>
-  <v-card class="d-inline-flex flex-row main_card" outlined hover width="auto" @click="touchCard">
+  <v-card class="d-inline-flex flex-row main_card" outlined hover width="100%" height="132" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
       <v-card class="d-inline-flex justify-space-between align-center" flat>
         <h2 class="text-truncate" >{{name}}</h2>
@@ -9,7 +9,7 @@
         <p v-show="description.length<90">{{description}}</p>
         <p v-show="description.length>=90">{{description.substring(0,98)+'..'}}</p>
     </v-card >
-    <v-img :src="img" :alt="alt" class="img-format" height="130"  width="30%"></v-img>
+    <v-img :src="img" :alt="alt" contain class="img-format" height="130"  width="130"></v-img>
   </v-card>
 </template>
 

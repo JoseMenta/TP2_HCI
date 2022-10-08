@@ -1,8 +1,8 @@
 <template>
-  <v-chip
+  <v-btn
       label
   class="tag rounded-lg"
-  color="grey">{{content}}</v-chip>
+  color="grey">{{content}}</v-btn>
 </template>
 
 <script>
