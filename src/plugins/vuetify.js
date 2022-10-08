@@ -47,7 +47,8 @@ export default new Vuetify({
             add: 'add',
             arrowBack: 'arrow_back',
             done: 'done',
-            playCircle: 'play_circle'
+            playCircle: 'play_circle',
+            clear: 'clear'
         }
     }
 });

@@ -4,10 +4,21 @@
     <v-container class="container-style">
       <v-row justify="space-between" class="top-style">
         <v-col :cols="1">
-          <v-icon v-text="$vuetify.icons.values.arrowBack"
-                  color="#1C1B1F"
-                  :size="50"
-                  @click="back"/>
+          <v-dialog v-model="closeDialog" width="50%">
+            <!-- La manera de abrir un popUp -->
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-text="$vuetify.icons.values.clear"
+                      color="#1C1B1F"
+                      :size="50"
+                      v-bind="attrs"
+                      v-on="on"/>
+            </template>
+            <!-- Lo que va a mostrar el popUp -->
+            <AlertPopUp title="¡Atención!"
+                        text="¿Está seguro que desea salir? Perderá el ejercicio creado."
+                        @closeWarning="closeDialog = false" @cancelExercise="cancelExercise"/>
+          </v-dialog>
+
         </v-col>
         <v-col :cols="1" class="d-flex justify-center">
           <v-icon v-text="$vuetify.icons.values.done"
@@ -18,28 +29,33 @@
       </v-row>
       <v-row class="img-style">
         <v-col :cols="12">
-          <v-img :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
-            <v-icon v-text="$vuetify.icons.values.playCircle"
-                    color="#1C1B1F"
-                    :size="83"
-                    class="play-button-style"
-                    @click="play"/>
-          </v-img>
+          <v-dialog v-model="mediaDialog">
+            <template v-slot:activator="{ on, attrs }">
+              <v-img :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
+                <v-icon v-text="$vuetify.icons.values.playCircle"
+                        color="#1C1B1F"
+                        :size="83"
+                        class="play-button-style"
+                        v-bind="attrs"
+                        v-on="on"/>
+              </v-img>
+            </template>
+            <MediaPopUp @closeWarning="mediaDialog = false"/>
+          </v-dialog>
+
         </v-col>
       </v-row>
       <v-row>
         <v-col :cols="12">
           <v-text-field id="title"
-                        :hide-details="!titleIsEmpty"
+                        :rules="[rules.required]"
                         :error="titleIsEmpty"
-                        :error-messages="['El titulo del ejercicio es requerido.']"
                         @input="updateTitleIsEmpty"
                         placeholder="Ingrese el nombre del ejercicio"
                         solo
                         flat
                         v-model="routineName"
                         class="exercise-title-style"
-                        :class="titleIsEmpty ? 'error-title-style' : ''"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -90,10 +106,14 @@
 <script>
 import FilterMenu from "@/components/FilterMenu";
 import ExerciseDetail from "@/components/ExerciseDetail";
+import AlertPopUp from "@/components/AlertPopUp";
+import MediaPopUp from "@/components/MediaPopUp";
 
 export default {
   name: "CreateExercisePopUp",
   components: {
+    MediaPopUp,
+    AlertPopUp,
     FilterMenu,
     ExerciseDetail
   },
@@ -101,6 +121,14 @@ export default {
     return {
       routineName: '',
       titleIsEmpty: false,
+      // Maneja el popUp de alerta (cuando es true se abre el popUp, cuando es false se cierra el popUp)
+      closeDialog: false,
+      // Maneja el popUp de imagen/video (cuando es true se abre el popUp, cuando es false se cierra el popUp
+      mediaDialog: false,
+
+      rules: {
+        required: value => !!value || 'El titulo del ejercicio es requerido.'
+      },
 
       // Datos requeridos para el scroll
       duration: 200,
@@ -109,22 +137,26 @@ export default {
     }
   },
   methods: {
-    back(){
-      alert('Go Back!')
-    },
     confirm(){
       if(this.routineName === ''){
         this.updateTitleIsEmpty()
         this.$vuetify.goTo(this.target, this.options)
       } else {
-        alert('Ejercicio guardado')
+        this.exerciseSaved()
       }
     },
     updateTitleIsEmpty(){
       this.titleIsEmpty = (this.routineName === '')
     },
-    play(){
-      alert('Play!')
+    exerciseSaved(){
+      // El padre debe cerrar el popUp
+      this.$emit("exerciseSaved")
+    },
+    cancelExercise() {
+      this.closeDialog = false
+      this.mediaDialog = false
+      // El padre debe cerrar el popUp
+      this.$emit("cancelExercise")
     }
   },
   computed: {
@@ -185,17 +217,6 @@ export default {
 .author-style span, .details-style span {
   font-size: 30px;
   font-weight: bold;
-}
-
-.error-title-style:deep(div.v-messages__message) {
-  font-size: 15px;
-  line-height: 20px;
-}
-
-.error-title-style:deep(input) {
-  border-radius: 12px;
-  border: 1px solid red;
-  padding-left: 10px;
 }
 
 </style>

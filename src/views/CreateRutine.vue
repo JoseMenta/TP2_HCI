@@ -78,7 +78,7 @@ export default {
   padding: 0;
 }
 
-::v-deep .v-label {
+:deep(.v-label) {
   font-size: 30px
 }
 

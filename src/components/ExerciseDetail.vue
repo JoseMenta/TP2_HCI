@@ -2,7 +2,7 @@
  el agregado de un ejercicio a una rutina (readOnly = true) -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <div class="ml-4">
+  <div>
     <span class="description-style black--text d-flex font-weight-bold mb-2 mt-5">{{ getTitleText }}</span>
     <v-textarea v-if="readOnly" class="textarea-style ml-5 mr-2"
                 solo flat hide-details readonly no-resize :value="textareaValue"/>
@@ -87,5 +87,8 @@ export default {
   font-size: v-bind(textareaSizeCSS);
 }
 
+.textarea-style:deep(textarea) {
+  padding-left: 10px;
+}
 
 </style>

@@ -83,14 +83,14 @@ export default {
   border-radius: v-bind(btnBorderRadiusCSS);
 }
 
-.v-text-field ::v-deep(input) {
+.v-text-field :deep(input) {
   font-size: v-bind(textSizeCSS);
   color: #7A7A7A;
   /* max-height:none permite sacar la restriccion que tiene por default los inputs */
   max-height: none;
 }
 
-.v-text-field ::v-deep(input::placeholder) {
+.v-text-field:deep(input::placeholder) {
   color: #7A7A7A;
 }
 
