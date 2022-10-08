@@ -6,7 +6,7 @@
       <v-col v-for="i in 10" :key="i" cols="6">
         <ExerciseCard :name="'Abdominales'" :id="1"
                       description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd"
-                      img="estiramiento.png"></ExerciseCard>
+                      :img="require('@/assets/estiramiento.png')"></ExerciseCard>
 
 
       </v-col>

@@ -4,7 +4,7 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="i in 10" :key="i" cols="6">
-        <RoutineCard img="lionel-messi.webp" name="Futbol para todos" v-bind:is-favorite="true" v-bind:id="1"
+        <RoutineCard :img="require('@/assets/lionel-messi.webp')" name="Futbol para todos" v-bind:is-favorite="true" v-bind:id="1"
                      @favoriteTouched="changeFavorite" v-bind:stars="3"
                      v-bind:tags="['Hello','World', 'Dale', 'Messi', 'La', 'Scaloneta', 'Qatar', '2022']"/>
 
