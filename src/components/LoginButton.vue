@@ -7,7 +7,7 @@
          ripple
          width="auto"
          height="auto"
-         @click="action"
+         @click="action ? action : null"
         :disabled=status>
     <span class="white--text my-3 mx-16 text-style">{{text}}</span>
   </v-btn>
@@ -36,7 +36,7 @@ export default {
     },
     action: {
       type: Function,
-      required: true
+      required: false
     },
     status: {
       type: Boolean,

@@ -1,7 +1,7 @@
 <template>
   <div class="mx-7 mt-7">
     <h1 class="title-style my-5">Ejercicios Creados</h1>
-    <v-sheet class="d-flex justify-space-between">
+    <v-sheet class="d-flex justify-space-between" width="70%">
       <FilterMenu :id="1" v-bind:options="['Buenas','Tardes','Como','Estas']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
       <FilterMenu :id="1" v-bind:options="['Buenas','Tardes','Como','Estas']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
       <FilterMenu :id="1" v-bind:options="['Buenas','Tardes','Como','Estas']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
@@ -14,7 +14,7 @@
           <v-col class="d-flex" cols="6">
             <v-card class="d-flex flex-column align-center justify-center new-routine-card-style" hover @click="alert()">
               <v-icon v-text="$vuetify.icons.values.add" color="#1C1B1F" :size="70"/>
-              <span class="new-routine-text-style">Nuevo Ejercicio</span>
+              <h2 class="new-routine-text-style"> Nuevo Ejercicio</h2>
             </v-card>
           </v-col>
         </template>
@@ -33,6 +33,12 @@ export default {
   components: {
     ExerciseCardList,
     FilterMenu
+  },
+  methods: {
+    changeMenu(menuId,newValue){
+      console.log(menuId)
+      console.log(newValue)
+    }
   },
 }
 </script>

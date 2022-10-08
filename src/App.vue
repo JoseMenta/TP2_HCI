@@ -1,5 +1,34 @@
 <template>
+
   <v-app>
+    <!-- <NavigationDrawer/>  ya tiene en su interior la estructura necesaria
+    <v-navigation-drawer app>
+    </v-navigation-drawer>
+    -->
+    <NavigationDrawer v-if="needNavigation()"/>
+
+    <v-app-bar v-if="needNavigation()" app color="white" prominent dense>
+      <TopBarMenu/>
+    </v-app-bar>
+
+    <!-- Sizes your content based upon application components -->
+    <v-main>
+      <div v-if="needNavigation()">
+        <TopBreadcrums :items="[{text: 'Lionel', disabled: false, href: 'Lionel',},
+      { text: 'Andres', disabled: false, href: 'Andres', },
+      { text: 'Messi', disabled: false, href: 'Messi', },]"
+                       class="ml-7 py-3"/>
+      </div>
+      <hr v-if="needNavigation()">
+<!--      <CreatedRoutinesView language="en"/>-->
+      <!-- Provides the application the proper gutter -->
+        <!-- If using vue-router -->
+        <router-view></router-view>
+    </v-main>
+
+  </v-app>
+
+<!--  <v-app>
 
     <v-app-bar app color="white" prominent dense>
       <TopBarMenu/>
@@ -13,10 +42,10 @@
                        class="ml-7 py-3"/>
       </div>
       <hr>
-<!--      Usar v-bind cuando se quiere pasar algo que no sea un String-->
-<!--      Es equivalente a hacer : antes de la propiedad-->
-<!--      Uso de routine card-->
-<!--      <RoutineCard img="lionel-messi.webp" name="Futbol para adsandasjkdbahkbjdsbasdhbahds" v-bind:is-favorite="true" v-bind:id="1"
+&lt;!&ndash;      Usar v-bind cuando se quiere pasar algo que no sea un String&ndash;&gt;
+&lt;!&ndash;      Es equivalente a hacer : antes de la propiedad&ndash;&gt;
+&lt;!&ndash;      Uso de routine card&ndash;&gt;
+&lt;!&ndash;      <RoutineCard img="lionel-messi.webp" name="Futbol para adsandasjkdbahkbjdsbasdhbahds" v-bind:is-favorite="true" v-bind:id="1"
       @favoriteTouched="changeFavorite" v-bind:stars="3"
       v-bind:tags="['hello','world','How','Are','You','Welcome','To','Fiti']"></RoutineCard>
       <ExerciseCard :name="'Abdominales'" :id="1" description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" img="estiramiento.png"></ExerciseCard>
@@ -51,43 +80,16 @@
       <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>
       <TextInput label="hola"></TextInput>
       <LoginView></LoginView>
-      <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>-->
+      <ExerciseDetail language="es" :read-only="false" :title-size="30" :textarea-size="20" :textarea-border-radius="12"/>&ndash;&gt;
 
       <NavigationDrawer/>
       <CreatedRoutinesView language="en"/>
     </v-main>
-  </v-app>
+  </v-app>-->
 </template>
 
 <script>
-// import ExerciseCard from "@/components/ExerciseCard";
-// import RoutineCard from "@/components/RoutineCard";
-// import FilterMenu from "@/components/FilterMenu";
-// import ExerciseCardMin from "@/components/ExerciseCardMin";
-//
-// import LanguageSelect from "./components/LanguageSelect";
-// import ControlsRutine from "./components/ControlsRutine";
-// import BinaryFilter from "./components/BinaryFilter";
-// import newTask from "./components/NewTask";
-// import TopBreadcrums from "./components/TopBreadcrums";
-// import ExerciseCategory from "./components/ExerciseCategory";
-// import ExerciseList from "@/components/ExerciseList";
 import NavigationDrawer from "@/components/NavigationDrawer";
-
-// import ExerciseDetail from "@/components/ExerciseDetail";
-// import IconTextCircle from "@/components/IconTextCircle";
-// import IconTextCircleTimer from "@/components/IconTextCircleTimer";
-// // import InfoTag from "@/components/InfoTag";
-// import LoginButton from "@/components/LoginButton";
-// import NewTask from "@/components/NewTask";
-// import NumberSelector from "@/components/NumberSelector";
-// import ProfileButton from "@/components/ProfileButton";
-// import SearchBox from "@/components/SearchBox";
-// // import TimeObject from "@/components/TimeObject";
-// import TimeSelector from "@/components/TimeSelector";
-// import ViewSwitch from "@/components/ViewSwitch";
-
-import CreatedRoutinesView from "@/components/CreatedRoutinesView";
 import TopBarMenu from "@/components/TopBarMenu";
 import TopBreadcrums from "@/components/TopBreadcrums";
 
@@ -96,31 +98,6 @@ export default {
 
   components: {
     NavigationDrawer,
-
-    // ExerciseCardMin,
-    // FilterMenu,
-    // RoutineCard,
-    // ExerciseCard,
-    // LanguageSelect,
-    // ControlsRutine,
-    // BinaryFilter,
-    // newTask,
-    // TopBreadcrums,
-    // ExerciseCategory,
-    // ExerciseList,
-    // ExerciseDetail,
-    // IconTextCircle,
-    // IconTextCircleTimer,
-    // LoginButton,
-    // NewTask,
-    // NumberSelector,
-    // ProfileButton,
-    // SearchBox,
-    // // TimeObject,
-    // TimeSelector,
-    // ViewSwitch,
-
-    CreatedRoutinesView,
     TopBarMenu,
     TopBreadcrums
   },
@@ -141,6 +118,9 @@ export default {
     },
     profile(){
       alert("Open Profile");
+    },
+    needNavigation(){
+      return !(['landing', 'register1', 'register2', 'login', 'forgotUser', 'verification'].includes(this.$route.name))
     }
   }
 };

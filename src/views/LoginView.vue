@@ -1,32 +1,30 @@
 <template>
-  <v-card >
-    <v-card height="130" elevation="100" color="#27496D" class="d-flex justify-center align-center mb-3">
+  <div>
+    <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
-             contain height="70" width="70"
+             contain
              class="image-style"/>
       <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu"  width="100" class="fixed"></LanguageSelect>
+                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
     </v-card>
-    <v-card class="d-flex center-card-margin flex-column" flat>
-      <v-card class="d-flex login-card-style justify-center flex-column" flat>
-        <h1 class="d-flex justify-center mb-5">Inicio de Sesion</h1>
+    <v-sheet class="d-flex center-card-margin flex-column" flat>
+      <v-card class="d-flex login-card-style justify-center flex-column" height="320" flat>
+        <h1 class="d-flex justify-center mb-2">Inicio de Sesion</h1>
         <TextInput label="Correo Electronico" class="margin-style"></TextInput>
         <PasswordInput password="FYTY" class="margin-style"></PasswordInput>
-        <LoginButton class="d-flex margin-btn-style justify-center" :text-size="10" text="Ingresar" :border-radius="12"/>
-        <a href="#"
-            class="d-inline-flex text-decoration-underline justify-center mt-5"
+        <LoginButton class="d-flex margin-btn-style" :text-size="10" text="Ingresar" :border-radius="12" @click.native="changeView({name: 'createdRoutines'})"/>
+        <a
+            class="d-inline-flex text-decoration-underline justify-center mt-5" @click="changeView({name: 'forgotUser'})"
         >Olvidaste tu contraseña</a>
       </v-card>
       <v-card class="d-inline-flex justify-center align-center justify-space-around" height="80" flat>
-        <h2 class="d-flex justify-center">Inicio de Sesion</h2>
-        <LoginButton :text-size="10" text="Ingresar" :border-radius="12"/>
+        <h2 class="d-flex justify-center">¿No tienes cuenta aún?</h2>
+        <LoginButton :text-size="10" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
       </v-card>
-    </v-card>
-  </v-card>
+    </v-sheet>
+  </div>
 </template>
 
-import TextInput from "./components/TextInput";
-import PasswordInput from "@/components/PasswordInput";
 
 <script>
 import TextInput from "@/components/TextInput";
@@ -41,30 +39,56 @@ export default {
     PasswordInput,
     LoginButton,
     LanguageSelect
+  },
+  methods:{
+    changeMenu(menuId,newValue){
+      console.log(menuId)
+      console.log(newValue)
+    },
+    ingresarUsuario(){
+      console.log("Revisar datos si da ok pasar pagina")
+    },
+    Registrarse(){
+      console.log("Ir a la vista de registrarse")
+    },
+    changeView(nameView) {
+      this.$router.push(nameView)
+    }
   }
 }
 </script>
 
 <style scoped>
+
+.top_card{
+  border-radius: 0;
+}
+
+.image-style{
+  margin-bottom: auto;
+  margin-top: auto;
+  height: 70px;
+}
+
 .login-card-style{
-  border-radius: 20px;
+  border-radius: 12px;
   border: 1px solid black;
   background: white;
 }
 
 .margin-btn-style{
-  margin-right: 200px;
-  margin-left: 200px;
-  margin-bottom: 10px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .margin-style{
   margin-right: 50px;
   margin-left: 50px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
-.fixed{
+.Lenguage-fixed{
+  width: 100px;
   position: absolute;
   bottom: 0;
   right: 0;

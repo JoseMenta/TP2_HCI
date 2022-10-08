@@ -1,23 +1,77 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    redirect: '/landing'
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+    path: '/landing',
+    name: 'landing',
+    component: () => import(/* webpackChunkName: "landing" */ '@/views/LandingPage')
+  },
+  {
+    path: '/register/1',
+    name: 'register1',
+    component:() => import(/* webpackChunkName: "register1" */ '@/views/Register1View')
+  },
+  {
+    path: '/register/2',
+    name: 'register2',
+    component:() => import(/* webpackChunkName: "register2" */ '@/views/Register2View')
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component:() => import(/* webpackChunkName: "login" */ '@/views/LoginView')
+  },
+  {
+    path: '/created_routines',
+    name: 'createdRoutines',
+    component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/CreatedRoutinesView'),
+    props: {
+      language: 'en'
+    }
+  },
+  {
+    path: '/create_routine',
+    name: 'createRoutine',
+    component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/CreateRutine'),
+    props: {
+      language: 'en'
+    }
+  },
+  {
+    path: '/favorites',
+    name: 'favorites',
+    component:() => import(/* webpackChunkName: "favorites" */ '@/views/FavoritesView'),
+    props: {
+      language: 'en'
+    }
+  },
+  {
+    path: '/forgot_user',
+    name: 'forgotUser',
+    component:() => import(/* webpackChunkName: "forgotUser" */ '@/views/ForgotUser')
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component:() => import(/* webpackChunkName: "search" */ '@/views/SearchResultsView')
+  },
+  {
+    path: '/verification',
+    name: 'verification',
+    component:() => import(/* webpackChunkName: "verification" */ '@/views/VerificationView')
+  },
+  {
+    path: '/created_exercises',
+    name: 'createdExercises',
+    component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/ExercisesCreated')
+  },
 ]
 
 const router = new VueRouter({

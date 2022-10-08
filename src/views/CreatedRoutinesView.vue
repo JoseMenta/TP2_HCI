@@ -12,7 +12,7 @@
       <RoutineCardList>
         <template v-slot:header>
           <v-col class="d-flex" cols="6">
-            <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="alert()">
+            <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="changeView({name: 'createRoutine'})">
               <v-icon v-text="$vuetify.icons.values.add" color="#1C1B1F" :size="70"/>
               <span class="new-routine-text-style">Nueva rutina</span>
             </v-card>
@@ -54,6 +54,9 @@ export default {
   methods: {
     getText(componentText){
       return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
+    },
+    changeView(nameView) {
+      this.$router.push(nameView)
     }
   }
 }

@@ -44,7 +44,7 @@
           ></v-date-picker>
         </v-menu>
 
-        <LoginButton class="d-flex margin-btn-style" :action="nextRegister" :text-size="10" text="Siguiente" :border-radius="12"/>
+        <LoginButton class="d-flex margin-btn-style" @click.native="changeView({name: 'register2'})" :text-size="10" text="Siguiente" :border-radius="12"/>
       </v-card>
     </v-sheet>
   </div>
@@ -77,6 +77,13 @@ export default {
     },
     nextRegister() {
       console.log("Pasar a proximo paso de registro")
+    },
+    changeMenu(menuId,newValue){
+      console.log(menuId)
+      console.log(newValue)
+    },
+    changeView(nameView) {
+      this.$router.push(nameView)
     }
   },
   components: {

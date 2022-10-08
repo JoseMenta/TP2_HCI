@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer app class="navigation_drawer">
-    <v-list-item class="pt-8">
+    <v-list-item class="pt-8" @click="changeView({name:'createdRoutines'})">
       <v-img src="fiti-logo.png" ></v-img>
     </v-list-item>
     <v-list
@@ -12,7 +12,7 @@
       <v-list-item
           v-for="item in basic_items"
           :key="item.title"
-          :to="item.route"
+          :to="{name: item.name}"
           link
           active-class="active_item"
       >
@@ -34,7 +34,7 @@
       <v-list-item
           v-for="item in other_items"
           :key="item.title"
-          :to="item.route"
+          :to="{name: item.name}"
           link
           active-class="active_item"
       >
@@ -56,17 +56,23 @@ export default {
   data () {
     return {
       basic_items: [
-        { title: 'Rutinas creadas', icon: 'fitness_center',route:'/about'},
-        { title: 'Ejercicios creados', icon: 'directions_run',route:'/' },
-        { title: 'Favoritos', icon:'favorite',route:'/favorites' },
+        { title: 'Rutinas creadas', icon: 'fitness_center', name: 'createdRoutines'},
+        { title: 'Ejercicios creados', icon: 'directions_run', name: 'createdExercises'},
+        { title: 'Favoritos', icon:'favorite', name:'favorites'},
       ],
       right: null,
       other_items:[
-        {title: 'Configuración',icon:'settings',route:'/login'},
-        {title:'Cerrar sesión',icon:'logout',route:'/about'}
+          // TODO: Hacer la pagina de configuracion
+        {title: 'Configuración',icon:'settings', name:'createdRoutines'},
+        {title:'Cerrar sesión',icon:'logout', name: 'landing'}
       ]
     }
   },
+  methods: {
+    changeView(nameView) {
+      this.$router.push(nameView)
+    }
+  }
 }
 </script>
 
