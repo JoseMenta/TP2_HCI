@@ -1,19 +1,18 @@
 <template>
-  <v-card class="d-inline-flex rounded flex-row main_card" outlined hover width="auto" @click="touchCard">
-    <v-card class="d-inline-flex rounded flex-column pa-1" flat tile width="60%" >
-      <v-card class="d-inline-flex rounded justify-space-between align-center" flat tile>
+  <v-card class="d-inline-flex flex-row main_card" outlined hover width="auto" @click="touchCard">
+    <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
+      <v-card class="d-inline-flex justify-space-between align-center" flat>
         <h2 class="text-truncate" >{{name}}</h2>
         <v-icon v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon"></v-icon>
         <v-icon v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
-      <p v-show="description.length<98">{{description}}</p>
-      <p v-show="description.length>=98">{{description.substring(0,98)+'..'}}</p>
+        <p v-show="description.length<90">{{description}}</p>
+        <p v-show="description.length>=90">{{description.substring(0,98)+'..'}}</p>
     </v-card >
-    <v-img :src="img" :alt="alt" class="rounded exercise_img" height="130"  width="30%"></v-img>
+    <v-img :src="img" :alt="alt" class="img-format" height="130"  width="30%"></v-img>
   </v-card>
 </template>
 
-<!--width 80% y margin auto para lo que decia gaston de centar -->
 <script>
 export default {
   name: "ExerciseCard",
@@ -61,6 +60,21 @@ export default {
 </script>
 
 <style scoped>
+.img-format{
+  border-bottom-left-radius: 0 ;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.v-sheet.v-card{
+  border-radius: 20px;
+}
+
+.main_card{
+  border-radius: 20px;
+  border: black solid 1px;
+}
+
 .action_icon{
   padding-left: 4px;
   padding-right: 4px;
@@ -74,10 +88,4 @@ p{
   width:250px;
   height:70px;
 }
-.exercise_img{
-  border-left: var(--v-black-base) 2px solid;
-}
-/*.main_card{*/
-/*  border: var(--v-black-base) 2px solid;*/
-/*}*/
 </style>

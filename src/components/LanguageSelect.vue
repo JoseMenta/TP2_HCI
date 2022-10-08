@@ -4,10 +4,11 @@
     <v-menu offset-y>
       <template v-slot:activator="{on,attrs}">
         <v-btn
+            elevation="0"
             v-bind="attrs"
             v-on="on"
             :width=width
-            class="dropdownFilters elevation-3"
+            class="dropdownFilters"
             @click="changeMenu"
         >
           <span class="material-icons">

@@ -6,7 +6,9 @@
          color="#00909E"
          ripple
          width="auto"
-         height="auto">
+         height="auto"
+         @click="action ? action : null"
+        :disabled=status>
     <span class="white--text my-3 mx-16 text-style">{{text}}</span>
   </v-btn>
 </template>
@@ -31,6 +33,15 @@ export default {
     borderRadius: {
       type: Number,
       required: true
+    },
+    action: {
+      type: Function,
+      required: false
+    },
+    status: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data(){

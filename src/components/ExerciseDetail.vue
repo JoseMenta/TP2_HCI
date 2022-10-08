@@ -2,8 +2,8 @@
  el agregado de un ejercicio a una rutina (readOnly = true) -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <div class="mr-7">
-    <span class="description-style black--text d-flex mb-2">{{ getTitleText }}</span>
+  <div class="ml-4">
+    <span class="description-style black--text d-flex font-weight-bold mb-2 mt-5">{{ getTitleText }}</span>
     <v-textarea v-if="readOnly" class="textarea-style ml-5 mr-2"
                 solo flat hide-details readonly no-resize :value="textareaValue"/>
     <v-textarea v-if="!readOnly" class="textarea-style ml-5 mr-2"
@@ -55,8 +55,8 @@ export default {
     return {
       // De esta manera, podemos parametrizar el contenido estático en funcion del lenguaje del usuario
       defaultText: [
-        {titleText: 'Descripción', placeholderText: 'Escriba una descripción del ejercicio', lang: 'es'},
-        {titleText: 'Description', placeholderText: 'Write some info about the exercise', lang: 'en'}
+        {titleText: 'Descripción:', placeholderText: 'Escriba una descripción del ejercicio', lang: 'es'},
+        {titleText: 'Description:', placeholderText: 'Write some info about the exercise', lang: 'en'}
       ],
       titleSizeCSS: this.titleSize + 'px',
       textareaSizeCSS: this.textareaSize + 'px',
@@ -78,7 +78,6 @@ export default {
 
 .description-style {
   font-size: v-bind(titleSizeCSS);
-  font-weight: bold;
 }
 
 .textarea-style {
@@ -86,11 +85,6 @@ export default {
   border-radius: v-bind(textareaBorderRadiusCSS);
   border: 1px solid black;
   font-size: v-bind(textareaSizeCSS);
-}
-
-.textarea-style:deep(textarea) {
-  padding-left: 10px;
-  padding-right: 15px;
 }
 
 

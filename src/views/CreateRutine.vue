@@ -16,7 +16,7 @@
       </v-sheet>
       <v-card width="40%" class="d-flex flex-column" flat>
         <v-img
-            :src="RutineImg"
+            :src="require('@/assets/placeholder.jpg')"
             max-height="200"
             width="auto"
             class="img_rutine elevation-5"
@@ -63,12 +63,6 @@ export default {
     }
   },
   components: {NewBlock, BlockRutine, InfoTag},
-  props: {
-    RutineImg: {
-      type: String,
-      required: true
-    },
-  },
   methods: {
     addBlock() {
       this.blocks = this.blocks +1;

@@ -10,7 +10,7 @@
       <div class="d-flex">
         <!-- El oninput sirve para que solo se puedan ingresar enteros no negativos -->
         <input class="pl-1 text-style input-style" type="number"
-               oninput="this.value = (!!this.value && Math.abs(this.value) >= 0) ? Math.abs(this.value) : null"
+               oninput="this.value = (!!this.value && Math.abs(this.value) >= 0) ? Math.abs(this.value) : 0"
                v-model="numberValue">
         <v-icon class="ml-auto black--text" @click="decrementValue" v-text="$vuetify.icons.values.keyboardArrowDown"/>
       </div>
@@ -61,11 +61,14 @@ export default {
   methods: {
     // Logica para los botones del componente
     incrementValue(){
-      this.numberValue += 1
+      this.numberValue += parseInt(1)
     },
     decrementValue(){
-      this.numberValue = (this.numberValue - 1 < 0) ? 0 : this.numberValue - 1
+      this.numberValue = parseInt((this.numberValue - 1 < 0) ? 0 : this.numberValue - 1)
     }
+  },
+  beforeUpdate() {
+    this.numberValue = parseInt((this.numberValue % 1 === 0) ? this.numberValue : 0)
   }
 }
 </script>
