@@ -10,8 +10,12 @@
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
         <h1 class="d-flex justify-center mb-7">Registro</h1>
-        <TextInput label="Ingrese su Nombre" class="margin-style"></TextInput>
-        <TextInput label="Ingrese su Apellido" class="margin-style"></TextInput>
+        <TextInput class="margin-style" @input="nameInput"
+                   :required="required" textError="Nombre es requerido"
+                   placeHolder="Ingrese su Nombre"></TextInput>
+        <TextInput class="margin-style" @input="LastNameInput"
+                   :required="required" textError="Apellido es requerido"
+                   placeHolder="Ingrese su Apellido"></TextInput>
 
         <v-menu
             ref="menu"
@@ -23,12 +27,15 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-                v-model="date"
-                label="Fecha de Nacimiento"
+                :rules="[rules.required]"
+                :error="required"
+                v-model="inputDate"
+                placeholder="Fecha de Nacimiento"
                 solo
                 background-color="#DAE1E7"
                 class="margin-style"
                 readonly
+                flat
                 v-bind="attrs"
                 v-on="on"
             ></v-text-field>
@@ -36,15 +43,16 @@
           <v-date-picker
               color="black"
               no-title
-              v-model="date"
+              v-model="inputDate"
               :active-picker.sync="activePicker"
               :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
               min="1950-01-01"
               @change="save"
+              class="date-picker"
           ></v-date-picker>
         </v-menu>
 
-        <LoginButton class="d-flex margin-btn-style" @click.native="changeView({name: 'register2'})" :text-size="10" text="Siguiente" :border-radius="12"/>
+        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'register2'})" :text-size="10" text="Siguiente" :border-radius="12"/>
       </v-card>
     </v-sheet>
   </div>
@@ -61,36 +69,56 @@ import LanguageSelect from "@/components/LanguageSelect";
 
 export default {
   name: "Register1View",
-  data: () => ({
+  components: {
+    TextInput,
+    LoginButton,
+    LanguageSelect
+  },
+  data() {
+    return {
       activePicker: null,
-      date: null,
       menu: false,
-    }),
-  watch: {
-    menu (val) {
-      val && setTimeout(() => (this.activePicker = 'YEAR'))
-    },
+      name: false,
+      inputName: '',
+      LastName: false,
+      inputLastName: '',
+      Date: false,
+      inputDate: '',
+      required: false,
+      correct: false,
+      rules: {
+        required: value => !!value || "Fecha de nacimiento es requerida",
+      },
+    }
   },
   methods: {
     save (date) {
       this.$refs.menu.save(date)
     },
-    nextRegister() {
-      console.log("Pasar a proximo paso de registro")
-    },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
     },
-    changeView(nameView) {
-      this.$router.push(nameView)
+    nextView(nameView){
+      if(this.name && this.LastName && this.inputDate.length>0)
+        this.$router.push(nameView);
+      else
+        this.required=true;
+    },
+    nameInput(value, input) {
+      this.name=value;
+      this.inputName=input;
+    },
+    LastNameInput(value, input) {
+      this.LastName=value;
+      this.inputLastName=input;
     }
   },
-  components: {
-    TextInput,
-    LoginButton,
-    LanguageSelect
-  }
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.activePicker = 'YEAR'))
+    },
+  },
 }
 
 </script>
@@ -139,5 +167,9 @@ export default {
 
 .v-date-picker-header {
   display: none
+}
+
+.date-picker{
+  width: 100%;
 }
 </style>

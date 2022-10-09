@@ -12,7 +12,7 @@
                      :search-box-width="445"
                      :icon-size="30"
                      :btn-border-radius="12"
-                     :text-size="20" class="mx-auto"/>
+                     :text-size="20" class="mx-auto" language="es" :filters="false"/>
         </v-app-bar>
         <v-container fluid>
           <v-row class="mt-5 mx-16">

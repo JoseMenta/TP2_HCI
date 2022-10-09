@@ -1,28 +1,50 @@
 <template>
   <v-sheet width="auto" height="auto" >
-    <v-text-field
-        :label=label
-        :placeholder=label
-        solo
-        background-color="#DAE1E7"
-    ></v-text-field>
+    <v-text-field :rules="[rules.required]"
+                  :error="IsEmpty || required"
+                  @input="updateIsEmpty"
+                  :placeholder="placeHolder"
+                  solo
+                  flat
+                  v-model="input"
+                  background-color="#DAE1E7"></v-text-field>
   </v-sheet>
 </template>
 
 <script>
 export default {
   name: "TextInput",
+  data() {
+    return {
+      input: '',
+      IsEmpty: false,
+      rules: {
+        required: value => !!value || this.textError
+      },
+    }
+  },
   props:{
-    label:{
-      type:String,
-      required: true,
+    required:{
+      type: Boolean,
+      required: true
     },
+    textError:{
+      type: String,
+      required: true
+    },
+    placeHolder:{
+      type: String,
+      required: true
+    }
+  },
+  methods: {
+    updateIsEmpty() {
+      this.IsEmpty = (this.input === '')
+      this.$emit('input', !this.IsEmpty, this.input)
+    }
   }
 }
 </script>
 
 <style scoped>
-.input-group--text-field {
-  padding: 5px;
-}
 </style>

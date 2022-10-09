@@ -7,14 +7,13 @@
             v-on="on"
             :width="width"
             class="dropdownFilters justify-space-between d-inline-block elevation-3 pl-2 pr-1 py-1"
-            @click="changeMenu"
-        >
+            @click="changeMenu">
           <span class="text-style mr-4 text-truncate">{{title}}</span>
           <v-icon color='#27496D'>{{icon}}</v-icon>
         </v-btn>
       </template>
       <v-list>
-        <v-list-item
+        <v-list-item  class="included"
             v-for="(option,index) in options"
             :key="index"
             @click="clickOption(index)"

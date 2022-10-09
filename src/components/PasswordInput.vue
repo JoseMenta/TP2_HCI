@@ -2,12 +2,15 @@
   <v-sheet width="auto"
            height="auto" >
     <v-text-field
-        :rules="[rules.required, rules.pass]"
+        :rules="[rules.required]"
         :type="show1 ? 'text' : 'password'"
-        name="input-10-1"
-        label="Ingresar Contraseña"
+        :error="IsEmpty || required"
+        @input="updateIsEmpty"
+        :placeholder="placeHolder"
         solo
         counter
+        flat
+        v-model="input"
         background-color="#DAE1E7"
     >
       <v-icon slot="append"
@@ -22,19 +25,34 @@
 <script>
 export default {
   name: "PasswordInput",
+  data () {
+    return {
+      input: '',
+      show1: false,
+      IsEmpty: false,
+      rules: {
+        required: value => !!value || this.textError,
+      },
+    }
+  },
   props:{
-    password:{
-      type:String,
+    required:{
+      type: Boolean,
+      required: true
+    },
+    textError:{
+      type: String,
+      required: true
+    },
+    placeHolder:{
+      type: String,
       required: true
     }
   },
-  data () {
-    return {
-      show1: false,
-      rules: {
-        required: value => !!value || 'Required.',
-        pass: v => v === "FYTY" || 'Contraseña incorrecta',
-      },
+  methods: {
+    updateIsEmpty() {
+      this.IsEmpty = (this.input === '')
+      this.$emit('input', !this.IsEmpty, this.input)
     }
   },
 }

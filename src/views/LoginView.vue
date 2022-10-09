@@ -8,11 +8,16 @@
                       @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
-      <v-card class="d-flex login-card-style justify-center flex-column" height="320" flat>
+      <v-card class="d-flex login-card-style justify-center flex-column" height="80%" flat>
         <h1 class="d-flex justify-center mb-2">Inicio de Sesion</h1>
-        <TextInput label="Correo Electronico" class="margin-style"></TextInput>
-        <PasswordInput password="FYTY" class="margin-style"></PasswordInput>
-        <LoginButton class="d-flex margin-btn-style" :text-size="10" text="Ingresar" :border-radius="12" @click.native="changeView({name: 'createdRoutines'})"/>
+        <TextInput class="margin-style" @input="nameInput"
+                   :required="required" textError="Email es requerido"
+                   placeHolder="Ingrese Email"></TextInput>
+        <PasswordInput class="margin-style" @input="passwordInput"
+                   :required="required" textError="Contraseña es requerida"
+                   placeHolder="Ingrese Contraseña"></PasswordInput>
+        <h3 v-if="correct" class="red--text d-flex justify-center mb-2">Usuario y contraseña incorrectos</h3>
+        <LoginButton class="d-flex margin-btn-style" :text-size="10" text="Ingresar" :border-radius="12" @click.native="nextView({name: 'createdRoutines'})"/>
         <a
             class="d-inline-flex text-decoration-underline justify-center mt-5" @click="changeView({name: 'forgotUser'})"
         >Olvidaste tu contraseña</a>
@@ -40,19 +45,40 @@ export default {
     LoginButton,
     LanguageSelect
   },
+  data() {
+    return {
+      name: false,
+      inputName: '',
+      password: false,
+      inputpassword: '',
+      required: false,
+      correct: false
+    }
+  },
   methods:{
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
     },
-    ingresarUsuario(){
-      console.log("Revisar datos si da ok pasar pagina")
-    },
-    Registrarse(){
-      console.log("Ir a la vista de registrarse")
-    },
     changeView(nameView) {
-      this.$router.push(nameView)
+      this.$router.push(nameView);
+    },
+    nextView(nameView){
+      if(this.name && this.password)
+          if(this.inputpassword==="pepe" && this.inputName==="pepe")
+              this.$router.push(nameView);
+          else
+            this.correct=true;
+      else
+        this.required=true;
+    },
+    nameInput(value, input) {
+      this.name=value;
+      this.inputName=input;
+    },
+    passwordInput(value, input) {
+      this.password=value;
+      this.inputpassword=input;
     }
   }
 }
@@ -98,4 +124,5 @@ export default {
   margin-left: 200px;
   margin-right: 200px;
 }
+
 </style>

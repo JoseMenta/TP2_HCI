@@ -10,8 +10,10 @@
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="320" flat>
         <h1 class="d-flex justify-center mb-7">Olvidé mi cuenta</h1>
-        <TextInput label="Ingrese su Correo Electronico" class="margin-style"></TextInput>
-        <LoginButton class="d-flex margin-btn-style" @click.native="sendVerification()" :text-size="10" text="Recuperar" :border-radius="12"/>
+        <TextInput class="margin-style" @input="emailInput"
+                   :required="false" textError="Correo Electronico es requerido"
+                   placeHolder="Ingrese su Correo Electronico"></TextInput>
+        <LoginButton :status="!this.email" class="d-flex margin-btn-style" @click.native="sendVerification()" :text-size="10" text="Recuperar" :border-radius="12"/>
         <v-sheet height="50">
           <h3 v-show="send" class="margin-style">Se ha enviado un mail para restaurar su contraseña</h3>
           <h3 v-show="send" class="margin-style">Verifique su casilla de correo electronico</h3>
@@ -36,6 +38,8 @@ export default {
   data(){
     return {
       send: false,
+      email: false,
+      inputEmail: '',
     }
   },
   components: {
@@ -47,16 +51,17 @@ export default {
     sendVerification(){
         this.send = true
     },
-    Registrarse(){
-      console.log("Ir a la vista de registrarse")
-    },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
     },
     changeView(nameView) {
       this.$router.push(nameView)
-    }
+    },
+    emailInput(value, input) {
+      this.email=value;
+      this.inputEmail=input;
+    },
   }
 }
 

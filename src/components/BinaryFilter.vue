@@ -1,8 +1,8 @@
 <template>
   <v-btn-toggle class="btn-toggle-style" mandatory borderless v-model="select">
     <v-btn v-for="(name, index) in filters" :key="index"
-           width="auto"
-           height="auto"
+           :width="150"
+           height="36"
            :class="format(index)">
       <span class="span-style">{{capitalizeText(name)}}</span>
     </v-btn>
@@ -54,6 +54,7 @@ export default {
   color: black;
   letter-spacing: 0;
   font-size: 12px;
+  height: 100%;
   text-transform: none;
 }
 

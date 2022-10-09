@@ -27,7 +27,7 @@
 <!--        TODO: cambiar esto por lo del store-->
         <v-card class="d-inline-flex mb-5" flat tile>
           <h2 class="text-truncate mr-2">Dificultad: </h2>
-          <v-icon v-for="i in 5" :key="i" :color="setColorLevel(i)" medium >bolt</v-icon>
+          <v-icon v-for="i in 5" :key="i" :color="setColorLevel(i)" size="30" >bolt</v-icon>
         </v-card>
         <v-card class="d-inline-flex" flat>
           <info-tag v-for="tag in routineData.metadata.tags" :key="tag" :content="tag"></info-tag>
@@ -78,8 +78,6 @@ export default {
   components: {InfoTag, BlockStaticRutine},
   data(){
     return{
-
-      blocks: [{name: 'inicio', rep: 5, ejercicios: 4}, {name: 'mitad', rep: 3, ejercicios: 9}, {name: 'final', rep:6, ejercicios: 1}]
     }
   },
   props:{

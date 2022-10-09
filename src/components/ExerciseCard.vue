@@ -1,16 +1,26 @@
 <template>
-  <v-card class="d-inline-flex flex-row main_card" outlined hover width="100%" height="132" @click="touchCard">
+  <v-card class="d-inline-flex flex-row main_card" outlined hover width="100%" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
       <v-card class="d-inline-flex align-center" flat>
         <h2 class="text-truncate" >{{exerciseData.name}}</h2>
 <!--       TODO: sacar estos iconos-->
-        <v-icon v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon ml-auto"></v-icon>
-        <v-icon v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
+        <v-icon v-if="editRemove" v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon ml-auto"></v-icon>
+        <v-icon v-if="editRemove" v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
         <p v-show="exerciseData.detail.length<90">{{exerciseData.detail}}</p>
         <p v-show="exerciseData.detail.length>=90">{{exerciseData.detail.substring(0,98)+'..'}}</p>
+      <v-sheet v-if="details" class="d-inline-flex align-end mb-2" height="100%">
+        <v-sheet class="ml-5 mr-10">
+          <v-icon class="mr-2" color="black">replay</v-icon>
+          <span>Hola</span>
+        </v-sheet>
+        <v-sheet>
+          <v-icon class="mr-2" color="black">alarm</v-icon>
+          <span>Hola</span>
+        </v-sheet>
+      </v-sheet>
     </v-card >
-    <v-img :src="exerciseData.image" :alt="exerciseData.name" contain class="img-format" height="130"  width="130"></v-img>
+    <v-img :src="exerciseData.image" :alt="exerciseData.name" contain class="img-format" height="100%"  width="130"></v-img>
   </v-card>
 </template>
 
@@ -24,6 +34,14 @@ export default {
       type:Number,
       required:true
     },
+    editRemove:{
+      type: Boolean,
+      required: true
+    },
+    details:{
+      type:Boolean,
+      required: true
+    }
     // name:{
     //   type:String,
     //   required:true
@@ -82,6 +100,7 @@ export default {
 .main_card{
   border-radius: 20px;
   border: black solid 1px;
+  aspect-ratio : 4 / 1;
 }
 
 .action_icon{

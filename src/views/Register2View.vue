@@ -10,10 +10,16 @@
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
         <h1 class="d-flex justify-center mb-2">Registro</h1>
-        <TextInput label="Correo Electronico" class="margin-style"></TextInput>
-        <PasswordInput password="FYTY" class="margin-style"></PasswordInput>
-        <PasswordInput password="FYTY" class="margin-style"></PasswordInput>
-        <LoginButton class="d-flex margin-btn-style" @click.native="changeView({name: 'verification'})" :text-size="10" text="Ingresar" :border-radius="12"/>
+        <TextInput class="margin-style" @input="emailInput"
+                   :required="required" textError="Correo Electronico es requerido"
+                   placeHolder="Ingrese su Correo Electronico"></TextInput>
+        <PasswordInput class="margin-style" @input="password1Input"
+                       :required="required" textError="Contraseña es requerida"
+                       placeHolder="Ingrese Contraseña"></PasswordInput>
+        <PasswordInput class="margin-style" @input="password2Input"
+                       :required="required" :textError="this.errorPassword"
+                       placeHolder="Ingrese Contraseña nuevamente"></PasswordInput>
+        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'verification'})" :text-size="10" text="Ingresar" :border-radius="12"/>
       </v-card>
     </v-sheet>
   </div>
@@ -36,18 +42,46 @@ export default {
     LoginButton,
     LanguageSelect
   },
+  data() {
+    return {
+      email: false,
+      inputEmail: '',
+      password1: false,
+      inputpassword1: '',
+      password2: false,
+      inputpassword2: '',
+      required: false,
+      correct: false,
+      errorPassword: 'Contraseña es requerida'
+    }
+  },
   methods: {
-    nextRegister() {
-      console.log("Pasar a proximo paso de registro")
-    },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
     },
-    changeView(nameView) {
-      this.$router.push(nameView)
+    nextView(nameView){
+      if(this.email && this.password1 && this.password2){
+        if(this.inputpassword1 === this.inputpassword2){
+          this.$router.push(nameView);
+        }
+      }
+      else
+        this.required=true;
+    },
+    emailInput(value, input) {
+      this.email=value;
+      this.inputEmail=input;
+    },
+    password1Input(value, input) {
+      this.password1=value;
+      this.inputpassword1=input;
+    },
+    password2Input(value, input) {
+      this.password2=value;
+      this.inputpassword2=input;
     }
-  }
+  },
 }
 </script>
 

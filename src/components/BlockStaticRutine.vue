@@ -8,7 +8,7 @@
       <v-container>
         <v-row>
           <v-col v-for="ex in cycleData.exercises" :key="ex.id" cols="6">
-            <ExerciseCard :id="ex.id"></ExerciseCard>
+            <ExerciseCard :id="ex.id" :details="true" :editRemove="false" ></ExerciseCard>
           </v-col>
         </v-row>
       </v-container>

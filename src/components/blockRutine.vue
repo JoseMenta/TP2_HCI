@@ -16,7 +16,7 @@
       <v-container>
         <v-row>
           <v-col v-for="i in exercise" :key="i" cols="6">
-            <ExerciseCard :name="'Abdominales'" :id="1" description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" :img="require('@/assets/estiramiento.png')"></ExerciseCard>
+            <ExerciseCard :name="'Abdominales'" :id="1" :details="false" :editRemove="true" description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" :img="require('@/assets/estiramiento.png')"></ExerciseCard>
           </v-col>
           <v-col class="d-flex flex-column align-center justify-space-between"  cols="6">
             <v-dialog persistent v-model="selectExerciseDialog">
