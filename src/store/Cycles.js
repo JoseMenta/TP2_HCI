@@ -38,10 +38,7 @@ export const useCycles = defineStore('cycles', {
         double: state => state.count * 2,
         getCycles(){
             const exercisesStore = useExercises()
-            return {
-                totalCount:this.cycles.length,
-                cycles:[
-                    this.cycles.map((cycle)=>{
+            return this.cycles.map((cycle)=>{
                         return {
                             id:cycle.id,
                             name:cycle.name,
@@ -53,12 +50,24 @@ export const useCycles = defineStore('cycles', {
                             exercises:exercisesStore.getExercises
                         }
                     })
-                ],
-                lastPage:true
-            }
+
         },
     },
     actions: {
+        getCycleById(id){
+            const exercisesStore = useExercises();
+            const cycle = this.cycles.find((elem)=>elem.id===id)
+            return {
+                        id:cycle.id,
+                        name:cycle.name,
+                        detail:cycle.detail,
+                        type:cycle.type,
+                        order:cycle.order,
+                        repetitions:cycle.repetitions,
+                        metadata:cycle.metadata,
+                        exercises:exercisesStore.getExercises
+                    }
+        }
 
     },
 })

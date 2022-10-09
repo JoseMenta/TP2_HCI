@@ -39,7 +39,7 @@ const routes = [
   {
     path: 'routine_details/:name',
     name: 'routine_details',
-    component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/AboutView'),
+    component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/routineDetails'),
     props:true,
 
   },
@@ -79,11 +79,11 @@ const routes = [
     name: 'createdExercises',
     component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/ExercisesCreated')
   },
-  {
-    path: '/routine_details',
-    name: 'routineDetails',
-    component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/routineDetails')
-  },
+  // {
+  //   path: '/routine_details',
+  //   name: 'routineDetails',
+  //   component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/routineDetails')
+  // },
 ]
 
 const router = new VueRouter({

@@ -4,9 +4,7 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="elem in exercises" :key="elem.id" cols="6">
-        <ExerciseCard :name="elem.name" :id="elem.id"
-                      :description="elem.detail"
-                      :img="elem.image"></ExerciseCard>
+        <ExerciseCard :id="elem.id"></ExerciseCard>
 
 
       </v-col>

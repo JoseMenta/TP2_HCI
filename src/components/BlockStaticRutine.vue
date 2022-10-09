@@ -1,14 +1,14 @@
 <template>
   <v-card class="block-rutine" flat>
     <v-card height="80" class="d-flex justify-space-between ma-5" color="#E8F1F6" flat>
-      <h1 class="mb-7 mt-5">{{titleBlock}}</h1>
-      <NumberSelector :component-width="190" :text-size="16" :component-border-radius="4" data-text="Repeticiones" :data-value="5" class="mt-5"/>
+      <h1 class="mb-7 mt-5">{{cycleData.name}}</h1>
+      <NumberSelector :deactivate="false" :component-width="190" :text-size="16" :component-border-radius="4" data-text="Repeticiones" :data-value="cycleData.repetitions" class="mt-5"/>
     </v-card>
     <div class="mt-1">
       <v-container>
         <v-row>
-          <v-col v-for="i in cantidad" :key="i" cols="6">
-            <ExerciseCard :name="'Abdominales'" :id="1" description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" :img="require('@/assets/estiramiento.png')"></ExerciseCard>
+          <v-col v-for="ex in cycleData.exercises" :key="ex.id" cols="6">
+            <ExerciseCard :id="ex.id"></ExerciseCard>
           </v-col>
         </v-row>
       </v-container>
@@ -20,23 +20,30 @@
 <script>
 import NumberSelector from "@/components/NumberSelector";
 import ExerciseCard from "@/components/ExerciseCard";
+import {useCycles} from "@/store/Cycles";
 
 export default {
   name: "BlockStaticRutine",
   components: {NumberSelector, ExerciseCard},
   props:{
-    titleBlock: {
-      type: String,
-      required: true
+    routineId:{
+      type:Number,
+      required:true
     },
-    cantidad: {
-      type: Number,
-      required: true
+    cycleId:{
+      type:Number,
+      required:true
     }
   },
   data(){
     return{
       excercise: 2,
+    }
+  },
+  computed:{
+    cycleData(){
+      const cycles = useCycles()
+      return cycles.getCycleById(this.cycleId)
     }
   },
   methods: {

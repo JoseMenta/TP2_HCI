@@ -11,7 +11,7 @@
         <RoutineCard :img="elem.image" :name="elem.name" v-bind:is-favorite="elem.favorite" v-bind:id="elem.id"
                      @favoriteTouched="changeFavorite" v-bind:stars="elem.stars"
                      v-bind:tags="elem.metadata.tags"
-                      @click="changeView(name)"/>
+                      @click="changeView(elem.name)"/>
 
       </v-col>
     </v-row>
@@ -20,7 +20,7 @@
 
 <script>
 import RoutineCard from "@/components/RoutineCard";
-import {useCreatedRoutines} from "@/store/CreatedRoutines";
+import {useRoutines} from "@/store/Routines";
 import {mapState} from "pinia";
 
 export default {
@@ -29,7 +29,7 @@ export default {
     RoutineCard
   },
   computed:{
-    ...mapState(useCreatedRoutines,{routines:'getRoutines'})
+    ...mapState(useRoutines,{routines:'getRoutines'})
   },
   methods: {
     changeFavorite(id,status){

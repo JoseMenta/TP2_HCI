@@ -46,6 +46,8 @@
 <script>
 
 import InfoTag from "@/components/InfoTag";
+// import {useCreatedRoutines} from "@/store/Routines";
+
 export default {
   name: "RoutineCard",
   components: {InfoTag},
@@ -113,7 +115,7 @@ export default {
           {name:'routine_details',
             params:{
               name:this.name,
-              index:this.id
+              id:this.id
             }
           })
     }

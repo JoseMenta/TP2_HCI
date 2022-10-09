@@ -8,7 +8,7 @@
 
 <script>
 import {mapActions} from 'pinia'
-import {useCreatedRoutines} from "@/store/CreatedRoutines";
+import {useRoutines} from "@/store/Routines";
 
 export default {
   name: "aboutView",
@@ -30,7 +30,7 @@ export default {
     goBack(){
       this.$router.back()
     },
-    ...mapActions(useCreatedRoutines,['getRoutineById'])
+    ...mapActions(useRoutines,['getRoutineById'])
   },
 }
 </script>

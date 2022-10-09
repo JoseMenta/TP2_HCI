@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import {useCycles} from "@/store/Cycles";
 
-export const useCreatedRoutines = defineStore('createdRoutines', {
+export const useRoutines = defineStore('createdRoutines', {
     state:()=>({
         routines:[
             {
@@ -85,6 +85,6 @@ export const useCreatedRoutines = defineStore('createdRoutines', {
                 metadata:routine.metadata,
                 cycles:cycles.getCycles
             })
-        }
+        },
     },
 })
