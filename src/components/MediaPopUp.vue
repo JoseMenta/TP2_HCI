@@ -1,13 +1,13 @@
 <!-- Componente para la visualizacion de las imagenes y videos -->
 <template>
-  <v-card>
+  <v-card class="card-style">
     <v-app-bar class="justify-start close-style">
       <v-icon v-text="$vuetify.icons.values.clear"
               color="#1C1B1F"
-              :size="50" @click="close"/>
+              :size="35" @click="close"/>
     </v-app-bar>
     <v-divider/>
-    <v-img :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
+    <v-img :src="imgSrc" class="d-flex justify-center align-center">
       <v-icon v-text="$vuetify.icons.values.playCircle"
               color="#1C1B1F"
               :size="83"
@@ -20,6 +20,15 @@
 <script>
 export default {
   name: "MediaPopUp",
+  // ----------------------------------------------------------
+  // imgSrc: Imagen a mostrar
+  // ----------------------------------------------------------
+  props: {
+    imgSrc: {
+      type: String,
+      required: true
+    }
+  },
   methods: {
     close() {
       // El padre debe cerrar el popUp
@@ -33,6 +42,10 @@ export default {
 </script>
 
 <style scoped>
+
+.card-style {
+  border-radius: 24px;
+}
 
 .close-style {
   position: sticky;

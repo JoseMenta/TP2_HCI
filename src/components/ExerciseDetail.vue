@@ -6,7 +6,7 @@
     <span class="description-style black--text d-flex font-weight-bold mb-2 mt-5">{{ getTitleText }}</span>
     <v-textarea v-if="readOnly" class="textarea-style ml-5 mr-2"
                 solo flat hide-details readonly no-resize :value="textareaValue"/>
-    <v-textarea v-if="!readOnly" class="textarea-style ml-5 mr-2"
+    <v-textarea v-else class="textarea-style ml-5 mr-2 not-readonly-style"
         solo flat hide-details no-resize :placeholder="getPlaceholderText"/>
   </div>
 </template>
@@ -89,6 +89,14 @@ export default {
 
 .textarea-style:deep(textarea) {
   padding-left: 10px;
+}
+
+.not-readonly-style:deep(textarea:focus) {
+  color: black;
+}
+
+.not-readonly-style:deep(textarea:not(:focus)){
+  color: var(--v-darkGrey-base);
 }
 
 </style>

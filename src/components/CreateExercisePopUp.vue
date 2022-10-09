@@ -40,7 +40,7 @@
                         v-on="on"/>
               </v-img>
             </template>
-            <MediaPopUp @closeWarning="mediaDialog = false"/>
+            <MediaPopUp :img-src="require('@/assets/placeholder.jpg')" @closeWarning="mediaDialog = false"/>
           </v-dialog>
 
         </v-col>
@@ -153,8 +153,6 @@ export default {
       this.$emit("exerciseSaved")
     },
     cancelExercise() {
-      this.closeDialog = false
-      this.mediaDialog = false
       // El padre debe cerrar el popUp
       this.$emit("cancelExercise")
     }

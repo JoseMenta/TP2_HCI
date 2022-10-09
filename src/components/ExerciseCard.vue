@@ -1,9 +1,9 @@
 <template>
   <v-card class="d-inline-flex flex-row main_card" outlined hover width="100%" height="132" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
-      <v-card class="d-inline-flex justify-space-between align-center" flat>
+      <v-card class="d-inline-flex align-center" flat>
         <h2 class="text-truncate" >{{name}}</h2>
-        <v-icon v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon"></v-icon>
+        <v-icon v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon ml-auto"></v-icon>
         <v-icon v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
         <p v-show="description.length<90">{{description}}</p>

@@ -1,6 +1,6 @@
 <!-- Componente para el manejo de alertas -->
 <template>
-  <v-card>
+  <v-card class="card-style">
     <v-card-title class="text-h5">
       {{this.title}}
     </v-card-title>
@@ -46,5 +46,9 @@ export default {
 </script>
 
 <style scoped>
+
+.card-style {
+  border-radius: 12px;
+}
 
 </style>
