@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer app class="navigation_drawer">
-    <v-list-item class="pt-8" @click="changeView({name:'createdRoutines'})">
+    <v-list-item class="mt-8 mb-3" @click="changeView({name:'createdRoutines'})">
       <v-img src="@/assets/fiti-logo.png" ></v-img>
     </v-list-item>
     <v-list

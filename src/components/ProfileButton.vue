@@ -1,15 +1,20 @@
 <!-- Componente para el visualizador del perfil en la navegacion persistente -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <v-btn class="d-inline-flex btn-style text-capitalize pa-0"
+  <v-btn class="d-flex btn-style text-capitalize pa-0"
          width="auto" :height="btnHeight"
          @click="profileMethod">
-    <v-row class="d-inline-flex py-2 px-1 row-style" align="center">
-      <span class="font-weight-bold mr-3 text-style">{{userName}}</span>
+    <v-row class="d-inline-flex py-2 px-1 row-style">
+      <v-col :cols="8" class="pr-0">
+        <span class="font-weight-bold text-style">{{userName}}</span>
+      </v-col>
+      <v-col :cols="4">
+        <v-img :src="userNameImg"
+               contain :height="imgSize" :width="imgSize"
+               class="image-style ml-auto mr-2"/>
+      </v-col>
 
-      <v-img :src="userNameImg"
-             contain :height="imgSize" :width="imgSize"
-             class="image-style"/>
+
     </v-row>
   </v-btn>
 </template>
@@ -75,7 +80,6 @@ export default {
 <style scoped>
 .row-style{
   align-items: center;
-  justify-content: space-between;
 }
 /* Con v-bind puedo utilizar una variable para parametrizar el valor de un estilo */
 .btn-style {

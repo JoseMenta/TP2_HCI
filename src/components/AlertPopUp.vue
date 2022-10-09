@@ -12,7 +12,7 @@
       <v-btn :color="$vuetify.theme.themes.light.blue" @click="closeWarning">
         <span class="white--text">Cancelar</span>
       </v-btn>
-      <v-btn :color="$vuetify.theme.themes.light.green" @click="cancelExercise">
+      <v-btn :color="$vuetify.theme.themes.light.green" @click="cancel">
         <span class="white--text">Aceptar</span>
       </v-btn>
     </v-card-actions>
@@ -37,9 +37,9 @@ export default {
     closeWarning(){
       this.$emit('closeWarning')
     },
-    cancelExercise() {
+    cancel() {
       // El padre debe cerrar este popUp
-      this.$emit('cancelExercise')
+      this.$emit('cancel')
     }
   }
 }

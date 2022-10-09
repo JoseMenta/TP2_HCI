@@ -20,7 +20,7 @@
         <v-col :cols="12">
           <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
-              <v-img :src="require('@/assets/estiramiento.png')" class="d-flex justify-center align-center">
+              <v-img :src="imageSrc" class="d-flex justify-center align-center">
                 <v-icon v-text="$vuetify.icons.values.playCircle"
                         color="#1C1B1F"
                         :size="83"
@@ -29,27 +29,14 @@
                         v-on="on"/>
               </v-img>
             </template>
-            <MediaPopUp :img-src="require('@/assets/estiramiento.png')" @closeWarning="mediaDialog = false"/>
+            <MediaPopUp :img-src="imageSrc" @closeWarning="mediaDialog = false"/>
           </v-dialog>
         </v-col>
       </v-row>
       <v-row class="align-center mr-2">
         <v-col :cols="8">
-          <h1 class="d-flex text-truncate">Burpees</h1>
-        </v-col>
-        <v-col :cols="4" class="d-flex justify-end align-center">
-          <v-checkbox hide-details dense
-                      class="ml-auto checkbox-style pa-0"
-                      v-model="seriesCheckbox" :class="optionNoSelected"/>
-          <NumberSelector class="ml-3" :component-width="150" :component-border-radius="4" data-text="Series" :data-value="10" :text-size="16" :deactivate="!seriesCheckbox" :error="noOptionSelected"/>
-        </v-col>
-      </v-row>
-      <v-row class="mt-n5 align-center mr-2">
-        <v-col :cols="8">
-          <div class="author-style">
-            <span>Autor: </span>
-            <span>Luz Stewart</span>
-          </div>
+          <h1 v-if="!isRest" class="d-flex text-truncate">Burpees</h1>
+          <h1 v-else class="d-flex text-truncate">Descanso</h1>
         </v-col>
         <v-col :cols="4" class="d-flex justify-end align-center">
           <v-checkbox hide-details dense
@@ -58,7 +45,22 @@
           <TimeSelector class="ml-3" :component-width="150" :component-border-radius="4" data-text="Tiempo" :seconds="10" :minutes="0" :text-size="16" :deactivate="!timeCheckbox" :error="noOptionSelected"/>
         </v-col>
       </v-row>
-      <v-row class="selector-style">
+      <v-row class="mt-n5 align-center mr-2">
+        <v-col :cols="8">
+          <div class="author-style">
+            <span>Autor: </span>
+            <span v-if="!isRest">Luz Stewart</span>
+            <span v-else>FITI</span>
+          </div>
+        </v-col>
+        <v-col v-if="!isRest" :cols="4" class="d-flex justify-end align-center">
+          <v-checkbox hide-details dense
+                      class="ml-auto checkbox-style pa-0"
+                      v-model="seriesCheckbox" :class="optionNoSelected"/>
+          <NumberSelector class="ml-3" :component-width="150" :component-border-radius="4" data-text="Series" :data-value="10" :text-size="16" :deactivate="!seriesCheckbox" :error="noOptionSelected"/>
+        </v-col>
+      </v-row>
+      <v-row v-if="!isRest" class="selector-style">
         <v-container fluid>
           <v-row justify="space-between" class="details-style">
             <v-col :cols="4">
@@ -81,16 +83,6 @@
             <v-col :cols="4">
               <span class="text-h6">Intensidad media</span>
             </v-col>
-<!--            <v-col :cols="4">-->
-<!--              &lt;!&ndash; TODO: Definir equipamientos posibles para un ejercicio &ndash;&gt;-->
-<!--              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195" :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"/>-->
-<!--            </v-col>-->
-<!--            <v-col :cols="4">-->
-<!--              <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4" :width="195" :options="['Zona inferior', 'Zona media', 'Zona superior']"/>-->
-<!--            </v-col>-->
-<!--            <v-col :cols="4">-->
-<!--              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :width="195" :options="['Baja', 'Media', 'Alta']"/>-->
-<!--            </v-col>-->
           </v-row>
         </v-container>
       </v-row>
@@ -101,7 +93,7 @@
                           :title-size="30"
                           :read-only="true"
                           language="es"
-                          textarea-value="Los burpees es un ejercicio muy importante para mantenerse en forma y ejercitan gran parte de los músculos."/>
+                          :textarea-value="descriptionText"/>
         </v-col>
       </v-row>
     </v-container>
@@ -116,6 +108,15 @@ import TimeSelector from "@/components/TimeSelector";
 
 export default {
   name: "SelectExerciseConfigPopUp",
+  // -------------------------------------------
+  // isRest: Indica si la tarjeta es un ejercicio o el descanso por default
+  // -------------------------------------------
+  props: {
+    isRest: {
+      type: Boolean,
+      required: true
+    }
+  },
   components: {
     TimeSelector,
     NumberSelector,
@@ -125,8 +126,8 @@ export default {
   data() {
     return {
       mediaDialog: false,
-      seriesCheckbox: true,
-      timeCheckbox: false,
+      seriesCheckbox: false,
+      timeCheckbox: true,
       noOptionSelected: false,
     }
   },
@@ -147,6 +148,12 @@ export default {
   computed: {
     optionNoSelected(){
       return (this.noOptionSelected) ? 'error-style' : ''
+    },
+    imageSrc(){
+      return (this.isRest) ? require('@/assets/rest.png') : require('@/assets/estiramiento.png')
+    },
+    descriptionText(){
+      return (this.isRest) ? 'Tomate un descanso.' : 'Los burpees es un ejercicio muy importante para mantenerse en forma y ejercitan gran parte de los músculos.'
     }
   },
   beforeUpdate() {

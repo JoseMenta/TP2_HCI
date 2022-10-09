@@ -4,7 +4,8 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="elem in exercises" :key="elem.id" cols="6">
-        <ExerciseCard :id="elem.id" :details="false" :editRemove="true" ></ExerciseCard>
+        <ExerciseCard :id="elem.id" :details="false" :editRemove="true"
+                      @cardTouched="cardTouched" @deleteTouched="deleteTouched" @editTouched="editTouched"></ExerciseCard>
 
 
       </v-col>
@@ -26,6 +27,15 @@ export default {
       console.log(id)
       console.log(status)
     },
+    cardTouched(id){
+      this.$emit('cardTouched', id)
+    },
+    deleteTouched(id){
+      this.$emit('deleteTouched', id)
+    },
+    editTouched(id){
+      this.$emit('editTouched', id)
+    }
     // ...mapActions(useExercises,['getExerciseById'])
   },
   computed:{

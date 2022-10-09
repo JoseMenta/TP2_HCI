@@ -16,7 +16,7 @@
             <!-- Lo que va a mostrar el popUp -->
             <AlertPopUp title="¡Atención!"
                         text="¿Está seguro que desea salir? Perderá el ejercicio creado."
-                        @closeWarning="closeDialog = false" @cancelExercise="cancelExercise"/>
+                        @closeWarning="closeDialog = false" @cancel="cancelExercise"/>
           </v-dialog>
 
         </v-col>

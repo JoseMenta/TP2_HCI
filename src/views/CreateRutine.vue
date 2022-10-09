@@ -57,15 +57,23 @@
             <v-icon small color="white">done</v-icon>
             <span class="white--text my-3 mx-3 text-style">Guardar</span>
           </v-btn>
-          <v-btn class="text-capitalize btn-style"
-                 color="#27496D"
-                 ripple
-                 width="45%"
-                 height="auto"
-                 @click="removeRutine({name: 'createdRoutines'})">
-            <v-icon small color="white">delete</v-icon>
-            <span class="white--text  my-3 mx-3 text-style">Descartar</span>
-          </v-btn>
+          <v-dialog persistent width="50%" v-model="alertDialog">
+            <template v-slot:activator="{on, attrs}">
+              <v-btn class="text-capitalize btn-style"
+                     color="#27496D"
+                     ripple
+                     width="45%"
+                     height="auto"
+                     v-on="on"
+                     v-bind="attrs"
+                     @click="alertDialog = true">
+                <v-icon small color="white">delete</v-icon>
+                <span class="white--text  my-3 mx-3 text-style">Descartar</span>
+              </v-btn>
+            </template>
+            <AlertPopUp @closeWarning="alertDialog = false" @cancel="removeRutine({name: 'createdRoutines'})" :title="'¡Atención!'" :text="'¿Está seguro que desea descartar la rutina? Se perderán todos los cambios.'"/>
+          </v-dialog>
+
         </v-card>
       </v-sheet>
     </v-sheet>
@@ -81,6 +89,7 @@
 import BlockRutine from "@/components/blockRutine";
 import NewBlock from "@/components/NewBlock";
 import AddTagPopUp from "@/components/AddTagPopUp";
+import AlertPopUp from "@/components/AlertPopUp";
 
 export default {
   name: "CreateRutine",
@@ -91,6 +100,7 @@ export default {
       tagsText: [],
       imageHover: false,
       addTagDialog: false,
+      alertDialog: false,
       tagKey: 0,
       RutineName: '',
       NameEmpty: true,
@@ -102,7 +112,7 @@ export default {
       },
     }
   },
-  components: {AddTagPopUp, NewBlock, BlockRutine},
+  components: {AlertPopUp, AddTagPopUp, NewBlock, BlockRutine},
   methods: {
     addBlock() {
       this.blocks.push({id: this.blocks.length, name:"jose", empty: false})

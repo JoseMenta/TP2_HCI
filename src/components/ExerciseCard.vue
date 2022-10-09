@@ -2,13 +2,15 @@
   <v-card class="d-inline-flex flex-row main_card" outlined hover width="100%" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
       <v-card class="d-inline-flex align-center" flat>
-        <h2 class="text-truncate" >{{exerciseData.name}}</h2>
+        <h2 v-if="!isRest" class="text-truncate" >{{exerciseData.name}}</h2>
+        <h2 v-else class="text-truncate">Descanso</h2>
 <!--       TODO: sacar estos iconos-->
         <v-icon v-if="editRemove" v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon ml-auto"></v-icon>
         <v-icon v-if="editRemove" v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
-        <p v-show="exerciseData.detail.length<90">{{exerciseData.detail}}</p>
-        <p v-show="exerciseData.detail.length>=90">{{exerciseData.detail.substring(0,98)+'..'}}</p>
+        <p v-if="!isRest" v-show="exerciseData.detail.length<90">{{exerciseData.detail}}</p>
+        <p v-if="!isRest" v-show="exerciseData.detail.length>=90">{{exerciseData.detail.substring(0,98)+'..'}}</p>
+        <p v-else>Tomate un descanso.</p>
       <v-sheet v-if="details" class="d-inline-flex align-end mb-2" height="100%">
         <v-sheet class="ml-5 mr-10">
           <v-icon class="mr-2" color="black">replay</v-icon>
@@ -20,7 +22,8 @@
         </v-sheet>
       </v-sheet>
     </v-card >
-    <v-img :src="exerciseData.image" :alt="exerciseData.name" contain class="img-format" height="100%"  width="130"></v-img>
+    <v-img v-if="!isRest" :src="exerciseData.image" :alt="exerciseData.name" contain class="img-format" height="100%"  width="130"/>
+    <v-img v-else :src="require('@/assets/rest.png')" :alt="'Descanso'" contain class="img-format" height="100%"  width="130"/>
   </v-card>
 </template>
 
@@ -41,6 +44,11 @@ export default {
     details:{
       type:Boolean,
       required: true
+    },
+    // Si se indica y es true, utiliza el formato de tarjeta de descanso
+    rest: {
+      type: Boolean,
+      required: false
     }
     // name:{
     //   type:String,
@@ -67,6 +75,9 @@ export default {
     exerciseData(){
       const exercises = useExercises()
       return exercises.getExerciseById(this.id)
+    },
+    isRest(){
+      return (this.rest === true)
     }
   },
   methods:{
@@ -81,7 +92,7 @@ export default {
     touchCard(){
       console.log(`ExerciseCard ${this.id} touched`)
       this.$emit('cardTouched',this.id)
-    }
+    },
   }
 }
 </script>

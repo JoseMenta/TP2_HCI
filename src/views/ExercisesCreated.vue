@@ -1,7 +1,7 @@
 <template>
   <div class="mx-7 mt-7">
     <h1 class="title-style my-5">Ejercicios Creados</h1>
-    <v-sheet class="d-flex justify-space-between" width="50%">
+    <v-sheet class="d-flex justify-space-between mr-3" width="auto">
       <FilterMenu :id="1" placeholder='Equipamiento' v-bind:options="['Con Equipamiento','Sin Equipamiento']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
       <FilterMenu :id="1" placeholder='Zona Muscular' v-bind:options="['Zona Inferior','Zona Media','Zona Superior']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
       <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja Intensidad','Media Intensidad','Alta Intensidad']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
