@@ -2,7 +2,6 @@
   <v-btn
       outlined
       class="TaskBtn elevation-3"
-      @click="action"
       :height="height"
       width="100%"
   >
@@ -26,10 +25,6 @@ export default {
     height:{
       type:Number,
       require:true
-    },
-    action:{
-      type: Function,
-      required: true
     }
   },
   methods:{

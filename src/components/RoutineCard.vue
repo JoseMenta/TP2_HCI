@@ -1,12 +1,11 @@
 <template>
     <v-card class="d-flex flex-column rounded" :width="width" hover @click="touchCard">
-    <v-card class="d-flex rounded-t" flat tile>
-      <v-img :src="img" :width="width" :alt="alt" height="100">
-      </v-img>
-    </v-card>
-    <v-card class="d-flex rounded-b justify-space-between" :color="color" :width="width" flat tile>
+      <v-card class="d-flex rounded-t" flat tile>
+        <v-img :src="img" :width="width" :alt="alt" :height="100" @click="changeView({name: 'routineDetails'})"></v-img>
+      </v-card>
+    <v-card class="d-flex rounded-b justify-space-between px-2 pt-2" :color="color" :width="width" flat tile>
       <v-card class="d-inline-flex" flat tile :color="color" >
-        <h2 class="text-truncate">{{name}}</h2>
+        <h2 class="text-truncate mr-2">{{name}}</h2>
         <v-icon v-show="favorite===true" color="black" v-text="$vuetify.icons.values.favoriteFull"
                     @click="touchFavorite"></v-icon>
         <v-icon v-show="favorite===false" color="black" @click="touchFavorite"
@@ -36,9 +35,7 @@
 <!--          <v-chip v-for="tag in tags" :key="tag" >{{tag}}</v-chip>-->
 <!--        </v-slide-group>-->
 <!--      </v-card>-->
-      <v-slide-group max="0" class="slide_infotag" show-arrows :next-icon="$vuetify.icons.values.next" :prev-icon="$vuetify.icons.values.prev" >
-        <template v-slot:prev><v-icon v-text="$vuetify.icons.values.prev" color="black" class="pa-0 ma-0"></v-icon></template>
-        <template v-slot:next><v-icon v-text="$vuetify.icons.values.next" color="black" class="pa-0 ma-0"></v-icon></template>
+      <v-slide-group max="0" class="slide_infotag pl-2 pb-2 pt-1" :next-icon="$vuetify.icons.values.next" :prev-icon="$vuetify.icons.values.prev" >
         <v-slide-item v-for="tag in tags" :key="tag">
           <InfoTag :content="tag"></InfoTag>
         </v-slide-item>
@@ -110,6 +107,15 @@ export default {
     touchCard(){
       console.log(`RoutineCard ${this.id} touched`)
       this.$emit('cardTouched',this.id)
+    },
+    changeView(){
+      this.$router.push(
+          {name:'routine_details',
+            params:{
+              name:this.name,
+              index:this.id
+            }
+          })
     }
   },
 
@@ -123,7 +129,7 @@ h2{
   padding: 0 4px 0 0;
 }
 .action_icon{
-  color: black;
+  color:black;
   padding-left: 4px;
   padding-right: 4px;
 }

@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';
-import colors from 'vuetify/lib/util/colors'
 Vue.use(Vuetify);
 
 export default new Vuetify({
@@ -14,15 +13,10 @@ export default new Vuetify({
                 lightBlue:'#E8F1F6',
                 green: '#00909E',
                 grey: '#DAE1E7',
+                darkGrey: '#808080',
                 error: '#FF0000',
                 black:'#000000',
-                white:'#FFFFFF',
-                primary: colors.red.darken1, // #E53935
-                secondary: colors.red.lighten4, // #FFCDD2
-                accent: colors.indigo.base, // #3F51B5
-            },
-            dark: {
-                primary: colors.blue.darken1,
+                white:'#FFFFFF'
             },
 
         }
@@ -47,7 +41,8 @@ export default new Vuetify({
             add: 'add',
             arrowBack: 'arrow_back',
             done: 'done',
-            playCircle: 'play_circle'
+            playCircle: 'play_circle',
+            clear: 'clear'
         }
     }
 });

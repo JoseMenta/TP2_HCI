@@ -23,7 +23,7 @@
 <!--      <CreatedRoutinesView language="en"/>-->
       <!-- Provides the application the proper gutter -->
         <!-- If using vue-router -->
-        <router-view></router-view>
+        <router-view :key="$route.path"></router-view>
     </v-main>
 
   </v-app>

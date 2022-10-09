@@ -10,11 +10,23 @@
             class="title_rutine mb-2 pa-0 ml-0"
         ></v-text-field>
         <v-card class="d-inline-flex mb-5" flat tile>
+          <h2 class="text-truncate mr-2">Valoracion: </h2>
+          <v-rating
+              background-color="black"
+              color="black"
+              :empty-icon="$vuetify.icons.values.starEmpty"
+              :full-icon="$vuetify.icons.values.starFull"
+              length="5"
+              :value="rating"
+              readonly
+          ></v-rating>
+          <h2> ( {{rating}} K )</h2>
+        </v-card>
+        <v-card class="d-inline-flex mb-5" flat tile>
           <h2 class="text-truncate mr-2">Dificultad: </h2>
-          <v-icon v-for="i in 5" :key="i" :color="setColorLevel(i)" @click="setLevel(i)">bolt</v-icon>
+          <v-icon v-for="i in 5" :key="i" :color="setColorLevel(i)" medium >bolt</v-icon>
         </v-card>
         <v-card class="d-inline-flex" flat>
-          <v-btn label class="tag rounded-lg mr-4" color="grey" @click="newTag()" height="56">+ Tag</v-btn>
           <v-card v-for="i in tags" :key="i" elevation="0" :width="size(i)" min-width="70px" height="56" class="mr-4">
             <v-text-field placeholder="Tag"
                           hide-details
@@ -28,70 +40,48 @@
       </v-sheet>
       <v-sheet width="30%" class="d-flex flex-column justify-end" flat>
         <v-img
-            :src="require('@/assets/placeholder.jpg')"
+            :src="require('@/assets/lionel-messi.webp')"
             max-height="200"
             width="auto"
             class="img_rutine elevation-5"
         ></v-img>
         <v-card class="d-inline-flex justify-center justify-space-between" flat>
-          <v-btn class="text-capitalize btn-style"
+          <v-btn class="text-capitalize btn-style justify-start"
                  color="#00909E"
                  ripple
-                 width="45%"
+                 width="100%"
                  height="auto"
                  @click="changeView({name: 'createdRoutines'})">
-            <v-icon small color="white">done</v-icon>
-            <span class="white--text my-3 mx-3 text-style">Guardar</span>
-          </v-btn>
-          <v-btn class="text-capitalize btn-style"
-                 color="#27496D"
-                 ripple
-                 width="45%"
-                 height="auto"
-                 @click="changeView({name: 'createdRoutines'})">
-            <v-icon small color="white">delete</v-icon>
-            <span class="white--text  my-3 mx-3 text-style">Descartar</span>
+            <v-icon medium color="white">play_arrow</v-icon>
+            <span class="white--text my-3 mx-3 text-style">Empezar</span>
           </v-btn>
         </v-card>
       </v-sheet>
     </v-sheet>
     <v-card flat  >
-      <block-rutine class="mb-5"></block-rutine>
-      <block-rutine class="mb-5" v-for="i in blocks" :key="i"></block-rutine>
-      <NewBlock class="mb-5" :action="addBlock"></NewBlock>
-      <block-rutine class="mb-5"></block-rutine>
+      <block-static-rutine class="mb-5" v-for="i in blocks" :key="i" :titleBlock="i.name"  :cantidad="i.ejercicios"></block-static-rutine>
     </v-card>
   </div>
 </template>
 
 <script>
-import BlockRutine from "@/components/blockRutine";
-import NewBlock from "@/components/NewBlock";
+import BlockStaticRutine from "@/components/BlockStaticRutine";
 
 export default {
-  name: "CreateRutine",
+  name: "routineDetails",
   data(){
     return{
-      blocks: 2,
-      level :0,
-      tags: 0,
-      tagsText: ['', '', '', '', '', '', '', '']
+      level :2,
+      rating: 3,
+      tags: 3,
+      tagsText: ['', 'Biceps', 'Futbol', 'Piernas'],
+      blocks: [{name: 'inicio', rep: 5, ejercicios: 4}, {name: 'mitad', rep: 3, ejercicios: 9}, {name: 'final', rep:6, ejercicios: 1}]
     }
   },
-  components: {NewBlock, BlockRutine},
+  components: { BlockStaticRutine},
   methods: {
-    addBlock() {
-      this.blocks = this.blocks +1;
-      this.$emit('newExccercice')
-    },
-    setLevel(i){
-      this.level = i;
-    },
     setColorLevel(i){
       return i>this.level ? "grey" : "black";
-    },
-    newTag(){
-      this.tags = this.tags +1;
     },
     size(i){
       return this.tagsText[i].length * 8
@@ -129,7 +119,7 @@ export default {
 
 .tag-input{
   margin-right: 10px;
-  ;
+;
 
 }
 
@@ -138,3 +128,4 @@ export default {
   font-size: v-bind(textSizeCSS);
 }
 </style>
+

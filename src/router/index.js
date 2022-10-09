@@ -37,6 +37,13 @@ const routes = [
     }
   },
   {
+    path: 'routine_details/:name',
+    name: 'routine_details',
+    component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/AboutView'),
+    props:true,
+
+  },
+  {
     path: '/create_routine',
     name: 'createRoutine',
     component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/CreateRutine'),
@@ -71,6 +78,11 @@ const routes = [
     path: '/created_exercises',
     name: 'createdExercises',
     component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/ExercisesCreated')
+  },
+  {
+    path: '/routine_details',
+    name: 'routineDetails',
+    component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/routineDetails')
   },
 ]
 

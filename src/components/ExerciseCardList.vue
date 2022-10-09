@@ -1,12 +1,12 @@
 <!-- Lista de rutinas a mostrar -->
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <slot name="header"></slot>
-      <v-col v-for="i in 10" :key="i" cols="6">
-        <ExerciseCard :name="'Abdominales'" :id="1"
-                      description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd"
-                      img="estiramiento.png"></ExerciseCard>
+      <v-col v-for="elem in exercises" :key="elem.id" cols="6">
+        <ExerciseCard :name="elem.name" :id="elem.id"
+                      :description="elem.detail"
+                      :img="elem.image"></ExerciseCard>
 
 
       </v-col>
@@ -16,7 +16,8 @@
 
 <script>
 import ExerciseCard from "@/components/ExerciseCard";
-
+import {useExercises} from "@/store/Exercises";
+import {mapState} from 'pinia'
 export default {
   name: "ExerciseCardList",
   components: {
@@ -27,7 +28,11 @@ export default {
       console.log(id)
       console.log(status)
     },
-  }
+    // ...mapActions(useExercises,['getExerciseById'])
+  },
+  computed:{
+    ...mapState(useExercises,{exercises:'getExercises'})
+  },
 }
 </script>
 

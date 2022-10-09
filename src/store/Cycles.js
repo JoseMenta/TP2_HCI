@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import {useExercises} from "@/store/Exercises";
 //TODO: terminar, pero usar la api y ajustarla a lo que vayamos a hacer
 export const useCycles = defineStore('cycles', {
-    state:{
+    state:()=>({
         cycles: [
             {
                 id:1,
@@ -33,13 +33,11 @@ export const useCycles = defineStore('cycles', {
             },
 
         ]
-    },
+    }),
     getters: {
         double: state => state.count * 2,
-    },
-    actions: {
-        getRoutines(){
-            const exercicesStore= useExercises()
+        getCycles(){
+            const exercisesStore = useExercises()
             return {
                 totalCount:this.cycles.length,
                 cycles:[
@@ -52,12 +50,15 @@ export const useCycles = defineStore('cycles', {
                             order:cycle.order,
                             repetitions:cycle.repetitions,
                             metadata:cycle.metadata,
-                            exercises:exercicesStore.getExercises(),
+                            exercises:exercisesStore.getExercises
                         }
                     })
                 ],
                 lastPage:true
             }
         },
+    },
+    actions: {
+
     },
 })

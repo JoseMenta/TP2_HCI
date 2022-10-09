@@ -1,7 +1,7 @@
 <!-- Componente para el selector de cantidad de repeticiones o series -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <v-sheet class="sheet-style d-inline-flex pl-3 pr-1 " :width="componentWidth">
+  <v-sheet class="sheet-style d-inline-flex pl-3 pr-1 " :width="componentWidth" :class="styleFunction">
     <div class="my-1">
       <div class="d-flex">
         <span class="text-style">{{ dataText }}</span>
@@ -9,7 +9,7 @@
       </div>
       <div class="d-flex">
         <!-- El oninput sirve para que solo se puedan ingresar enteros no negativos -->
-        <input class="pl-1 text-style input-style" type="number"
+        <input class="pl-1 text-style input-style" type="number" :readonly="deactivate"
                oninput="this.value = (!!this.value && Math.abs(this.value) >= 0) ? Math.abs(this.value) : 0"
                v-model="numberValue">
         <v-icon class="ml-auto black--text" @click="decrementValue" v-text="$vuetify.icons.values.keyboardArrowDown"/>
@@ -27,6 +27,8 @@ export default {
   // String dataText: Significado del valor numerico
   // Number data: Valor numerico inicial
   // Number textSize: Tamaño del texto (en px)
+  // Boolean deactivate: Indica si es posible usarlo (false) o no (true)
+  // Boolean error: Da estilo para error
   // --------------------------------------------
   props: {
     componentWidth: {
@@ -48,6 +50,14 @@ export default {
     textSize: {
       type: Number,
       required: true
+    },
+    deactivate: {
+      type: Boolean,
+      required: true
+    },
+    error: {
+      type: Boolean,
+      required: true
     }
   },
   data(){
@@ -61,14 +71,25 @@ export default {
   methods: {
     // Logica para los botones del componente
     incrementValue(){
+      if(this.deactivate){
+        return
+      }
       this.numberValue += parseInt(1)
     },
     decrementValue(){
+      if(this.deactivate) {
+        return
+      }
       this.numberValue = parseInt((this.numberValue - 1 < 0) ? 0 : this.numberValue - 1)
     }
   },
   beforeUpdate() {
     this.numberValue = parseInt((this.numberValue % 1 === 0) ? this.numberValue : 0)
+  },
+  computed: {
+    styleFunction(){
+      return ((this.deactivate) ? 'deactivate-style' : '') + ' ' + ((this.error) ? 'error-style' : '')
+    }
   }
 }
 </script>
@@ -79,6 +100,14 @@ export default {
   background-color: #DAE1E7;
   border-radius: v-bind(componentBorderRadiusCSS);
   border: 1px solid black;
+}
+
+.deactivate-style {
+  opacity: 0.3;
+}
+
+.error-style {
+  border: 1px solid red;
 }
 
 .text-style {

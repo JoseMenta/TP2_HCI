@@ -4,7 +4,7 @@
   <v-sheet class="d-inline-flex"
            :width="searchBoxWidth">
     <v-text-field class="text-field-style"
-                  :placeholder="getPlaceholderText"
+                  :placeholder="this.placeholder"
                   background-color="#DAE1E7"
                   color="#1C1B1F"
                   solo flat hide-details single-line clearable>
@@ -22,7 +22,7 @@
 export default {
   name: "SearchBox",
   // --------------------------------------------
-  // String language: Indica el lenguaje en que se debe mostrar el contenido estatico (Valores aceptados: 'es' y 'en')
+  // String placeholder: Texto a mostrar como placeholder
   // Function searchMethod: Funcion que se debe ejecutar al clickear la lupa
   // Number searchBoxWidth: Largo del search box (en px)
   // Number iconSize: Tamaño del icono (en px)
@@ -30,12 +30,9 @@ export default {
   // Number textSize: Tamaño del texto (en px)
   // --------------------------------------------
   props: {
-    language: {
+    placeholder: {
       type: String,
-      required: true,
-      validator(value) {
-        return ['es', 'en'].includes(value)
-      }
+      required: true
     },
     searchMethod: {
       type: Function,
@@ -60,17 +57,9 @@ export default {
   },
   data(){
     return {
-      placeholder: [
-        {text: 'Buscar rutinas', lang: 'es'}, {text: 'Search routines', lang: 'en'}
-      ],
       // Defino una variable para poder parametrizar el CSS
       textSizeCSS: this.textSize + 'px',
       btnBorderRadiusCSS: this.btnBorderRadius + 'px'
-    }
-  },
-  computed: {
-    getPlaceholderText() {
-      return this.placeholder[this.placeholder.map(e => e.lang).indexOf(this.language)].text;
     }
   }
 }
@@ -83,14 +72,14 @@ export default {
   border-radius: v-bind(btnBorderRadiusCSS);
 }
 
-.v-text-field ::v-deep(input) {
+.v-text-field :deep(input) {
   font-size: v-bind(textSizeCSS);
   color: #7A7A7A;
   /* max-height:none permite sacar la restriccion que tiene por default los inputs */
   max-height: none;
 }
 
-.v-text-field ::v-deep(input::placeholder) {
+.v-text-field:deep(input::placeholder) {
   color: #7A7A7A;
 }
 

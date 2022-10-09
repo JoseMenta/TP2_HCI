@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 export const useExercises = defineStore('exercises', {
-    state: {
+    state:() => ({
         exercises: [
             {
                 id: 1,
@@ -9,6 +9,7 @@ export const useExercises = defineStore('exercises', {
                 detail: 'Es un ejercicio muy dificil',
                 type: 'exercise',
                 date: null,
+                image:'estiramiento.png',
                 metadata: null
             }, {
                 id: 2,
@@ -16,6 +17,7 @@ export const useExercises = defineStore('exercises', {
                 detail: 'Hay que sacar gluteos',
                 type: 'exercise',
                 date: null,
+                image:'estiramiento.png',
                 metadata: null
             },
             {
@@ -24,6 +26,7 @@ export const useExercises = defineStore('exercises', {
                 detail: 'Simplemente hay que descansar',
                 type: 'rest',
                 date: null,
+                image:'estiramiento.png',
                 metadata: null
             },
             {
@@ -32,6 +35,7 @@ export const useExercises = defineStore('exercises', {
                 detail: 'Cuesta una banda',
                 type: 'exercise',
                 date: null,
+                image:'estiramiento.png',
                 metadata: null
             },
             {
@@ -40,18 +44,21 @@ export const useExercises = defineStore('exercises', {
                 detail: 'Descancar y elongar los musculos trabajados',
                 type: 'rest',
                 date: null,
+                image:'estiramiento.png',
                 metadata: null
             }
         ]
-    },
+    }),
     getters: {
+        foo(){
+            return 1
+        },
         getExercises() {
             return this.exercises
-
         },
     },
     actions: {
-        getExercise(id) {
+        getExerciseById(id) {
             return this.exercises.find((ex) => {
                 ex.id = id
             })
