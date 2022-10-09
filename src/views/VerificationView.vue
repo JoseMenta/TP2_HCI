@@ -3,7 +3,8 @@
     <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
              contain
-             class="image-style"/>
+             class="image-style"
+             @click="changeView({name: 'landing'})"/>
       <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
                       @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
     </v-card>
@@ -47,9 +48,6 @@ export default {
     LanguageSelect
   },
   methods: {
-    nextRegister() {
-      console.log("Pasar a proximo paso de registro")
-    },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)

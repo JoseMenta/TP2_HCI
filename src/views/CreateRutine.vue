@@ -136,12 +136,10 @@ export default {
       this.required=true;
       for(const index in this.blocks){
         if(!this.blocks[index].empty){
-          console.log(index)
           return;
         }
       }
       if(!this.finalBlock.empty || this.NameEmpty){
-        console.log("final 0 titulo")
         return;
       }
       this.$router.push(nameView)
@@ -157,9 +155,6 @@ export default {
       this.addTagDialog = false
     },
     readTitle(value, title, id){
-      console.log(value)
-      console.log(title)
-      console.log(id)
       if(id === -1){
         this.finalBlock.empty=value;
         this.finalBlock.name=title;

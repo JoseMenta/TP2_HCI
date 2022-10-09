@@ -119,7 +119,6 @@ export default {
   padding-right: 4px;
 }
 h2{
-  width: 200px;
   display: inline;
 }
 p{
