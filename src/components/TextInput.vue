@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="auto" height="auto" >
     <v-text-field :rules="[rules.required]"
-                  :error="IsEmpty || required"
+                  :error="required"
                   @input="updateIsEmpty"
                   :placeholder="placeHolder"
                   solo

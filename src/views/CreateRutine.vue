@@ -3,7 +3,10 @@
     <v-sheet class="d-inline-flex justify-space-around mb-10" flat width="100%">
       <v-sheet class="d-flex flex-column" width="70%" flat>
         <v-text-field
-            hide-details
+            :rules="[rules.required]"
+            :error="required"
+            @input="updateIsEmpty"
+            v-model="RutineName"
             placeholder="Nombre de Rutina"
             solo
             flat
@@ -50,7 +53,7 @@
                  ripple
                  width="45%"
                  height="auto"
-                 @click="changeView({name: 'createdRoutines'})">
+                 @click="saveRutine({name: 'createdRoutines'})">
             <v-icon small color="white">done</v-icon>
             <span class="white--text my-3 mx-3 text-style">Guardar</span>
           </v-btn>
@@ -59,7 +62,7 @@
                  ripple
                  width="45%"
                  height="auto"
-                 @click="changeView({name: 'createdRoutines'})">
+                 @click="removeRutine({name: 'createdRoutines'})">
             <v-icon small color="white">delete</v-icon>
             <span class="white--text  my-3 mx-3 text-style">Descartar</span>
           </v-btn>
@@ -67,10 +70,9 @@
       </v-sheet>
     </v-sheet>
     <v-card flat  >
-      <block-rutine class="mb-5"></block-rutine>
-      <block-rutine class="mb-5" v-for="i in blocks" :key="i"></block-rutine>
+      <blockRutine class="mb-5" v-for="i in blocks" :key="i.id" @input="readTitle" :id="i.id" :required="required"></blockRutine>
       <NewBlock class="mb-5" :action="addBlock"></NewBlock>
-      <block-rutine class="mb-5"></block-rutine>
+      <block-rutine class="mb-5" @input="readTitle" :id="-1" :required="required"></block-rutine>
     </v-card>
   </div>
 </template>
@@ -84,19 +86,26 @@ export default {
   name: "CreateRutine",
   data(){
     return{
-      blocks: 2,
       level :0,
       tags: 0,
       tagsText: [],
       imageHover: false,
       addTagDialog: false,
-      tagKey: 0
+      tagKey: 0,
+      RutineName: '',
+      NameEmpty: true,
+      required: false,
+      blocks: [{id: 0, name:"pepe", empty: false}, {id:1, name:"jose", empty: false}],
+      finalBlock:{id: -1, name:"", empty: false},
+      rules: {
+        required: value => !!value || "Es necesario un Titulo de Rutina"
+      },
     }
   },
   components: {AddTagPopUp, NewBlock, BlockRutine},
   methods: {
     addBlock() {
-      this.blocks = this.blocks +1;
+      this.blocks.push({id: this.blocks.length, name:"jose", empty: false})
       this.$emit('newExercise')
     },
     setLevel(i){
@@ -113,7 +122,21 @@ export default {
     removeTag(index){
       this.tagsText.splice(index, 1)
     },
-    changeView(nameView) {
+    saveRutine(nameView) {
+      this.required=true;
+      for(const index in this.blocks){
+        if(!this.blocks[index].empty){
+          console.log(index)
+          return;
+        }
+      }
+      if(!this.finalBlock.empty || this.NameEmpty){
+        console.log("final 0 titulo")
+        return;
+      }
+      this.$router.push(nameView)
+    },
+    removeRutine(nameView) {
       this.$router.push(nameView)
     },
     changeImage(){
@@ -122,6 +145,21 @@ export default {
     closeTagPopUp(){
       this.tagKey++
       this.addTagDialog = false
+    },
+    readTitle(value, title, id){
+      console.log(value)
+      console.log(title)
+      console.log(id)
+      if(id === -1){
+        this.finalBlock.empty=value;
+        this.finalBlock.name=title;
+        return
+      }
+      this.blocks[id].empty=value;
+      this.blocks[id].name=title;
+    },
+    updateIsEmpty() {
+      this.NameEmpty = (this.RutineName === '')
     }
   },
   computed: {

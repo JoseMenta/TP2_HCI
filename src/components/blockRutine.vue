@@ -2,12 +2,15 @@
   <v-card class="block-rutine" flat>
     <v-card height="80" class="d-flex justify-space-between ma-5" color="#E8F1F6" flat>
       <v-text-field
-          hide-details
+          :rules="[rules.required]"
+          :error="required"
+          @input="updateIsEmpty"
           placeholder="Nombre de Bloque"
           solo
           flat
           class="title_block mb-7 mt-5"
           background-color="#E8F1F6"
+          v-model="title"
       ></v-text-field>
       <NumberSelector :component-width="190" :text-size="16" :component-border-radius="4" data-text="Repeticiones" :data-value="5" class="mt-5" :deactivate="false" :error="false"/>
     </v-card>
@@ -48,8 +51,12 @@ import SelectExercisePopUp from "@/components/SelectExercisePopUp";
 export default {
   name: "blockRutine",
   components: {SelectExercisePopUp, NumberSelector, ExerciseCard, NewTask},
-  prop:{
-    status: {
+  props:{
+    id:{
+      type: Number,
+      required: true
+    },
+    required:{
       type: Boolean,
       required: true
     }
@@ -59,6 +66,11 @@ export default {
       exercise: 2,
       popUpKey: 0,
       selectExerciseDialog: false,
+      title: '',
+      IsEmpty: false,
+      rules: {
+        required: value => !!value || "Necesita Ingresar un titulo de Bloque"
+      },
     }
   },
   methods: {
@@ -72,6 +84,10 @@ export default {
       this.selectExerciseDialog = false;
       this.popUpKey++;
     },
+    updateIsEmpty() {
+      this.IsEmpty = (this.title === '')
+      this.$emit('input', !this.IsEmpty, this.title, this.id)
+    }
   }
 }
 </script>
