@@ -18,7 +18,7 @@
       </v-row>
       <v-row class="img-style">
         <v-col :cols="12">
-          <v-dialog v-model="mediaDialog">
+          <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
               <v-img :src="require('@/assets/estiramiento.png')" class="d-flex justify-center align-center">
                 <v-icon v-text="$vuetify.icons.values.playCircle"
@@ -44,20 +44,6 @@
           <NumberSelector class="ml-3" :component-width="150" :component-border-radius="4" data-text="Series" :data-value="10" :text-size="16" :deactivate="!seriesCheckbox" :error="noOptionSelected"/>
         </v-col>
       </v-row>
-<!--      <v-row>-->
-<!--        <v-col :cols="12">-->
-<!--          <v-text-field id="title"-->
-<!--                        :rules="[rules.required]"-->
-<!--                        :error="titleIsEmpty"-->
-<!--                        @input="updateTitleIsEmpty"-->
-<!--                        placeholder="Ingrese el nombre del ejercicio"-->
-<!--                        solo-->
-<!--                        flat-->
-<!--                        v-model="routineName"-->
-<!--                        class="exercise-title-style"-->
-<!--          ></v-text-field>-->
-<!--        </v-col>-->
-<!--      </v-row>-->
       <v-row class="mt-n5 align-center mr-2">
         <v-col :cols="8">
           <div class="author-style">
