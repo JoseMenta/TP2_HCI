@@ -29,7 +29,7 @@
       </v-row>
       <v-row class="img-style">
         <v-col :cols="12">
-          <v-dialog v-model="mediaDialog">
+          <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
               <v-img :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
                 <v-icon v-text="$vuetify.icons.values.playCircle"

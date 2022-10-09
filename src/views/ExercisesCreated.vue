@@ -12,7 +12,7 @@
         <ExerciseCardList>
           <template v-slot:header>
             <v-col class="d-flex" cols="6">
-              <v-dialog v-model="createExerciseDialog">
+              <v-dialog persistent v-model="createExerciseDialog">
                 <template v-slot:activator="{ on, attrs }">
                   <v-card class="d-flex flex-column align-center justify-center new-routine-card-style" hover
                           v-bind="attrs"

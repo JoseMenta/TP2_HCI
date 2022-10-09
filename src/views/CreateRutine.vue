@@ -13,26 +13,37 @@
           <h2 class="text-truncate mr-2">Dificultad: </h2>
           <v-icon v-for="i in 5" :key="i" :color="setColorLevel(i)" @click="setLevel(i)">bolt</v-icon>
         </v-card>
-        <v-card class="d-inline-flex" flat>
-          <v-btn label class="tag rounded-lg mr-4" color="grey" @click="newTag()" height="56">+ Tag</v-btn>
-          <v-card v-for="i in tags" :key="i" elevation="0" :width="size(i)" min-width="70px" height="56" class="mr-4">
-            <v-text-field placeholder="Tag"
-                          hide-details
-                          solo background-color="#DAE1E7"
-                          height="48px" width="50px"
-                          filled
-                          v-model="tagsText[i]"
-            ></v-text-field>
+        <div class="d-flex overflow-auto py-4 px-1">
+          <v-card class="tag-style" flat>
+            <v-dialog persistent v-model="addTagDialog" :key="tagKey">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn label class="tag rounded-lg mr-4" height="56"
+                       v-bind="attrs" :color="$vuetify.theme.themes.light.grey"
+                       v-on="on">+ Tag</v-btn>
+              </template>
+              <AddTagPopUp @closeWindow="closeTagPopUp" @addTag="newTag"/>
+            </v-dialog>
           </v-card>
-        </v-card>
+          <v-card v-for="(tag, index) in tagsText" :color="$vuetify.theme.themes.light.grey"
+                  :key="index" height="56" class="mr-4 d-inline-flex align-center tag-style">
+            <v-card-text class="text-h6 font-weight-bold black--text">{{tag}}</v-card-text>
+            <v-btn icon class="tag-icon-style" color="white" @click="removeTag(index)">
+              <v-icon v-text="$vuetify.icons.values.delete" :size="25" color="white"/>
+            </v-btn>
+          </v-card>
+        </div>
       </v-sheet>
       <v-sheet width="30%" class="d-flex flex-column justify-end" flat>
         <v-img
             :src="require('@/assets/placeholder.jpg')"
             max-height="200"
-            width="auto"
-            class="img_rutine elevation-5"
-        ></v-img>
+            width="auto" @mouseover="imageHover = true" @mouseleave="imageHover = false"
+            class="img_rutine elevation-5 d-flex justify-center align-center"
+        >
+          <v-icon v-text="$vuetify.icons.values.edit" :size="80" color="black"
+                  class="d-flex mx-auto image-icon-style" :class="showImageEditIcon"
+                  @click="changeImage"/>
+        </v-img>
         <v-card class="d-inline-flex justify-center justify-space-between" flat>
           <v-btn class="text-capitalize btn-style"
                  color="#00909E"
@@ -67,6 +78,7 @@
 <script>
 import BlockRutine from "@/components/blockRutine";
 import NewBlock from "@/components/NewBlock";
+import AddTagPopUp from "@/components/AddTagPopUp";
 
 export default {
   name: "CreateRutine",
@@ -75,14 +87,17 @@ export default {
       blocks: 2,
       level :0,
       tags: 0,
-      tagsText: ['', '', '', '', '', '', '', '']
+      tagsText: [],
+      imageHover: false,
+      addTagDialog: false,
+      tagKey: 0
     }
   },
-  components: {NewBlock, BlockRutine},
+  components: {AddTagPopUp, NewBlock, BlockRutine},
   methods: {
     addBlock() {
       this.blocks = this.blocks +1;
-      this.$emit('newExccercice')
+      this.$emit('newExercise')
     },
     setLevel(i){
       this.level = i;
@@ -90,14 +105,28 @@ export default {
     setColorLevel(i){
       return i>this.level ? "grey" : "black";
     },
-    newTag(){
-      this.tags = this.tags +1;
+    newTag(name){
+      this.tagsText.push(name)
+      this.tags = this.tags + 1;
+      this.closeTagPopUp()
     },
-    size(i){
-      return this.tagsText[i].length * 8
+    removeTag(index){
+      this.tagsText.splice(index, 1)
     },
     changeView(nameView) {
       this.$router.push(nameView)
+    },
+    changeImage(){
+      alert("Upload new image.")
+    },
+    closeTagPopUp(){
+      this.tagKey++
+      this.addTagDialog = false
+    }
+  },
+  computed: {
+    showImageEditIcon(){
+      return (this.imageHover) ? 'image-hover-style' : ''
     }
   }
 }
@@ -117,6 +146,17 @@ export default {
   font-size: 30px;
 }
 
+.tag-style {
+  border-radius: 10px;
+}
+
+.tag-icon-style {
+  position: absolute;
+  background-color: var(--v-blue-base);
+  top: -15px;
+  right: -15px;
+}
+
 .img_rutine{
   margin-bottom: 15px;
   border-radius: 20px !important;
@@ -127,10 +167,12 @@ export default {
   border-radius: 12px;
 }
 
-.tag-input{
-  margin-right: 10px;
-  ;
+.image-icon-style {
+  visibility: hidden;
+}
 
+.image-hover-style {
+  visibility: visible;
 }
 
 /* Con v-bind puedo utilizar una variable para parametrizar el valor de un estilo */

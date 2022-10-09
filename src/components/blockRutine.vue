@@ -19,7 +19,7 @@
             <ExerciseCard :name="'Abdominales'" :id="1" description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" :img="require('@/assets/estiramiento.png')"></ExerciseCard>
           </v-col>
           <v-col class="d-flex flex-column align-center justify-space-between"  cols="6">
-            <v-dialog v-model="selectExerciseDialog">
+            <v-dialog persistent v-model="selectExerciseDialog">
               <template v-slot:activator="{on, attrs}">
                 <NewTask name="Agregar Ejercicio" icon="fitness_center" :height="50" class="margin-Task"
                          v-bind="attrs" v-on="on"
@@ -66,6 +66,7 @@ export default {
       this.selectExerciseDialog = false
       this.exercise = this.exercise+1;
       this.$emit('newExercise')
+      this.reRenderPopUp()
     },
     reRenderPopUp() {
       this.selectExerciseDialog = false;
