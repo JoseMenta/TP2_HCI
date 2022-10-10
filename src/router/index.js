@@ -33,7 +33,7 @@ const routes = [
     name: 'createdRoutines',
     component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/CreatedRoutinesView'),
     props: {
-      language: 'en'
+      language: 'es'
     }
   },
   {
@@ -48,7 +48,7 @@ const routes = [
     name: 'createRoutine',
     component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/CreateRutine'),
     props: {
-      language: 'en'
+      language: 'es'
     }
   },
   {
@@ -56,7 +56,7 @@ const routes = [
     name: 'favorites',
     component:() => import(/* webpackChunkName: "favorites" */ '@/views/FavoritesView'),
     props: {
-      language: 'en'
+      language: 'es'
     }
   },
   {
@@ -67,7 +67,10 @@ const routes = [
   {
     path: '/search',
     name: 'search',
-    component:() => import(/* webpackChunkName: "search" */ '@/views/SearchResultsView')
+    component:() => import(/* webpackChunkName: "search" */ '@/views/SearchResultsView'),
+    props: {
+      language: 'es'
+    }
   },
   {
     path: '/verification',

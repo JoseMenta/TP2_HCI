@@ -45,13 +45,13 @@
             </v-col>
           </v-row>
           <v-row class="mt-10">
-            <ExerciseCardList class="mx-10" @exerciseClicked="openExercise"/>
+            <ExerciseCardList class="mx-10" @cardTouched="openExercise"/>
           </v-row>
         </v-container>
       </v-card>
     </v-carousel-item>
     <v-carousel-item>
-      <SelectExerciseConfigPopUp @goBack="step--" @confirmExercise="exerciseSelected"/>
+      <SelectExerciseConfigPopUp :is-rest="false" @goBack="step--" @confirmExercise="exerciseSelected"/>
     </v-carousel-item>
   </v-carousel>
 
@@ -64,6 +64,12 @@ import ExerciseCardList from "@/components/ExerciseCardList";
 import SelectExerciseConfigPopUp from "@/components/SelectExerciseConfigPopUp";
 export default {
   name: "SelectExercisePopUp",
+  props: {
+    editExercise: {
+      type: String,
+      required: false
+    }
+  },
   components: {SelectExerciseConfigPopUp, ExerciseCardList, FilterMenu, SearchBox},
   data() {
     return {
@@ -84,8 +90,15 @@ export default {
       this.step++
     },
     exerciseSelected() {
-      this.$emit("exerciseSelected")
+      if(this.editExercise){
+        this.$emit("exerciseEdited")
+      } else {
+        this.$emit("exerciseSelected")
+      }
     }
+  },
+  beforeMount() {
+    this.step = (this.editExercise) ? 1 : 0
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <!-- Componente para el buscador de la navegacion persistente -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <v-col class="shrink" v-click-outside="retractBox">
+  <v-col class="shrink pt-0" v-click-outside="retractBox">
     <v-sheet class="d-inline-flex included"
              :width="searchWidth">
       <v-text-field class="text-field-style"
@@ -20,7 +20,7 @@
     </v-sheet>
 
     <v-expand-transition>
-      <v-card :width="searchWidth" :height="400" flat v-show="expand"  v-if="filters">
+      <v-card :width="searchWidth" :height="400" flat v-show="expand" v-if="filters">
         <v-card class="d-inline-flex mb-10 mt-10 included align-center" width="100%" flat>
           <v-sheet width="25%">
             <h3 class="ml-5">Buscar por</h3>
@@ -32,18 +32,18 @@
             <h3 class="ml-5">Filtrar por</h3>
           </v-sheet>
           <v-sheet class="d-inline-flex justify-space-between align-center mr-5" width="75%">
-            <FilterMenu :id="1"
+            <FilterMenu :id="1" @menuChanged="avoidClose = true"
                         :options="['⭐⭐⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐', '⭐⭐', '⭐']"
                         :width="150"
                         :placeholder="getText(this.ratingText)"
                         :left-border-radius="4" :right-border-radius="4"/>
-            <FilterMenu :id="2"
+            <FilterMenu :id="2" @menuChanged="avoidClose = true"
                         :options="['⚡⚡⚡⚡⚡', '⚡⚡⚡⚡', '⚡⚡⚡', '⚡⚡', '⚡']"
                         :width="150"
                         :placeholder="getText(this.levelText)"
                         :left-border-radius="4" :right-border-radius="4"/>
             <!-- TODO: Ver qué va en Categoria -->
-            <FilterMenu :id="3"
+            <FilterMenu :id="3" @menuChanged="avoidClose = true"
                         :options="getArrayTexts(this.categoryOptionsText)"
                         :width="150"
                         :placeholder="getText(this.categoryText)"
@@ -53,8 +53,8 @@
         <v-container>
           <v-row>
             <slot name="header"></slot>
-            <v-col v-for="(i, index) in RutinesRecomended" :key="index" cols="6" @click="retractBox">
-              <SearchCardRutine :name="i.name" v-bind:ranking="i.ranking"  :srcImg="require('@/assets/' + i.srcImg + '')"
+            <v-col v-for="(i, index) in RutinesRecomended" :key="index" cols="6" >
+              <SearchCardRutine :name="i.name" v-bind:ranking="i.ranking" @click.native="retractBox" :srcImg="require('@/assets/' + i.srcImg + '')"
                                 ></SearchCardRutine>
             </v-col>
           </v-row>
@@ -119,6 +119,7 @@ export default {
   data(){
     return {
       expand: false,
+      avoidClose: false,
       // Defino una variable para poder parametrizar el CSS
       textSizeCSS: this.textSize + 'px',
       btnBorderRadiusCSS: this.btnBorderRadius + 'px',
@@ -156,12 +157,16 @@ export default {
       return componentArrayText[componentArrayText.map(e => e.lang).indexOf(this.language)].elements
     },
     retractBox(){
-      this.searchWidth = this.searchBoxWidth;
-      this.expand = false;
+      if(!this.avoidClose){
+        this.searchWidth = this.searchBoxWidth;
+        this.expand = false;
+      } else {
+        this.avoidClose = false
+      }
     },
     include () {
       return [document.querySelector('.included')]
-    },
+    }
   },
   computed: {
     getPlaceholderText() {

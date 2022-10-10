@@ -37,7 +37,7 @@
 <!--      </v-card>-->
       <v-slide-group max="0" class="slide_infotag pl-2 pb-2 pt-1" :next-icon="$vuetify.icons.values.next" :prev-icon="$vuetify.icons.values.prev" >
         <v-slide-item v-for="tag in tags" :key="tag">
-          <InfoTag :content="tag"></InfoTag>
+          <InfoTag :content="tag" class="mb-1"></InfoTag>
         </v-slide-item>
       </v-slide-group>
     </v-card>
