@@ -8,27 +8,9 @@ import { Api } from "@/api/api";
 export const useUsers = defineStore("users", {
     state: () => ({
         user:{},
-        // user: {
-        //     id: 1,
-        //     username: 'raul_sarmiento',
-        //     password: 'olakase',
-        //     firstName: 'Raul',
-        //     lastName: 'Sarmiento',
-        //     birthdate: 284007600000,
-        //     email: 'raulsarmiento@gmail.com',
-        //     avatarUrl: require('@/assets/avatar.jpg'),
-        //     metadata: {
-        //         creationDate: '02/08/2021',
-        //         routinesCreated: 12,
-        //         hoursTraining: 127
-        //     },
-        //     date: 1602139940660,
-        //     lastActivity: 1602483829035,
-        //     verified: true
-        // },
-        // // Token de acceso del usuario
         token: null,
         newUser:{
+            username:'',
             firstName:'',
             lastName:'',
             birthdate:'',

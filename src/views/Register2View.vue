@@ -3,10 +3,8 @@
     <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
              contain
-             @click="changeView({name: 'landing'})"
-             class="image-style"/>
-<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
-<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
+             class="image-style"
+             @click="changeView('landing')"/>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
@@ -31,8 +29,7 @@
 import TextInput from "@/components/TextInput";
 import PasswordInput from "@/components/PasswordInput";
 import LoginButton from "@/components/LoginButton";
-// import LanguageSelect from "@/components/LanguageSelect";
-import {mapActions, mapWritableState} from "pinia";
+import {mapActions, mapState} from "pinia";
 import {useUsers} from "@/store/User";
 
 export default {
@@ -41,14 +38,13 @@ export default {
     TextInput,
     PasswordInput,
     LoginButton,
-    // LanguageSelect
   },
   data() {
     return {
       email: false,
-      // inputEmail: '',
+      inputEmail: '',
       password1: false,
-      // inputpassword1: '',
+      inputPassword1: '',
       password2: false,
       inputPassword2: '',
       required: false,
@@ -61,16 +57,14 @@ export default {
       console.log(menuId)
       console.log(newValue)
     },
-    changeView(nameView) {
-      this.$router.push(nameView);
-    },
     async nextView(nameView){
       if(this.email && this.password1 && this.password2){
         if(this.inputpassword1 === this.inputPassword2){
           try{
-            console.log(this.inputEmail, this.inputPassword1)
-            const users = useUsers();
-            await users.createUser();
+            this.user.password = this.inputpassword1
+            this.user.email = this.inputEmail
+            this.user.username = this.inputEmail
+            await this.createUser();
           }catch (e){
             console.log(e)
           }
@@ -84,6 +78,9 @@ export default {
       this.email=value;
       this.inputEmail=input;
     },
+    changeView(viewName){
+      this.$router.push({name:viewName})
+    },
     password1Input(value, input) {
       this.password1=value;
       this.inputpassword1=input;
@@ -95,10 +92,7 @@ export default {
     ...mapActions(useUsers,['createUser'])
   },
   computed:{
-    ...mapWritableState(useUsers,{
-      inputEmail:'newUser.email',
-      inputPassword1:'newUser.password'
-    })
+    ...mapState(useUsers,{user:'newUser'})
   }
 }
 </script>
@@ -130,13 +124,6 @@ export default {
   margin-right: 50px;
   margin-left: 50px;
   margin-bottom: 5px;
-}
-
-.Lenguage-fixed{
-  width: 100px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
 }
 
 .center-card-margin{

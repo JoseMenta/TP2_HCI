@@ -3,10 +3,8 @@
     <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
              contain
-             @click="changeView({name: 'landing'})"
-             class="image-style"/>
-<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
-<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
+             class="image-style"
+             @click="changeView('landing')"/>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
@@ -64,17 +62,14 @@
 <script>
 import TextInput from "@/components/TextInput";
 import LoginButton from "@/components/LoginButton";
-// import LanguageSelect from "@/components/LanguageSelect";
-// import {mapWritableState} from 'pinia'
+import {mapState} from 'pinia'
 import {useUsers} from "@/store/User";
-import {useNewStore} from "@/store/newStore";
 
 export default {
   name: "Register1View",
   components: {
     TextInput,
     LoginButton,
-    // LanguageSelect
   },
   data() {
     return {
@@ -101,35 +96,19 @@ export default {
       console.log(menuId)
       console.log(newValue)
     },
-    changeView(nameView) {
-      this.$router.push(nameView);
-    },
-    nextView(nameView){
-      if(this.name && this.LastName && this.inputDate.length>0)
-        this.$router.push(nameView);
-      else
-        this.required=true;
+    changeView(viewName){
+      this.$router.push({name:viewName})
     },
     saveData(){
-      // this.newUser.firstName = this.inputName
-      // this.newUser.lastName = this.inputLastName
-      const prueba = useNewStore();
-      prueba.addItem(this.inputLastName)
-      prueba.printState()
-      this.birthdate = this.inputDate
-      const users = useUsers();
-      users.$patch({
-        newUser: {
-          username:'jose@mail.com',
-          firstName: this.inputName,
-          lastName: this.inputLastName,
-          birthdate: new Date(this.inputDate).valueOf(),
-          email:'jose@mail.com',
-          password:'1234'
-        }
-      })
-      console.log(this.inputName, this.inputLastName, this.birthdate)
-      this.nextView({name:"register2"})
+      if(this.name && this.LastName && this.inputDate.length>0) {
+        //guardamos los datos en el store
+        this.user.firstName = this.inputName
+        this.user.lastName = this.inputLastName
+        this.user.birthdate = new Date(this.inputDate).valueOf()
+        this.$router.push({name:'register2'})
+      }else{
+        this.required = true
+      }
     },
     nameInput(value, input) {
       this.name=value;
@@ -141,11 +120,7 @@ export default {
     }
   },
   computed:{
-    // ...mapWritableState(useUsers,{
-    //   inputName:'newUser.firstName',
-    //   inputLastName:'newUser.lastName',
-    //   birthdate:'newUser.birthdate'
-    // })
+    ...mapState(useUsers,{user:'newUser'})
   },
   watch: {
     menu (val) {
@@ -186,21 +161,15 @@ export default {
   margin-bottom: 5px;
 }
 
-.Lenguage-fixed{
-  width: 100px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
 
 .center-card-margin{
   margin-left: 200px;
   margin-right: 200px;
 }
 
-.v-date-picker-header {
-  display: none
-}
+/*.v-date-picker-header {*/
+/*  display: none*/
+/*}*/
 
 .date-picker{
   width: 100%;

@@ -3,13 +3,8 @@
     <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
              contain
-             class="image-style"/>
-<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
-<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
              class="image-style"
-             @click="changeView({name: 'landing'})"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
+             @click="changeView('landing')"/>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
@@ -33,7 +28,6 @@
 
 <script>
 import LoginButton from "@/components/LoginButton";
-// import LanguageSelect from "@/components/LanguageSelect";
 
 import {useUsers} from "@/store/User";
 
@@ -46,11 +40,11 @@ export default {
   props:{
     user: {
       type: String,
-      required: true
+      required: false
     },
     code:{
       type:String,
-      required:true
+      required:false
     }
   },
   computed: {
@@ -60,12 +54,8 @@ export default {
   },
   components: {
     LoginButton,
-    // LanguageSelect
   },
   methods: {
-    // nextRegister() {
-    //   console.log("Pasar a proximo paso de registro")
-    // },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
@@ -75,11 +65,6 @@ export default {
     },
     async verify(){
       const users = useUsers();
-      // const user = await users.getUserById(this.user);
-      // if(user === -1){
-      //   console.log('Error crítico.');
-      //   return;
-      // }
       const result = await users.verifyEmail(this.otp);
       switch(result){
         case -1:
@@ -90,7 +75,7 @@ export default {
           return;
         case 0:
           console.log('Codigo correcto, cuenta verificada');
-          this.changeView({name: 'createdRoutines'});
+          this.changeView({name: 'login'});
       }
     }
   }
@@ -127,12 +112,6 @@ export default {
   margin-left: 50px;
 }
 
-.Lenguage-fixed{
-  width: 100px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
 
 .center-card-margin{
   margin-left: 200px;

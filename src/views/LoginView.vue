@@ -3,10 +3,8 @@
     <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
              contain
-             @click="changeView({name: 'landing'})"
-             class="image-style"/>
-<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
-<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
+             class="image-style"
+             @click="changeView({name: 'landing'})"/>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="80%" flat>
@@ -36,7 +34,6 @@
 import TextInput from "@/components/TextInput";
 import PasswordInput from "@/components/PasswordInput";
 import LoginButton from "@/components/LoginButton";
-// import LanguageSelect from "@/components/LanguageSelect";
 
 import {useUsers} from "@/store/User";
 
@@ -46,7 +43,6 @@ export default {
     TextInput,
     PasswordInput,
     LoginButton,
-    // LanguageSelect
   },
   data() {
     return {
@@ -86,15 +82,6 @@ export default {
           this.changeView({name: 'createdRoutines'});
       }
     },
-    /*nextView(nameView){
-      if(this.email && this.password)
-          if(this.inputPassword==="pepe" && this.inputEmail==="pepe")
-              this.$router.push(nameView);
-          else
-            this.incorrect=true;
-      else
-        this.required=true;
-    },*/
     emailInput(value, input) {
       this.email=value;
       this.inputEmail=input;
@@ -136,12 +123,6 @@ export default {
   margin-bottom: 5px;
 }
 
-.Lenguage-fixed{
-  width: 100px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
 
 .center-card-margin{
   margin-left: 200px;
