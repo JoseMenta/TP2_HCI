@@ -3,17 +3,14 @@
     <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
       <v-img src="@/assets/fiti-logo.png"
              contain
+             @click="changeView({name: 'landing'})"
              class="image-style"/>
 <!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
 <!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
-             class="image-style"
-             @click="changeView({name: 'landing'})"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
-        <h1 class="d-flex justify-center mb-7">Registro</h1>
+        <h1 class="d-flex justify-center mb-7 mt-8">Registro</h1>
         <TextInput class="margin-style" @input="nameInput"
                    :required="required" textError="Nombre es requerido"
                    placeHolder="Ingrese su Nombre"></TextInput>
@@ -103,6 +100,9 @@ export default {
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
+    },
+    changeView(nameView) {
+      this.$router.push(nameView);
     },
     nextView(nameView){
       if(this.name && this.LastName && this.inputDate.length>0)

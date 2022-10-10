@@ -62,7 +62,7 @@ const routes = [
   {
     path: '/resend_verification',
     name: 'resendVerification',
-    component:() => import(/* webpackChunkName: "forgotUser" */ '@/views/ForgotUser')
+    component:() => import(/* webpackChunkName: "forgotUser" */ '@/views/ResendVerificationView')
   },
   {
     path: '/search',

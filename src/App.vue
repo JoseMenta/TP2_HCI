@@ -120,7 +120,7 @@ export default {
       alert("Open Profile");
     },
     needNavigation(){
-      return !(['landing', 'register1', 'register2', 'login', 'forgotUser', 'verification'].includes(this.$route.name))
+      return !(['landing', 'register1', 'register2', 'login', 'resendVerification', 'verification'].includes(this.$route.name))
     }
   }
 };

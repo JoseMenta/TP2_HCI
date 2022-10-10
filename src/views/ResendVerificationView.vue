@@ -5,9 +5,6 @@
              contain
              class="image-style"
              @click="changeView({name: 'landing'})"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
-             class="image-style"/>
 <!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
 <!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
     </v-card>
@@ -40,7 +37,7 @@ import LoginButton from "@/components/LoginButton";
 // import {useUsers} from "@/store/User";
 
 export default {
-  name: "ForgotUser",
+  name: "ResendVerificationView",
   data(){
     return {
       send: false,
