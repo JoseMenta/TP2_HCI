@@ -112,15 +112,14 @@ export default {
     },
     changeView(){
       this.$router.push(
-          {name:'routine_details',
+          { name:'routine_details',
             params:{
               name:this.name,
               id:this.id
             }
           })
     }
-  },
-
+  }
 }
 </script>
 

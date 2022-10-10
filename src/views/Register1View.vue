@@ -4,8 +4,8 @@
       <v-img src="@/assets/fiti-logo.png"
              contain
              class="image-style"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
+<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
+<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
@@ -52,27 +52,28 @@
           ></v-date-picker>
         </v-menu>
 
-        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'register2'})" :text-size="10" text="Siguiente" :border-radius="12"/>
+        <LoginButton class="d-flex margin-btn-style" @click.native="saveData" :text-size="20" text="Siguiente" :border-radius="12"/>
       </v-card>
     </v-sheet>
   </div>
 </template>
 
-import TextInput from "./components/TextInput";
-import PasswordInput from "@/components/PasswordInput";
+
 
 <script>
 import TextInput from "@/components/TextInput";
 import LoginButton from "@/components/LoginButton";
-import LanguageSelect from "@/components/LanguageSelect";
-
+// import LanguageSelect from "@/components/LanguageSelect";
+// import {mapWritableState} from 'pinia'
+import {useUsers} from "@/store/User";
+import {useNewStore} from "@/store/newStore";
 
 export default {
   name: "Register1View",
   components: {
     TextInput,
     LoginButton,
-    LanguageSelect
+    // LanguageSelect
   },
   data() {
     return {
@@ -105,6 +106,27 @@ export default {
       else
         this.required=true;
     },
+    saveData(){
+      // this.newUser.firstName = this.inputName
+      // this.newUser.lastName = this.inputLastName
+      const prueba = useNewStore();
+      prueba.addItem(this.inputLastName)
+      prueba.printState()
+      this.birthdate = this.inputDate
+      const users = useUsers();
+      users.$patch({
+        newUser: {
+          username:'jose@mail.com',
+          firstName: this.inputName,
+          lastName: this.inputLastName,
+          birthdate: new Date(this.inputDate).valueOf(),
+          email:'jose@mail.com',
+          password:'1234'
+        }
+      })
+      console.log(this.inputName, this.inputLastName, this.birthdate)
+      this.nextView({name:"register2"})
+    },
     nameInput(value, input) {
       this.name=value;
       this.inputName=input;
@@ -113,6 +135,13 @@ export default {
       this.LastName=value;
       this.inputLastName=input;
     }
+  },
+  computed:{
+    // ...mapWritableState(useUsers,{
+    //   inputName:'newUser.firstName',
+    //   inputLastName:'newUser.lastName',
+    //   birthdate:'newUser.birthdate'
+    // })
   },
   watch: {
     menu (val) {

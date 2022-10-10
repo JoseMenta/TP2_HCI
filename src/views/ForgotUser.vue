@@ -4,24 +4,24 @@
       <v-img src="@/assets/fiti-logo.png"
              contain
              class="image-style"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
+<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
+<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="320" flat>
-        <h1 class="d-flex justify-center mb-7">Olvidé mi cuenta</h1>
+        <h1 class="d-flex justify-center mb-7">Reenviar código de verificación</h1>
         <TextInput class="margin-style" @input="emailInput"
-                   :required="false" textError="Correo Electronico es requerido"
-                   placeHolder="Ingrese su Correo Electronico"></TextInput>
-        <LoginButton :status="!this.email" class="d-flex margin-btn-style" @click.native="sendVerification()" :text-size="10" text="Recuperar" :border-radius="12"/>
+                   :required="false" textError="Se requiere un correo electrónico"
+                   placeHolder="Ingrese su correo electrónico"></TextInput>
+        <LoginButton :status="!this.email" class="d-flex margin-btn-style" @click.native="sendVerification()" :text-size="20" text="Enviar" :border-radius="12"/>
         <v-sheet height="50">
-          <h3 v-show="send" class="margin-style">Se ha enviado un mail para restaurar su contraseña</h3>
-          <h3 v-show="send" class="margin-style">Verifique su casilla de correo electronico</h3>
+          <h3 v-show="send" class="margin-style">Se ha enviado un mail con el nuevo código de verificación.</h3>
+          <h3 v-show="send" class="margin-style">Verifique su casilla de correo electrónico.</h3>
         </v-sheet>
       </v-card>
       <v-card class="d-inline-flex justify-center align-center justify-space-around" height="80" flat>
         <h2 class="d-flex justify-center">¿No tienes cuenta aún?</h2>
-        <LoginButton :text-size="10" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
+        <LoginButton :text-size="20" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
       </v-card>
     </v-sheet>
   </div>
@@ -31,7 +31,9 @@
 <script>
 import TextInput from "@/components/TextInput";
 import LoginButton from "@/components/LoginButton";
-import LanguageSelect from "@/components/LanguageSelect";
+// import LanguageSelect from "@/components/LanguageSelect";
+//
+// import {useUsers} from "@/store/User";
 
 export default {
   name: "ForgotUser",
@@ -45,7 +47,7 @@ export default {
   components: {
     TextInput,
     LoginButton,
-    LanguageSelect
+    // LanguageSelect
   },
   methods:{
     sendVerification(){

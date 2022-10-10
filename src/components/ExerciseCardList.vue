@@ -3,10 +3,8 @@
   <v-container fluid>
     <v-row>
       <slot name="header"></slot>
-      <v-col v-for="elem in exercises" :key="elem.id" cols="6">
-        <ExerciseCard :id="elem.id" :details="false" :editRemove="true" ></ExerciseCard>
-
-
+      <v-col v-for="id in ids" :key="id" cols="6">
+        <ExerciseCard :id="id" :details="false" :editRemove="true" ></ExerciseCard>
       </v-col>
     </v-row>
   </v-container>
@@ -21,6 +19,12 @@ export default {
   components: {
     ExerciseCard
   },
+  props:{
+    ids:{
+      type:Array[Number],
+      required:true
+    }
+  },
   methods: {
     changeFavorite(id,status){
       console.log(id)
@@ -29,8 +33,16 @@ export default {
     // ...mapActions(useExercises,['getExerciseById'])
   },
   computed:{
-    ...mapState(useExercises,{exercises:'getExercises'})
+    exercises() {
+      const exercises = useExercises()
+      return exercises.getExercises()
+    },
+    ...mapState(useExercises,{getExercises:'getExercises'})
   },
+  async created() {
+    const exercises = useExercises()
+    await exercises.fetchExercises();//las busca cuando se crea el componente
+  }
 }
 </script>
 

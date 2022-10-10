@@ -60,8 +60,8 @@ const routes = [
     }
   },
   {
-    path: '/forgot_user',
-    name: 'forgotUser',
+    path: '/resend_verification',
+    name: 'resendVerification',
     component:() => import(/* webpackChunkName: "forgotUser" */ '@/views/ForgotUser')
   },
   {
@@ -72,7 +72,8 @@ const routes = [
   {
     path: '/verification',
     name: 'verification',
-    component:() => import(/* webpackChunkName: "verification" */ '@/views/VerificationView')
+    component:() => import(/* webpackChunkName: "verification" */ '@/views/VerificationView'),
+    props: (route)=>({user:route.query.user,code:route.query.code})
   },
   {
     path: '/created_exercises',

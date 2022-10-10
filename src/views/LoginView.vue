@@ -4,27 +4,27 @@
       <v-img src="@/assets/fiti-logo.png"
              contain
              class="image-style"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
+<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
+<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="80%" flat>
         <h1 class="d-flex justify-center mb-2">Inicio de Sesion</h1>
-        <TextInput class="margin-style" @input="nameInput"
-                   :required="required" textError="Email es requerido"
+        <TextInput class="margin-style" @input="emailInput"
+                   :required="required" textError="Se requiere un email"
                    placeHolder="Ingrese Email"></TextInput>
         <PasswordInput class="margin-style" @input="passwordInput"
-                   :required="required" textError="Contraseña es requerida"
+                   :required="required" textError="Se requiere una contraseña"
                    placeHolder="Ingrese Contraseña"></PasswordInput>
-        <h3 v-if="correct" class="red--text d-flex justify-center mb-2">Usuario y contraseña incorrectos</h3>
-        <LoginButton class="d-flex margin-btn-style" :text-size="10" text="Ingresar" :border-radius="12" @click.native="nextView({name: 'createdRoutines'})"/>
+        <h3 v-if="incorrect" class="red--text d-flex justify-center mb-2">{{errorMessage}}</h3>
+        <LoginButton class="d-flex margin-btn-style" :text-size="20" text="Ingresar" :border-radius="12" @click.native="logIn"/>
         <a
-            class="d-inline-flex text-decoration-underline justify-center mt-5" @click="changeView({name: 'forgotUser'})"
-        >Olvidaste tu contraseña</a>
+            class="d-inline-flex text-decoration-underline justify-center mt-5 text-h6" @click="changeView({name: 'resendVerification'})"
+        >Reenviar el código de verificación</a>
       </v-card>
       <v-card class="d-inline-flex justify-center align-center justify-space-around" height="80" flat>
         <h2 class="d-flex justify-center">¿No tienes cuenta aún?</h2>
-        <LoginButton :text-size="10" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
+        <LoginButton :text-size="20" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
       </v-card>
     </v-sheet>
   </div>
@@ -35,7 +35,9 @@
 import TextInput from "@/components/TextInput";
 import PasswordInput from "@/components/PasswordInput";
 import LoginButton from "@/components/LoginButton";
-import LanguageSelect from "@/components/LanguageSelect";
+// import LanguageSelect from "@/components/LanguageSelect";
+
+import {useUsers} from "@/store/User";
 
 export default {
   name: "LoginView",
@@ -43,16 +45,17 @@ export default {
     TextInput,
     PasswordInput,
     LoginButton,
-    LanguageSelect
+    // LanguageSelect
   },
   data() {
     return {
-      name: false,
-      inputName: '',
+      email: false,
+      inputEmail: '',
       password: false,
-      inputpassword: '',
+      inputPassword: '',
       required: false,
-      correct: false
+      incorrect: false,
+      errorMessage: ''
     }
   },
   methods:{
@@ -63,22 +66,41 @@ export default {
     changeView(nameView) {
       this.$router.push(nameView);
     },
-    nextView(nameView){
-      if(this.name && this.password)
-          if(this.inputpassword==="pepe" && this.inputName==="pepe")
+    async logIn(){
+      if(!this.name || !this.password){
+        this.required = true;
+      }
+      const users = useUsers();
+      switch(await users.login({username: this.inputEmail, password: this.inputPassword}, false)){
+        case -1:
+          this.errorMessage = 'Error crítico.';
+          this.incorrect = true;
+          break;
+        case 1:
+          this.errorMessage = 'El email y/o la contraseña son inválidos.';
+          this.incorrect = true;
+          break;
+        case 0:
+          this.incorrect = false;
+          this.changeView({name: 'createdRoutines'});
+      }
+    },
+    /*nextView(nameView){
+      if(this.email && this.password)
+          if(this.inputPassword==="pepe" && this.inputEmail==="pepe")
               this.$router.push(nameView);
           else
-            this.correct=true;
+            this.incorrect=true;
       else
         this.required=true;
-    },
-    nameInput(value, input) {
-      this.name=value;
-      this.inputName=input;
+    },*/
+    emailInput(value, input) {
+      this.email=value;
+      this.inputEmail=input;
     },
     passwordInput(value, input) {
       this.password=value;
-      this.inputpassword=input;
+      this.inputPassword=input;
     }
   }
 }

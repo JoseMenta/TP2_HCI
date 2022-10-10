@@ -4,13 +4,13 @@
       <v-img src="@/assets/fiti-logo.png"
              contain
              class="image-style"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
+<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
+<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
-        <h1 class="d-flex justify-center mb-5">Verificacion</h1>
-        <h3 class="d-flex justify-start margin-style text-format">Código de Verificacion:</h3>
+        <h1 class="d-flex justify-center mb-5">Verificación</h1>
+        <h3 class="d-flex justify-start margin-style text-format">Código de Verificación:</h3>
         <h3 class="d-flex justify-start mb-10 pl-10 margin-style text-format">Esta acción requiere verificación de correo, revise su buzón e ingrese el código.</h3>
         <v-otp-input
             :length="length"
@@ -18,25 +18,37 @@
             plain
             class="margin-style"
         ></v-otp-input>
-        <LoginButton class="d-flex margin-btn-style" @click.native="changeView({name: 'createdRoutines'})" :text-size="10" text="Ingresar" :border-radius="12" block :status="!isActive"/>
+        <LoginButton class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive"/>
       </v-card>
     </v-sheet>
+    <p>{{this.user}}</p>
+    <p>{{this.code}}</p>
   </div>
 </template>
 
-import TextInput from "./components/TextInput";
-import PasswordInput from "@/components/PasswordInput";
 
 <script>
 import LoginButton from "@/components/LoginButton";
-import LanguageSelect from "@/components/LanguageSelect";
+// import LanguageSelect from "@/components/LanguageSelect";
+
+import {useUsers} from "@/store/User";
 
 export default {
   name: "VerificationView",
   data: () => ({
     otp: '',
-    length: 6,
+    length: 6
   }),
+  props:{
+    user: {
+      type: String,
+      required: true
+    },
+    code:{
+      type:String,
+      required:true
+    }
+  },
   computed: {
     isActive () {
       return this.otp.length === this.length
@@ -44,18 +56,38 @@ export default {
   },
   components: {
     LoginButton,
-    LanguageSelect
+    // LanguageSelect
   },
   methods: {
-    nextRegister() {
-      console.log("Pasar a proximo paso de registro")
-    },
+    // nextRegister() {
+    //   console.log("Pasar a proximo paso de registro")
+    // },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
     },
     changeView(nameView) {
       this.$router.push(nameView)
+    },
+    async verify(){
+      const users = useUsers();
+      // const user = await users.getUserById(this.user);
+      // if(user === -1){
+      //   console.log('Error crítico.');
+      //   return;
+      // }
+      const result = await users.verifyEmail(this.otp);
+      switch(result){
+        case -1:
+          console.log('Error crítico.');
+          return;
+        case 1:
+          console.log('El código es incorrecto.');
+          return;
+        case 0:
+          console.log('Codigo correcto, cuenta verificada');
+          this.changeView({name: 'createdRoutines'});
+      }
     }
   }
 }

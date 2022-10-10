@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import {mapActions} from "pinia";
 import {useExercises} from "@/store/Exercises";
 
 export default {
@@ -64,9 +65,10 @@ export default {
     // }
   },
   computed:{
+    ...mapActions(useExercises, {getExercisesByIdFromStore: 'getExercisesByIdFromStore'}),
     exerciseData(){
       const exercises = useExercises()
-      return exercises.getExerciseById(this.id)
+      return exercises.getExerciseByIdFromStore(this.id)
     }
   },
   methods:{
@@ -82,6 +84,10 @@ export default {
       console.log(`ExerciseCard ${this.id} touched`)
       this.$emit('cardTouched',this.id)
     }
+  },
+  async created(){
+    const exercises = useExercises()
+    return exercises.fetchExerciseById(this.id)
   }
 }
 </script>

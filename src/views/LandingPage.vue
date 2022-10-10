@@ -25,6 +25,9 @@
         >
           Iniciar Sesión
         </v-btn>
+        <v-btn @click="data">
+          Hola
+        </v-btn>
       </div>
     </v-sheet>
     <div class="fixed_text">
@@ -43,11 +46,21 @@
 </template>
 
 <script>
+import {useNewStore} from "@/store/newStore";
+import {mapWritableState} from "pinia";
+
 export default {
   name: "LandingPage",
+  computed:{
+    ...mapWritableState(useNewStore,['items'])
+  },
   methods: {
     changeView(nameView){
       this.$router.push(nameView)
+    },
+    data(){
+      this.items.push('Hola')
+      console.log(this.items)
     }
   }
 }

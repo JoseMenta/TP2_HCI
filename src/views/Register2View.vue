@@ -4,35 +4,35 @@
       <v-img src="@/assets/fiti-logo.png"
              contain
              class="image-style"/>
-      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"
-                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>
+<!--      <LanguageSelect :id="1" v-bind:options="['Español','English']" v-bind:abrev="['ESP','ENG']"-->
+<!--                      @menuChanged="changeMenu" class="Lenguage-fixed"></LanguageSelect>-->
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
         <h1 class="d-flex justify-center mb-2">Registro</h1>
         <TextInput class="margin-style" @input="emailInput"
-                   :required="required" textError="Correo Electronico es requerido"
-                   placeHolder="Ingrese su Correo Electronico"></TextInput>
+                   :required="required" textError="Se requiere un correo electrónico"
+                   placeHolder="Ingrese su correo electrónico"></TextInput>
         <PasswordInput class="margin-style" @input="password1Input"
-                       :required="required" textError="Contraseña es requerida"
-                       placeHolder="Ingrese Contraseña"></PasswordInput>
+                       :required="required" textError="Se requiere una contraseña"
+                       placeHolder="Ingrese una contraseña"></PasswordInput>
         <PasswordInput class="margin-style" @input="password2Input"
                        :required="required" :textError="this.errorPassword"
-                       placeHolder="Ingrese Contraseña nuevamente"></PasswordInput>
-        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'verification'})" :text-size="10" text="Ingresar" :border-radius="12"/>
+                       placeHolder="Ingrese la contraseña nuevamente"></PasswordInput>
+        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'verification'})" :text-size="20" text="Ingresar" :border-radius="12"/>
       </v-card>
     </v-sheet>
   </div>
 </template>
 
-import TextInput from "./components/TextInput";
-import PasswordInput from "@/components/PasswordInput";
 
 <script>
 import TextInput from "@/components/TextInput";
 import PasswordInput from "@/components/PasswordInput";
 import LoginButton from "@/components/LoginButton";
-import LanguageSelect from "@/components/LanguageSelect";
+// import LanguageSelect from "@/components/LanguageSelect";
+import {mapActions, mapWritableState} from "pinia";
+import {useUsers} from "@/store/User";
 
 export default {
   name: "Register2View",
@@ -40,19 +40,19 @@ export default {
     TextInput,
     PasswordInput,
     LoginButton,
-    LanguageSelect
+    // LanguageSelect
   },
   data() {
     return {
       email: false,
-      inputEmail: '',
+      // inputEmail: '',
       password1: false,
-      inputpassword1: '',
+      // inputpassword1: '',
       password2: false,
-      inputpassword2: '',
+      inputPassword2: '',
       required: false,
       correct: false,
-      errorPassword: 'Contraseña es requerida'
+      errorPassword: 'Contraseña es requerida.'
     }
   },
   methods: {
@@ -60,9 +60,16 @@ export default {
       console.log(menuId)
       console.log(newValue)
     },
-    nextView(nameView){
+    async nextView(nameView){
       if(this.email && this.password1 && this.password2){
-        if(this.inputpassword1 === this.inputpassword2){
+        if(this.inputpassword1 === this.inputPassword2){
+          try{
+            console.log(this.inputEmail, this.inputPassword1)
+            const users = useUsers();
+            await users.createUser();
+          }catch (e){
+            console.log(e)
+          }
           this.$router.push(nameView);
         }
       }
@@ -79,9 +86,16 @@ export default {
     },
     password2Input(value, input) {
       this.password2=value;
-      this.inputpassword2=input;
-    }
+      this.inputPassword2=input;
+    },
+    ...mapActions(useUsers,['createUser'])
   },
+  computed:{
+    ...mapWritableState(useUsers,{
+      inputEmail:'newUser.email',
+      inputPassword1:'newUser.password'
+    })
+  }
 }
 </script>
 
