@@ -30,7 +30,7 @@ export default {
     return{
       optionIndex: -1,
       icon:"arrow_drop_down",
-      leftBorderRaidusCSS: this.leftBorderRadius + 'px',
+      leftBorderRadiusCSS: this.leftBorderRadius + 'px',
       rightBorderRadiusCSS: this.rightBorderRadius + 'px'
     }
   },
@@ -95,7 +95,7 @@ export default {
 <!--      Todos los formatos estan hardcodeados, definir patrones y hacerlos de una a todos-->
 <style scoped>
 .dropdownFilters{
-  border-radius: v-bind(leftBorderRaidusCSS) v-bind(rightBorderRadiusCSS) v-bind(rightBorderRadiusCSS) v-bind(leftBorderRaidusCSS);
+  border-radius: v-bind(leftBorderRadiusCSS) v-bind(rightBorderRadiusCSS) v-bind(rightBorderRadiusCSS) v-bind(leftBorderRadiusCSS);
   border: 2px solid #142850;
   background: white;
 }

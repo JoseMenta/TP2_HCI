@@ -9,19 +9,20 @@
     <v-sheet>
 
       <div class="mt-12">
-        <ExerciseCardList>
+        <ExerciseCardList v-if="this.dataLoaded" :ids="this.getExercises" @editExercise="editExercise">
           <template v-slot:header>
             <v-col class="d-flex" cols="6">
               <v-dialog persistent v-model="createExerciseDialog">
                 <template v-slot:activator="{ on, attrs }">
                   <v-card class="d-inline-flex flex-column align-center justify-center new-routine-card-style" hover
+                          @click="popUpId = -1"
                           v-bind="attrs"
                           v-on="on">
                     <v-icon v-text="$vuetify.icons.values.add" color="#1C1B1F" :size="70"/>
                     <h2 class="new-routine-text-style">Nuevo Ejercicio</h2>
                   </v-card>
                 </template>
-                <CreateExercisePopUp @exerciseSaved="reRenderPopUp"
+                <CreateExercisePopUp :exercise-id="popUpId" @exerciseSaved="reRenderPopUp"
                                      @cancelExercise="reRenderPopUp" :key="popUpKey"/>
               </v-dialog>
             </v-col>
@@ -36,6 +37,8 @@
 import FilterMenu from "@/components/FilterMenu";
 import ExerciseCardList from "@/components/ExerciseCardList";
 import CreateExercisePopUp from "@/components/CreateExercisePopUp";
+import {useExercises} from "@/store/Exercises"
+import {mapState} from "pinia";
 
 export default {
   name: "ExercisesCreated",
@@ -47,7 +50,9 @@ export default {
   data(){
     return {
       createExerciseDialog: false,
-      popUpKey: 0
+      popUpKey: 0,
+      dataLoaded: false,
+      popUpId: -1
     }
   },
   methods: {
@@ -58,8 +63,25 @@ export default {
     reRenderPopUp(){
       this.createExerciseDialog = false
       this.popUpKey++;
+      this.popUpId = -1;
+    },
+    editExercise(exerciseId){
+      this.popUpId = exerciseId;
+      console.log(this.popUpId);
+      this.popUpKey++;
+      this.createExerciseDialog = true;
     }
   },
+  computed: {
+    ...mapState(useExercises, {getExercises: 'getExercises'})
+  },
+  // Se ejecuta antes de crear la vista (el primer paso del componente)
+  async beforeCreate(){
+    // Obtenes la informacion de los ejercicios y lo guarda en el store
+    const exercises = useExercises();
+    await exercises.fetchExercises();
+    this.dataLoaded = true;
+  }
 }
 </script>
 

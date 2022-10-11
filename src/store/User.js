@@ -38,11 +38,6 @@ export const useUsers = defineStore("users", {
         //     }
         // },
         async createUser(){
-            console.log(this.newUser.firstName)
-            console.log(this.newUser.lastName)
-            console.log(this.newUser.birthdate)
-            console.log(this.newUser.email)
-            console.log(this.newUser.password)
             if(this.newUser.firstName&&this.newUser.lastName&&this.newUser.birthdate&&this.newUser.email&&this.newUser.password){
                 const user =  await UserApi.create(this.newUser)
                 this.user = user
@@ -99,20 +94,20 @@ export const useUsers = defineStore("users", {
         //     }
         //     return 0;
         // },
-        // // Devuelve la información del usuario
-        // // Devuelve -1 en caso de error
-        // async getCurrentUser() {
-        //     if (this.user)
-        //         return this.user;
-        //     try {
-        //         const result = await UserApi.getCurrentUser();
-        //         this.setUser(result);
-        //         return result;
-        //     } catch (e){
-        //         console.log(e);
-        //         return -1;
-        //     }
-        // },
+        // Devuelve la información del usuario
+        // Devuelve -1 en caso de error
+        async getCurrentUser() {
+            if (this.user)
+                return this.user;
+            try {
+                const result = await UserApi.getCurrentUser();
+                this.setUser(result);
+                return result;
+            } catch (e){
+                console.log(e);
+                return -1;
+            }
+        },
         // // Devuelve la información de un usuario por su id
         // // Devuelve -1 en caso de error
         async getUserById(id){

@@ -4,7 +4,7 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="id in ids" :key="id" cols="6">
-        <ExerciseCard :id="id" :details="false" :editRemove="true" ></ExerciseCard>
+        <ExerciseCard :id="id" :details="false" :editRemove="true" @editTouched="editExercise"/>
       </v-col>
     </v-row>
   </v-container>
@@ -14,6 +14,7 @@
 import ExerciseCard from "@/components/ExerciseCard";
 import {useExercises} from "@/store/Exercises";
 import {mapState} from 'pinia'
+
 export default {
   name: "ExerciseCardList",
   components: {
@@ -30,6 +31,9 @@ export default {
       console.log(id)
       console.log(status)
     },
+    editExercise(exerciseId){
+      this.$emit('editExercise', exerciseId);
+    }
     // ...mapActions(useExercises,['getExerciseById'])
   },
   computed:{

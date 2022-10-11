@@ -3,11 +3,11 @@
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
   <div>
-    <span class="description-style black--text d-flex font-weight-bold mb-2 mt-5">{{ getTitleText }}</span>
+    <span class="description-style black--text d-flex font-weight-bold mb-2 mt-5">Descripción:</span>
     <v-textarea v-if="readOnly" class="textarea-style ml-5 mr-2"
                 solo flat hide-details readonly no-resize :value="textareaValue"/>
-    <v-textarea v-else class="textarea-style ml-5 mr-2 not-readonly-style"
-        solo flat hide-details no-resize :placeholder="getPlaceholderText"/>
+    <v-textarea v-else class="textarea-style ml-5 mr-2 not-readonly-style" @input="updateIsEmpty"
+        solo flat hide-details no-resize v-model="textAreaData" :placeholder="'Escriba una descripción del ejercicio'"/>
   </div>
 </template>
 
@@ -23,13 +23,13 @@ export default {
   // Number textareaBorderRadius: Radio del borde del textarea (en px)
   // --------------------------------------------
   props: {
-    language: {
-      type: String,
-      required: true,
-      validator(value) {
-        return ['es', 'en'].includes(value)
-      }
-    },
+    // language: {
+    //   type: String,
+    //   required: true,
+    //   validator(value) {
+    //     return ['es', 'en'].includes(value)
+    //   }
+    // },
     readOnly: {
       type: Boolean,
       required: true
@@ -54,21 +54,35 @@ export default {
   data() {
     return {
       // De esta manera, podemos parametrizar el contenido estático en funcion del lenguaje del usuario
-      defaultText: [
-        {titleText: 'Descripción:', placeholderText: 'Escriba una descripción del ejercicio', lang: 'es'},
-        {titleText: 'Description:', placeholderText: 'Write some info about the exercise', lang: 'en'}
-      ],
+      // defaultText: [
+      //   {titleText: 'Descripción:', placeholderText: 'Escriba una descripción del ejercicio', lang: 'es'},
+      //   {titleText: 'Description:', placeholderText: 'Write some info about the exercise', lang: 'en'}
+      // ],
       titleSizeCSS: this.titleSize + 'px',
       textareaSizeCSS: this.textareaSize + 'px',
-      textareaBorderRadiusCSS: this.textareaBorderRadius + 'px'
+      textareaBorderRadiusCSS: this.textareaBorderRadius + 'px',
+      IsEmpty: true,
+      textAreaData: '',
+    }
+  },
+  methods: {
+    updateIsEmpty() {
+      console.log(this.textAreaData)
+      this.IsEmpty = (this.textAreaData === '')
+      this.$emit('input', !this.IsEmpty, this.textAreaData)
     }
   },
   computed: {
-    getTitleText(){
-      return this.defaultText[this.defaultText.map(e => e.lang).indexOf(this.language)].titleText
-    },
-    getPlaceholderText(){
-      return this.defaultText[this.defaultText.map(e => e.lang).indexOf(this.language)].placeholderText
+    // getTitleText(){
+    //   return this.defaultText[this.defaultText.map(e => e.lang).indexOf(this.language)].titleText
+    // },
+    // getPlaceholderText(){
+    //   return this.defaultText[this.defaultText.map(e => e.lang).indexOf(this.language)].placeholderText
+    // }
+  },
+  beforeMount() {
+    if(this.textareaValue && !this.readOnly){
+      this.textAreaData = this.textareaValue;
     }
   }
 }

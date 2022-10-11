@@ -40,7 +40,7 @@
                         v-on="on"/>
               </v-img>
             </template>
-            <MediaPopUp :img-src="require('@/assets/placeholder.jpg')" @closeWarning="mediaDialog = false"/>
+            <MediaPopUp :img-src="getExerciseImage" @closeWarning="mediaDialog = false"/>
           </v-dialog>
 
         </v-col>
@@ -54,16 +54,16 @@
                         placeholder="Ingrese el nombre del ejercicio"
                         solo
                         flat
-                        v-model="routineName"
+                        v-model="exerciseName"
                         class="exercise-title-style"
-          ></v-text-field>
+          />
         </v-col>
       </v-row>
       <v-row class="mt-n5">
         <v-col :cols="12">
           <div class="d-inline author-style">
             <span>Autor: </span>
-            <span>Raul Sarmiento</span>
+            <span>{{this.getUser.firstName}} {{this.getUser.lastName}}</span>
           </div>
         </v-col>
       </v-row>
@@ -83,20 +83,20 @@
           <v-row class="mt-n6">
             <v-col :cols="4">
               <!-- TODO: Definir equipamientos posibles para un ejercicio -->
-              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195" :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"/>
+              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195" :placeholder="getEquipmentValue" :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"/>
             </v-col>
             <v-col :cols="4">
-              <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4" :width="195" :options="['Zona inferior', 'Zona media', 'Zona superior']"/>
+              <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4" :width="195" :placeholder="getMuscleZone" :options="['Todo el cuerpo', 'Zona inferior', 'Zona media', 'Zona superior']"/>
             </v-col>
             <v-col :cols="4">
-              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :width="195" :options="['Baja', 'Media', 'Alta']"/>
+              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :width="195" :placeholder="getIntensity" :options="['Baja', 'Media', 'Alta']"/>
             </v-col>
           </v-row>
         </v-container>
       </v-row>
       <v-row>
         <v-col :cols="12">
-          <ExerciseDetail :textarea-border-radius="12" :textarea-size="20" :title-size="30" :read-only="false" language="es"/>
+          <ExerciseDetail :textarea-border-radius="12" :textarea-size="20" :title-size="30" :read-only="false" :textarea-value="getDetail" @input="detailsInput"/>
         </v-col>
       </v-row>
     </v-container>
@@ -109,8 +109,24 @@ import ExerciseDetail from "@/components/ExerciseDetail";
 import AlertPopUp from "@/components/AlertPopUp";
 import MediaPopUp from "@/components/MediaPopUp";
 
+import {useExercises} from "@/store/Exercises";
+import { mapActions } from "pinia";
+import {Exercise} from "@/api/exercise";
+
+import {useUsers} from "@/store/User";
+
+
 export default {
   name: "CreateExercisePopUp",
+  // ------------------------------------------
+  // Number exerciseId: Indica el id del ejercicio que se esta editando (vale -1 si es un ejercicio nuevo)
+  // ------------------------------------------
+  props: {
+    exerciseId: {
+      type: Number,
+      required: true
+    }
+  },
   components: {
     MediaPopUp,
     AlertPopUp,
@@ -119,12 +135,22 @@ export default {
   },
   data() {
     return {
-      routineName: '',
+      // body{
+//     name: "Jumping Jacks",
+//     detail: "Jumping Jacks",
+//     type: "exercise",
+//     metadata: null
+// }
+      result: null,
+      exercise: null,
+      exerciseName: '',
       titleIsEmpty: false,
       // Maneja el popUp de alerta (cuando es true se abre el popUp, cuando es false se cierra el popUp)
       closeDialog: false,
       // Maneja el popUp de imagen/video (cuando es true se abre el popUp, cuando es false se cierra el popUp
       mediaDialog: false,
+      details: '',
+      detailsIsEmpty: false,
 
       rules: {
         required: value => !!value || 'El titulo del ejercicio es requerido.'
@@ -138,7 +164,7 @@ export default {
   },
   methods: {
     confirm(){
-      if(this.routineName === ''){
+      if(this.exerciseName === ''){
         this.updateTitleIsEmpty()
         this.$vuetify.goTo(this.target, this.options)
       } else {
@@ -146,16 +172,41 @@ export default {
       }
     },
     updateTitleIsEmpty(){
-      this.titleIsEmpty = (this.routineName === '')
+      this.titleIsEmpty = (this.exerciseName === '')
     },
-    exerciseSaved(){
-      // El padre debe cerrar el popUp
+    setResult(result){
+      this.result = JSON.stringify(result, null, 2)
+    },
+    async exerciseSaved(){
       this.$emit("exerciseSaved")
+      const exerciseCreated = new Exercise(this.exerciseName, this.details, "exercise", null)
+      try {
+        if(this.exerciseId === -1){
+          this.exercise = await this.$addExercise(exerciseCreated);
+        }
+        console.log(this.exercise)
+        this.setResult(this.exercise)
+        console.log("subido")
+      } catch (e) {
+        console.log(e)
+      }
+      console.log("listo")
+
     },
     cancelExercise() {
       // El padre debe cerrar el popUp
       this.$emit("cancelExercise")
-    }
+    },
+    ...mapActions(useExercises, {
+      $addExercise: 'addExerciseToApiAndStore',
+      $modifyExercise: ''
+    }),
+    detailsInput(value, input) {
+      this.detailsIsEmpty=value;
+      this.details=input;
+    },
+    ...mapActions(useUsers, {getUser: 'getCurrentUser'}),
+    ...mapActions(useExercises, {getExercise: 'getExerciseByIdFromStore'})
   },
   computed: {
     target () {
@@ -167,7 +218,45 @@ export default {
         offset: this.offset,
         easing: this.easing,
       }
+    },
+    getExerciseName() {
+      if(this.exerciseId === -1){
+        return '';
+      } else {
+        return this.getExercise(this.exerciseId).name;
+      }
+    },
+    getExerciseImage(){
+      // if(this.exerciseId === -1){
+      //   return require('@/assets/placeholder.jpg');
+      // } else {
+      //   // TODO: Realizar el manejo de imagenes
+      //   // return this.
+      // }
+      return require('@/assets/placeholder.jpg');
+    },
+    // TODO: Requiere de metadata
+    getEquipmentValue(){
+      return 'Sin equipamiento'
+    },
+    // TODO: Requiere de metadata
+    getMuscleZone(){
+      return 'Todo el cuerpo'
+    },
+    // TODO: Requiere de metadata
+    getIntensity(){
+      return 'Baja'
+    },
+    getDetail(){
+      if(this.exerciseId === -1){
+        return '';
+      } else {
+        return this.getExercise(this.exerciseId).detail;
+      }
     }
+  },
+  beforeMount() {
+    this.exerciseName = this.getExerciseName;
   }
 }
 </script>

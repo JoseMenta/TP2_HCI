@@ -22,7 +22,8 @@
         </v-sheet>
       </v-sheet>
     </v-card >
-    <v-img v-if="!isRest" :src="exerciseData.image" :alt="exerciseData.name" contain class="img-format" height="100%"  width="130"/>
+<!-- Ojo cambiar imagen, es para meterme despues con la meta data-->
+    <v-img v-if="!isRest" src="@/assets/fiti-logo.png" :alt="exerciseData.name" contain class="img-format" height="100%"  width="130"/>
     <v-img v-else :src="require('@/assets/rest.png')" :alt="'Descanso'" contain class="img-format" height="100%"  width="130"/>
   </v-card>
 </template>
@@ -74,7 +75,7 @@ export default {
   computed:{
     exerciseData(){
       const exercises = useExercises()
-      return exercises.getExerciseById(this.id)
+      return exercises.getExerciseByIdFromStore(this.id)
     },
     isRest(){
       return (this.rest === true)
