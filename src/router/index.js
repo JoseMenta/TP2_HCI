@@ -76,7 +76,7 @@ const routes = [
     path: '/verification',
     name: 'verification',
     component:() => import(/* webpackChunkName: "verification" */ '@/views/VerificationView'),
-    props: (route)=>({user:route.query.user,code:route.query.code})
+    props: (route)=>({user:route.query.user,code:route.query.code, email:route.query.email})
   },
   {
     path: '/created_exercises',

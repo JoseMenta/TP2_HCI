@@ -9,7 +9,8 @@
          height="auto"
          @click="action ? action : null"
         :disabled=status>
-    <span class="white--text my-3 mx-16 text-style">{{text}}</span>
+    <span class="white--text my-3 mx-16 text-style" v-if="!waiting">{{text}}</span>
+    <span class="white--text my-3 mx-16 text-style" v-else><v-progress-circular indeterminate></v-progress-circular></span>
   </v-btn>
 </template>
 
@@ -41,6 +42,11 @@ export default {
     status: {
       type: Boolean,
       required: false,
+      default: false
+    },
+    waiting:{
+      type:Boolean,
+      required:false,
       default: false
     }
   },

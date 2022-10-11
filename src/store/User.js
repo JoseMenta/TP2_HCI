@@ -132,9 +132,9 @@ export const useUsers = defineStore("users", {
         // },
         // // Verifica la cuenta
         // // Devuelve 0 en caso de exito, -1 en caso de error y 1 si los datos son invalidos
-        async verifyEmail(code) {
+        async verifyEmail(email, code) {
             try {
-                await UserApi.verifyEmail({email: this.user.email, code: code});
+                await UserApi.verifyEmail({email: email, code: code});
                 return 0;
             } catch(e) {
                 console.log(e);
