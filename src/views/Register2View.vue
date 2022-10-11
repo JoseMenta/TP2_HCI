@@ -18,7 +18,7 @@
         <PasswordInput class="margin-style" @input="password2Input"
                        :required="required" :textError="this.errorPassword"
                        placeHolder="Ingrese la contraseña nuevamente"></PasswordInput>
-        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'verification'})" :text-size="20" text="Ingresar" :border-radius="12"/>
+        <LoginButton class="d-flex margin-btn-style" @click.native="nextView({name: 'verification'})" :text-size="20" text="Ingresar" :border-radius="12" :waiting="waiting"/>
       </v-card>
     </v-sheet>
   </div>
@@ -41,6 +41,7 @@ export default {
   },
   data() {
     return {
+      waiting:false,
       email: false,
       inputEmail: '',
       password1: false,
@@ -58,6 +59,7 @@ export default {
       console.log(newValue)
     },
     async nextView(nameView){
+      this.waiting = true
       if(this.email && this.password1 && this.password2){
         if(this.inputpassword1 === this.inputPassword2){
           try{
@@ -67,11 +69,13 @@ export default {
             await this.createUser();
           }catch (e){
             console.log(e)
+            this.waiting = false
           }
           this.$router.push(nameView);
         }
       }
       else
+        this.waiting = false
         this.required=true;
     },
     emailInput(value, input) {

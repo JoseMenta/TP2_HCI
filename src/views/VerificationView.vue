@@ -17,11 +17,10 @@
             plain
             class="margin-style"
         ></v-otp-input>
-        <LoginButton class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive"/>
+        <LoginButton class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive" :waiting="waiting">
+        </LoginButton>
       </v-card>
     </v-sheet>
-    <p>{{this.user}}</p>
-    <p>{{this.code}}</p>
   </div>
 </template>
 
@@ -34,23 +33,31 @@ import {useUsers} from "@/store/User";
 export default {
   name: "VerificationView",
   data: () => ({
-    otp: '',
-    length: 6
+    otp:'',
+    length: 6,
+    waiting:false,
   }),
   props:{
     user: {
       type: String,
-      required: false
+      required: false,
+      default:''
     },
-    code:{
+    email:{
       type:String,
-      required:false
+      required:false,
+      default:''
     }
   },
   computed: {
     isActive () {
       return this.otp.length === this.length
     },
+  },
+  created() {
+    console.log(this.code)
+    console.log(this.email)
+    console.log(this.otp)
   },
   components: {
     LoginButton,
@@ -64,8 +71,15 @@ export default {
       this.$router.push(nameView)
     },
     async verify(){
+      this.waiting = true
       const users = useUsers();
-      const result = await users.verifyEmail(this.otp);
+      let mail = this.email
+      if(this.email.length===0){
+        mail=users.user.email
+      }
+      console.log(users.user.email)
+      const result = await users.verifyEmail(mail,this.otp);
+      this.waiting = false
       switch(result){
         case -1:
           console.log('Error crítico.');
@@ -77,6 +91,7 @@ export default {
           console.log('Codigo correcto, cuenta verificada');
           this.changeView({name: 'login'});
       }
+
     }
   }
 }
