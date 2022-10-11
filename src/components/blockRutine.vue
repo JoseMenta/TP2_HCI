@@ -139,7 +139,7 @@ export default {
 
 <style scoped>
 
-::v-deep .v-label {
+:deep(.v-label) {
   font-size: 30px
 }
 

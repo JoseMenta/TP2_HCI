@@ -2,7 +2,7 @@
 <template>
   <div class="d-inline-flex">
     <FilterMenu :id="0"
-                :options="getArrayTexts(this.searchNameFilterMenu)"
+                :options="['Nombre de la rutina', 'Nombre del creador']"
                 :width="175"
                 :left-border-radius="4" :right-border-radius="0"/>
     <input class="text-field-style pl-1" type="text" v-model="filterSearchText"/>
@@ -17,28 +17,28 @@ export default {
   components: {
     FilterMenu
   },
-  props: {
-    language: {
-      type: String,
-      required: true,
-      validator(value) {
-        return ['es', 'en'].includes(value)
-      }
-    },
-  },
+  // props: {
+  //   language: {
+  //     type: String,
+  //     required: true,
+  //     validator(value) {
+  //       return ['es', 'en'].includes(value)
+  //     }
+  //   },
+  // },
   data() {
     return {
       filterSearchText: '',
-      searchNameFilterMenu: [
-        {elements: ['Nombre de la rutina', 'Nombre del creador'], lang: 'es'},
-        {elements: ['Routine name', 'Creator name'], lang: 'en'}
-      ],
+      // searchNameFilterMenu: [
+      //   {elements: ['Nombre de la rutina', 'Nombre del creador'], lang: 'es'},
+      //   {elements: ['Routine name', 'Creator name'], lang: 'en'}
+      // ],
     }
   },
   methods: {
-    getArrayTexts(componentArrayText){
-      return componentArrayText[componentArrayText.map(e => e.lang).indexOf(this.language)].elements
-    }
+    // getArrayTexts(componentArrayText){
+    //   return componentArrayText[componentArrayText.map(e => e.lang).indexOf(this.language)].elements
+    // }
   }
 }
 </script>

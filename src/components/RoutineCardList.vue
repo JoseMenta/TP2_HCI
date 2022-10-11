@@ -3,15 +3,12 @@
   <v-container>
     <v-row>
       <slot name="header"></slot>
-      <v-col v-for="elem in routines" :key="elem.name" cols="6">
-        <router-link :to="{
-          name:'routine_details',
-          params:{name:elem.name}
-        }"></router-link>
-        <RoutineCard :img="elem.image" :name="elem.name" v-bind:is-favorite="elem.favorite" v-bind:id="elem.id"
-                     @favoriteTouched="changeFavorite" v-bind:stars="elem.stars"
-                     v-bind:tags="elem.metadata.tags"
-                      @click="changeView(elem.name)"/>
+      <v-col v-for="routine in routines" :key="routine.id" cols="6">
+<!--        <router-link :to="{-->
+<!--          name:'routine_details',-->
+<!--          params:{name:elem.name}-->
+<!--        }"></router-link>-->
+        <RoutineCard :routine-data="routine" @favoriteTouched="changeFavorite" />
 
       </v-col>
     </v-row>
@@ -20,30 +17,39 @@
 
 <script>
 import RoutineCard from "@/components/RoutineCard";
-import {useRoutines} from "@/store/Routines";
-import {mapState} from "pinia";
+// import {useRoutines} from "@/store/Routines";
+// import {mapState} from "pinia";
 
 export default {
   name: "RoutineCardList",
   components: {
     RoutineCard
   },
-  computed:{
-    ...mapState(useRoutines,{routines:'getRoutines'})
+  props: {
+    // ------------------------------------------
+    // Array routines: Las rutinas a mostrar
+    // ------------------------------------------
+    routines: {
+      type: Array[Object],
+      required: true
+    }
   },
+  // computed:{
+  //   ...mapState(useRoutines,{routines:'getRoutines'})
+  // },
   methods: {
     changeFavorite(id,status){
       console.log(id)
       console.log(status)
     },
-    changeView(paramName){
-       this.$router.push(
-           {name:'routine_details',
-            params:{
-             name:paramName
-           }
-           })
-    }
+    // changeView(paramName){
+    //    this.$router.push(
+    //        {name:'routine_details',
+    //         params:{
+    //          name:paramName
+    //        }
+    //        })
+    // }
   }
 }
 </script>

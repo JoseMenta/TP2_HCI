@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
-// import {useCycles} from "@/store/Cycles";
-// import {useUsers} from "@/store/User";
+
 import { RoutineApi } from "@/api/routine";
+
+import {useFavourites} from "@/store/Favourites";
+
+// import {useUsers} from "@/store/User";
 
 // Rutinas:
 //      - id: Identificador de la rutina
@@ -16,116 +19,120 @@ import { RoutineApi } from "@/api/routine";
 //      - cycles: Arreglo de bloques de la rutina
 //      - metadata:
 //          - slug: link de la rutina
-//          - favourite: Indica si el usuario lo tiene como favorito
 //          - votes: Cantidad de votos que tiene la rutina
+//          - tags: Tags asociados a la rutina
 
+const DIFICULTY_LEVELS = {
+    ROOKIE: 'rookie',
+    BEGINNER: 'beginner',
+    INTERMEDIATE: 'intermediate',
+    ADVANCED: 'advanced',
+    EXPERT: 'expert'
+};
 
-export const useRoutines = defineStore('createdRoutines', {
+const example = {
+    id: 0,
+    name: 'Fulbo',
+    detail: require('@/assets/lionel-messi.webp'),
+    date: 1602646871112,
+    score: 4,
+    isPublic: true,
+    difficulty: DIFICULTY_LEVELS.ROOKIE,
+    user: {
+        id: 0,
+        username: 'raulsarmiento@mail.com',
+        avatarUrl: require('@/assets/avatar.jpg'),
+        date: 1602139940660,
+        lastActivity: 1602646870971
+    },
+    category: {
+        id: 0,
+        name: 'Full body',
+        detail: 'Full body'
+    },
+    metadata: {
+        slug: 'fulbo',
+        votes: 2340,
+        tags: ['Pelota', 'Equipo', 'Fútbol']
+    }
+};
+
+export const useRoutines = defineStore('routines', {
     state:()=>({
-        // routines:[
-        //     {
-        //         name: 'Jogo bonito',
-        //         slug: 'jogo_bonito',
-        //         id:1,
-        //         image: require('@/assets/lionel-messi.webp'),
-        //         favorite: true,
-        //         stars: 4,
-        //         date: '1602139940660',
-        //         metadata:{
-        //             tags:['Fuerza','Resistencia']
-        //         }
-        //     },
-        //     {
-        //         name: 'Futbol para todos',
-        //         slug: 'futbol_para_todos',
-        //         id:2,
-        //         image: require('@/assets/lionel-messi.webp'),
-        //         favorite: true,
-        //         stars: 3,
-        //         metadata:{
-        //             tags:['Fuerza','Resistencia']
-        //         }
-        //     },
-        //     {
-        //         name: 'Gluteos',
-        //         slug: 'gluteos',
-        //         id:3,
-        //         image: require('@/assets/lionel-messi.webp'),
-        //         favorite: true,
-        //         stars: 5,
-        //         metadata:{
-        //             tags:['Fuerza','Resistencia']
-        //         }
-        //     },
-        //     {
-        //         name: 'Velocidad',
-        //         slug: 'velocidad',
-        //         id:4,
-        //         image: require('@/assets/lionel-messi.webp'),
-        //         favorite: true,
-        //         stars: 2,
-        //         metadata:{
-        //             tags:['Fuerza','Resistencia']
-        //         }
-        //     }
-        // ]
-        routines:[]
+        routines: []
     }),
     getters: {
         // Devuelve todas las rutinas almacenadas en cache
-        // getRoutines(){
-        //     return this.routines.map((routine) => this.getRoutineById(routine.id));
-        // },
-        // Devuelve la rutina por id
-        // Devuelve -1 si no existe rutina con dicho id
-        // getRoutineById(id){
-        //     const routine = this.routines.find((routine) => routine.id === id);
-        //     if(!routine){
-        //         return -1;
-        //     }
-        //     const user = useUsers();
-        //     const cycles = useCycles();
-        //     return {
-        //         id:routine.id,
-        //         name:routine.name,
-        //         detail: routine.detail,
-        //         date: routine.date,
-        //         score: routine.score,
-        //         isPublic: routine.isPublic,
-        //         difficulty: routine.difficulty,
-        //         user: user.getUser,
-        //         category: routine.category,
-        //         cycles: cycles.getCycles,
-        //         metadata:routine.metadata,
-        //     }
-        // },
-        // Devuelve la rutina por nombre
-        // Devuelve -1 si no existe rutina con dicho nombre
-        // getRoutineByName(name){
-        //     const routine = this.routines.find((routine) => routine.name === name);
-        //     if(!routine){
-        //         return -1;
-        //     }
-        //     return this.getRoutineById(routine.id);
-        // },
-        // Devuelve el indice de la rutina routine en el store
-        // -1 si no esta en el store
-        // getRoutineIndex(routine){
-        //     return this.routines.findIndex((routineInStore) => {
-        //         return routineInStore.id === routine.id
-        //     })
-        // }
+        getRoutines(){
+            return this.routines.map((routine) => this.returnRoutineInfo(routine));
+        },
+        getRoutinesFromCurrentUser(){
+            // TODO: Users.js
+            // const usersStore = useUsers();
+            // const currentUser = usersStore.getCurrentUser();
+            // return this.getRoutinesFromUserId(currentUser.id);
+            return this.getRoutinesFromUserId(0);
+        },
+        getFavouriteRoutinesFromCurrentUser(){
+            const favouritesStore = useFavourites();
+            return favouritesStore.getFavouriteRoutines.map((routine) => this.getRoutineById(routine.id))
+        }
     },
     actions: {
-
+        // Dada una rutina, devuelve toda su informacion
+        returnRoutineInfo(routine){
+            return {
+                id:routine.id,
+                name:routine.name,
+                detail: routine.detail,
+                date: routine.date,
+                score: routine.score,
+                isPublic: routine.isPublic,
+                difficulty: routine.difficulty,
+                user: routine.user,
+                category: routine.category,
+                metadata:routine.metadata,
+            }
+        },
+        // Devuelve la rutina por id
+        // Devuelve -1 si no existe rutina con dicho id
+        getRoutineById(id){
+            const routine = this.routines.find((routine) => routine.id === id);
+            if(!routine){
+                return -1;
+            }
+            return this.returnRoutineInfo(routine);
+        },
+        // Devuelve la rutina por nombre
+        // Devuelve -1 si no existe rutina con dicho nombre
+        getRoutineByName(name){
+            const routine = this.routines.find((routine) => routine.name === name);
+            if(!routine){
+                return -1;
+            }
+            return this.returnRoutineInfo(routine);
+        },
+        // Devuelve el indice de la rutina routine en el store
+        // -1 si no esta en el store
         getRoutineIndex(routine){
             return this.routines.findIndex((routineInStore) => {
                 return routineInStore.id === routine.id
             })
         },
+        // Devuelve aquellas rutinas cuyo creador tenga el mismo id que userId
+        getRoutinesFromUserId(userId){
+            const routines = this.routines.filter((routine) => routine.user.id === userId);
+            return routines.map((routine) => this.returnRoutineInfo(routine));
+        },
+        // Devuelve true si la rutina con id routineId es una rutina del usuario con id userId
+        isRoutineFromUserId(userId, routineId){
+            const userIdRoutines = this.getRoutinesFromUserId(userId);
+            return userIdRoutines.map((routine) => routine.id).includes(routineId);
+        },
         // Agrega una nueva rutina al store
         // Es void
         addRoutineToStore(routine) {
+            this.routines = Array.from(this.routines);
             this.routines.push(routine);
         },
         // Reemplaza la rutina en el indice index del store por routine
@@ -212,17 +219,18 @@ export const useRoutines = defineStore('createdRoutines', {
         // Guarda las rutinas almacenadas en la Api en el store (lo actualiza)
         // Devuelve 0 en caso de exito, -1 en caso de error
         async fetchRoutines(){
-            try {
-                const apiRoutines = await this.getRoutinesFromApi();
-                this.replaceAllRoutinesInStore(apiRoutines);
-            } catch (e) {
-                console.log(e);
+            const apiRoutines = await this.getRoutinesFromApi();
+            if(apiRoutines === -1){
                 return -1;
             }
+            this.replaceAllRoutinesInStore(apiRoutines);
+            // TODO: Prueba -----------
+            this.addRoutineToStore(example);
+            // TODO: Prueba ---------
             return 0;
         },
         // Agrega una rutina a la API y (si no esta) en el store
-        // Devuelve la respuesta del store
+        // Devuelve la respuesta de la API
         async addRoutine(routine){
             const apiResult = await this.addRoutineToApi(routine);
             if (this.getRoutineIndex(apiResult) === -1)
@@ -233,21 +241,15 @@ export const useRoutines = defineStore('createdRoutines', {
         // Devuelve un objeto con la respuesta de la api y del store respectivamente (-1 en caso de error para cada uno)
         async modifyRoutine(routine){
             const apiResult = await this.modifyRoutineInApi(routine);
-            if(apiResult === -1){
-                return {api: apiResult, store: -1};
-            }
-            const index = this.getRoutineIndex(apiResult);
-            const storeResult = this.modifyRoutineByIndexInStore(index, apiResult);
+            const index = this.getRoutineIndex(routine);
+            const storeResult = this.modifyRoutineByIndexInStore(index, routine);
             return {api: apiResult, store: storeResult};
         },
         // Elimina la rutina routine en Store y API
         // Devuelve un objeto con la respuesta de la api y del store respectivamente (-1 en caso de error para cada uno)
         async deleteRoutine(routine){
             const apiResult = await this.deleteRoutineInApi(routine);
-            if(apiResult === -1){
-                return {api: apiResult, store: -1};
-            }
-            const index = this.getRoutineIndex(apiResult);
+            const index = this.getRoutineIndex(routine);
             const storeResult = this.removeRoutineByIndexInStore(index);
             return {api: apiResult, store: storeResult}
         }

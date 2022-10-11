@@ -1,15 +1,16 @@
 <!-- Vista de la pagina principal -->
 <template>
   <div class="ml-7">
-    <h1 class="title-style my-5">{{getText(this.mainPageText)}}</h1>
-    <RoutineFilter :language="language">
+    <h1 class="title-style my-5">Rutinas creadas</h1>
+    <RoutineFilter>
       <template v-slot:firstFilter>
-        <RoutineFilterSearch :language="language"/>
+        <RoutineFilterSearch/>
       </template>
     </RoutineFilter>
 
     <div class="mt-12">
-      <RoutineCardList>
+      <!-- TODO: Corregir User.js -->
+      <RoutineCardList v-if="dataLoaded" :routines="userCreatedRoutines">
         <template v-slot:header>
           <v-col class="d-flex" cols="6">
             <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="changeView({name: 'createRoutine'})">
@@ -28,6 +29,17 @@ import RoutineCardList from "@/components/RoutineCardList";
 import RoutineFilter from "@/components/RoutineFilter";
 import RoutineFilterSearch from "@/components/RoutineFilterSearch";
 
+import {mapState} from "pinia";
+
+import {useRoutines} from "@/store/Routines";
+const routinesStore = useRoutines();
+
+import {useFavourites} from "@/store/Favourites";
+const favouritesStore = useFavourites();
+
+// import {useUsers} from "@/store/User";
+// const usersStore = useUsers();
+
 export default {
   name: "CreatedRoutinesView",
   components: {
@@ -35,29 +47,46 @@ export default {
     RoutineFilterSearch,
     RoutineCardList
   },
-  props: {
-    language: {
-      type: String,
-      required: true,
-      validator(value) {
-        return ['es', 'en'].includes(value)
-      }
-    },
-  },
+  // props: {
+  //   language: {
+  //     type: String,
+  //     required: true,
+  //     validator(value) {
+  //       return ['es', 'en'].includes(value)
+  //     }
+  //   },
+  // },
   data(){
     return {
-      mainPageText: [
-        {text: 'Rutinas creadas', lang: 'es'}, {text: 'Created routines', lang: 'en'}
-      ],
+      dataLoaded: false,
+      // mainPageText: [
+      //   {text: 'Rutinas creadas', lang: 'es'}, {text: 'Created routines', lang: 'en'}
+      // ],
     }
   },
   methods: {
-    getText(componentText){
-      return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
-    },
+    // getText(componentText){
+    //   return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
+    // },
     changeView(nameView) {
       this.$router.push(nameView)
-    }
+    },
+  },
+  computed:{
+    ...mapState(useRoutines, {userCreatedRoutines: "getRoutinesFromCurrentUser"})
+  },
+  async beforeCreate(){
+    // Busca las rutinas almacenadas en la api y las almacena en el store
+    await routinesStore.fetchRoutines();
+    // Busca las rutinas favoritas del usuario
+    await favouritesStore.fetchFavourites();
+    // Tomo los datos del usuario para obtener su id
+    // TODO: Corregir User.js
+    // const user = usersStore.getCurrentUser();
+    // Nos quedamos con las rutinas que nos sirven
+    // this.userCreatedRoutines = routinesStore.getRoutinesFromUserId(user.id);
+    // Aviso que ya se cargo la informacion
+    this.dataLoaded = true;
   }
 }
 </script>
