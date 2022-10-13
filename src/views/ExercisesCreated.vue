@@ -7,9 +7,8 @@
       <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja Intensidad','Media Intensidad','Alta Intensidad']"  :width="150" @menuChanged="changeMenu" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
     </v-sheet>
     <v-sheet>
-
       <div class="mt-12">
-        <ExerciseCardList v-if="this.dataLoaded" :ids="this.getExercises" @editExercise="editExercise">
+        <ExerciseCardList v-if="this.dataLoaded" :ids="this.getExercises" :version="this.version" @editExercise="editExercise" @deleteExercise="deleteExercise">
           <template v-slot:header>
             <v-col class="d-flex" cols="6">
               <v-dialog persistent v-model="createExerciseDialog">
@@ -22,7 +21,7 @@
                     <h2 class="new-routine-text-style">Nuevo Ejercicio</h2>
                   </v-card>
                 </template>
-                <CreateExercisePopUp :exercise-id="popUpId" @exerciseSaved="reRenderPopUp"
+                <CreateExercisePopUp :exercise-id="popUpId" @exerciseSaved="reRenderExerciseCard"
                                      @cancelExercise="reRenderPopUp" :key="popUpKey"/>
               </v-dialog>
             </v-col>
@@ -38,7 +37,7 @@ import FilterMenu from "@/components/FilterMenu";
 import ExerciseCardList from "@/components/ExerciseCardList";
 import CreateExercisePopUp from "@/components/CreateExercisePopUp";
 import {useExercises} from "@/store/Exercises"
-import {mapState} from "pinia";
+import {mapActions, mapState} from "pinia";
 
 export default {
   name: "ExercisesCreated",
@@ -52,7 +51,8 @@ export default {
       createExerciseDialog: false,
       popUpKey: 0,
       dataLoaded: false,
-      popUpId: -1
+      popUpId: -1,
+      version:0
     }
   },
   methods: {
@@ -60,17 +60,32 @@ export default {
       console.log(menuId)
       console.log(newValue)
     },
-    reRenderPopUp(){
+    async reRenderPopUp(){
       this.createExerciseDialog = false
       this.popUpKey++;
       this.popUpId = -1;
+      console.log("Despues de la carga como esta el API")
+    },
+    reRenderExerciseCard(){
+      this.version++;
+      console.log("refresh")
+      this.reRenderPopUp();
     },
     editExercise(exerciseId){
       this.popUpId = exerciseId;
       console.log(this.popUpId);
       this.popUpKey++;
       this.createExerciseDialog = true;
-    }
+    },
+    async deleteExercise(exerciseId){
+      const exercise = await this.$getFromId(exerciseId);
+      await this.$deleteExercise(exercise);
+      this.version++;
+    },
+    ...mapActions(useExercises, {
+        $deleteExercise : 'deleteExerciseFromApiAndStore',
+        $getFromId: 'getExerciseFromApi'
+      }),
   },
   computed: {
     ...mapState(useExercises, {getExercises: 'getExercises'})
