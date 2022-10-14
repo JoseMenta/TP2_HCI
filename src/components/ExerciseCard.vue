@@ -1,5 +1,5 @@
 <template>
-  <v-card class="d-inline-flex flex-row main_card" outlined hover width="100%" @click="touchCard">
+  <v-card class="d-inline-flex flex-row main_card justify-space-between" outlined hover width="100%" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
       <v-card class="d-inline-flex align-center" flat>
         <h2 v-if="!isRest" class="text-truncate" >{{exerciseData.name}}</h2>
@@ -23,7 +23,7 @@
       </v-sheet>
     </v-card >
 <!-- Ojo cambiar imagen, es para meterme despues con la meta data-->
-    <v-img v-if="!isRest" src="@/assets/fiti-logo.png" :alt="exerciseData.name" contain class="img-format" height="100%"  width="130"/>
+    <iframe v-if="!isRest" src="https://player.vimeo.com/video/705745212?h=9e77c9b220" height="100%" width="auto" class="iframe-class"></iframe>
     <v-img v-else :src="require('@/assets/rest.png')" :alt="'Descanso'" contain class="img-format" height="100%"  width="130"/>
   </v-card>
 </template>
@@ -33,6 +33,11 @@ import {useExercises} from "@/store/Exercises";
 
 export default {
   name: "ExerciseCard",
+  data() {
+    return {
+      url : ''
+    }
+  },
   props:{
     id:{
       type:Number,
@@ -79,22 +84,31 @@ export default {
     },
     isRest(){
       return (this.rest === true)
-    }
+    },
   },
   methods:{
     touchEdit(){
       console.log(`edit touched in ExerciseCard ${this.id}`)
-      this.$emit('editTouched',this.id)
+      this.$emit('editTouched', this.id)
     },
     touchDelete(){
       console.log(`delete touched in ExerciseCard ${this.id}`)
-      this.$emit('deleteTouched',this.id)
+      this.$emit('deleteTouched', this.id)
     },
     touchCard(){
       console.log(`ExerciseCard ${this.id} touched`)
-      this.$emit('cardTouched',this.id)
+      this.$emit('cardTouched', this.id)
     },
-  }
+  },
+  /*
+  async beforeMount() {
+    const exercises = useExercises()
+    const video = await exercises.getVideo(this.id, 1);
+    console.log(this.id)
+    console.log("lo que recibi")
+    console.log(video)
+    this.url = video.url
+  }*/
 }
 </script>
 
@@ -110,7 +124,7 @@ export default {
 }
 
 .main_card{
-  border-radius: 20px;
+  -moz-border-radius-bottomleft: 0 ;
   border: black solid 1px;
   aspect-ratio : 4 / 1;
 }
@@ -127,4 +141,10 @@ p{
   width:250px;
   height:70px;
 }
+
+.iframe-class{
+  border: 0 white;
+  border-radius: 0;
+}
+
 </style>

@@ -50,7 +50,7 @@ export const useExercises = defineStore('exercises', {
         //         metadata: null
         //     }
         // ],
-        exercises:{ }
+        exercises:[]
     }),
     getters: {
         // Devuelve el id de los ejercicios almacenados
@@ -59,37 +59,9 @@ export const useExercises = defineStore('exercises', {
             if(!this.exercises.content){
                 return [];
             }
+            console.log(this.exercises.content)
             return this.exercises.content.map((exercise) => exercise.id);
         },
-        // getExerciseById(id) {
-        //     const exercise = this.exercises.find((ex) => ex.id === id)
-        //     if(!exercise){
-        //         return -1;
-        //     }
-        //     /*          Exercises{
-        //                     "id": 1,
-        //                     "name": "Jumping Jacks",
-        //                     "detail": "Jumping Jacks",
-        //                     "type": "exercise",
-        //                     "date": 1620062203228,
-        //                     "metadata": null
-        //                 }*/
-        //     return {
-        //         id: exercise.id,
-        //         name: exercise.name,
-        //         detail: exercise.detail,
-        //         type: exercise.type,
-        //         date: exercise.date,
-        //         metadata: exercise.metadata,
-        //     }
-        // },
-        // // Devuelve el indice del ejercicio exercise en el store
-        // // -1 si no esta en el store
-        // getExerciseIndex(exercise){
-        //     return this.exercise.findIndex((exerciseInStore) => {
-        //         return exerciseInStore.id === exercise.id
-        //     })
-        // }
 
     },
     actions: {
@@ -110,22 +82,27 @@ export const useExercises = defineStore('exercises', {
             this.exercises.content.push(exercise);
         },
         // Devuelve -1 si index es invalido, 0 en caso de exito
-        modifyExerciseInStoreByIndex(index, exercise) {
+        modifyExerciseByIndexInStore(index, exercise) {
             if(!this.exercises.content ||  index >= this.exercises.content.length || index < 0){
                 return -1;
             }
             this.exercises.content[index] = exercise;
+            console.log(this.exercises.content[index])
             return 0;
         },
         // Devuelve -1 si index es invalido, 0 en caso de exito
-        removeExerciseByIndexFromStore(index) {
+         removeExerciseByIndexFromStore(index) {
             if(!this.exercises.content){
                 return -1;
             }
             if(index >= this.exercises.content.length || index < 0){
                 return -1;
             }
-            this.exercises.splice(index, 1);
+             this.exercises.content.splice(index, 1);
+            //delete(this.exercises.content.index)
+             console.log("ejercicios:")
+             console.log(this.exercises.content)
+
             return 0;
         },
         getExerciseByIdFromStore(exerciseId){
@@ -146,6 +123,8 @@ export const useExercises = defineStore('exercises', {
         async addExerciseToApi(exercise) {
             try{
                 const result = await ExerciseApi.addExercise(exercise);
+                console.log("addExercise > addExerciceToApi")
+                console.log(result)
                 return result;
             } catch (e) {
                 console.log(e);
@@ -164,16 +143,31 @@ export const useExercises = defineStore('exercises', {
         },
         // Modifica el exercicio exercise en la API
         // Devuelve la respuesta de la API o -1 en caso de error
-        async modifyExerciseInApi(exercise) {
+        async modifyExerciseInApi(id, exercise) {
             let result;
             try {
-                result = await ExerciseApi.modifyExercise(exercise.id, exercise);
+                console.log(id)
+                console.log(exercise)
+                result = await ExerciseApi.modifyExercise(id, exercise);
             } catch (e){
                 console.log(e);
                 return -1;
             }
             return result;
         },
+
+        async modifyExerciseInApi2(id, exercise) {
+            let result;
+            try {
+                result = await ExerciseApi.modifyExercise(id, exercise);
+            } catch (e){
+                console.log(e);
+                return -1;
+            }
+            return result;
+        },
+
+
         // Elimina el exercicio routine de la Api
         // Devuelve 0 en exito, -1 en caso de error
         async deleteExerciseFromApi(exercise) {
@@ -228,19 +222,16 @@ export const useExercises = defineStore('exercises', {
         // Agrega un exercicio a la API y (si no esta) en el store
         // Devuelve la respuesta del store
         async addExerciseToApiAndStore(exercise){
-            console.log(exercise);
             const apiExercise = await this.addExerciseToApi(exercise);
             if (this.getExerciseIndex(apiExercise) === -1)
                 this.addExerciseToStore(apiExercise);
-            console.log(apiExercise);
             return apiExercise
         },
 
-
         // Modifica el exercicio en Store y API
         // Devuelve un objeto con la respuesta de la api y del store respectivamente (-1 en caso de error para cada uno)
-        async modifyExerciseInApiAndStore(exercise){
-            const apiResult = await this.modifyExerciseInApi(exercise);
+        async modifyExerciseInApiAndStore(id, exercise){
+            const apiResult = await this.modifyExerciseInApi(id, exercise);
             if(apiResult === -1){
                 return {api: apiResult, store: -1};
             }
@@ -255,7 +246,7 @@ export const useExercises = defineStore('exercises', {
             if(apiResult === -1){
                 return {api: apiResult, store: -1};
             }
-            const index = this.getExerciseIndex(apiResult);
+            const index = this.getExerciseIndex(exercise);
             const storeResult = this.removeExerciseByIndexFromStore(index);
             return {api: apiResult, store: storeResult}
         },
@@ -263,8 +254,8 @@ export const useExercises = defineStore('exercises', {
         async getImages(exerciseId){
             return await ExerciseApi.getImages(exerciseId);
         },
-        async addImage(exerciseId, body){
-            return await ExerciseApi.addImage(exerciseId, body);
+        async addImage(exerciseId, img){
+            return await ExerciseApi.addImage(exerciseId, img);
         },
         async getImage(exerciseId, imgId){
             return await ExerciseApi.getImage(exerciseId, imgId);
@@ -278,7 +269,7 @@ export const useExercises = defineStore('exercises', {
         async getVideos(exerciseId){
             return await ExerciseApi.getVideos(exerciseId);
         },
-        async addVideo(exerciseId,body){
+        async addVideo(exerciseId, body){
             return await ExerciseApi.addVideo(exerciseId,body);
         },
         async getVideo(exerciseId, videoId){

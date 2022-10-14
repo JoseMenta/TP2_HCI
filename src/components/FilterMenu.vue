@@ -2,15 +2,18 @@
   <div class="text-center d-inline-flex">
     <v-menu offset-y class="text-truncate">
       <template v-slot:activator="{on,attrs}">
-        <v-btn
-            v-bind="attrs"
-            v-on="on"
-            :width="width"
-            class="dropdownFilters justify-space-between d-inline-block elevation-3 pl-2 pr-1 py-1"
-            @click="changeMenu">
-          <span class="text-style mr-4 text-truncate">{{title}}</span>
-          <v-icon color='#27496D'>{{icon}}</v-icon>
-        </v-btn>
+        <v-sheet class="d-flex flex-column">
+          <v-btn
+              v-bind="attrs"
+              v-on="on"
+              :width="width"
+              class="dropdownFilters justify-space-between d-inline-block elevation-3 pl-2 pr-1 py-1"
+              @click="changeMenu">
+            <span class="text-style mr-4 text-truncate">{{title}}</span>
+            <v-icon color='#27496D'>{{icon}}</v-icon>
+          </v-btn>
+          <p v-show="condition" class="red--text">{{errorText}}</p>
+        </v-sheet>
       </template>
       <v-list>
         <v-list-item  class="included"
@@ -35,6 +38,14 @@ export default {
     }
   },
   props:{
+    errorText:{
+      type: String,
+      required: false
+    },
+    condition:{
+      type: Boolean,
+      required: false
+    },
     id:{
       type:Number,
       required:true

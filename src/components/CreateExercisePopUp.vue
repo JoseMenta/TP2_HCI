@@ -31,7 +31,8 @@
         <v-col :cols="12">
           <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
-              <v-img :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
+              <iframe v-if="true" :src="url" height="100%" width="100%" class="iframe-class"></iframe>
+              <v-img v-else :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
                 <v-icon v-text="$vuetify.icons.values.playCircle"
                         color="#1C1B1F"
                         :size="83"
@@ -40,7 +41,9 @@
                         v-on="on"/>
               </v-img>
             </template>
-            <MediaPopUp :img-src="getExerciseImage" @closeWarning="mediaDialog = false"/>
+            <UploadUrl title="Cargar URL video:"
+                        text="Colocar el url a un video, preferentemente no de youtube"
+                        @closeWarning="mediaDialog = false" @subir="uploadUrl"/>
           </v-dialog>
 
         </v-col>
@@ -83,13 +86,16 @@
           <v-row class="mt-n6">
             <v-col :cols="4">
               <!-- TODO: Definir equipamientos posibles para un ejercicio -->
-              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195" :placeholder="getEquipmentValue" :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"/>
+              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195"  :condition="required && !equipment" errorText="Es necesario el Equipamento"
+                          :placeholder="getEquipmentValue" @menuChanged="inputEquipment" :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"/>
             </v-col>
             <v-col :cols="4">
-              <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4" :width="195" :placeholder="getMuscleZone" :options="['Todo el cuerpo', 'Zona inferior', 'Zona media', 'Zona superior']"/>
+              <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4"  :condition="required && !muscleZone" errorText="Es necesaria la zona muscular"
+                          :width="195" :placeholder="getMuscleZone" @menuChanged="inputMuscleZone" :options="['Todo el cuerpo', 'Zona inferior', 'Zona media', 'Zona superior']"/>
             </v-col>
             <v-col :cols="4">
-              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :width="195" :placeholder="getIntensity" :options="['Baja', 'Media', 'Alta']"/>
+              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :condition="required && !Intensity" errorText="Es necesario la Intensidad"
+                          :width="195" :placeholder="getIntensity" @menuChanged="inputIntensity" :options="['Baja', 'Media', 'Alta']"/>
             </v-col>
           </v-row>
         </v-container>
@@ -107,13 +113,14 @@
 import FilterMenu from "@/components/FilterMenu";
 import ExerciseDetail from "@/components/ExerciseDetail";
 import AlertPopUp from "@/components/AlertPopUp";
-import MediaPopUp from "@/components/MediaPopUp";
 
 import {useExercises} from "@/store/Exercises";
 import { mapActions } from "pinia";
 import {Exercise} from "@/api/exercise";
+import {Video} from "@/api/exercise";
 
 import {useUsers} from "@/store/User";
+import UploadUrl from "@/components/UploadUrl";
 
 
 export default {
@@ -128,7 +135,7 @@ export default {
     }
   },
   components: {
-    MediaPopUp,
+    UploadUrl,
     AlertPopUp,
     FilterMenu,
     ExerciseDetail
@@ -151,6 +158,8 @@ export default {
       mediaDialog: false,
       details: '',
       detailsIsEmpty: false,
+      url: "https://player.vimeo.com/video/705745212?h=9e77c9b220",
+      showContent: false,
 
       rules: {
         required: value => !!value || 'El titulo del ejercicio es requerido.'
@@ -160,16 +169,29 @@ export default {
       duration: 200,
       offset: 0,
       easing: 'easeInOutCubic',
+      metaData: {equipment : '', muscleZone : '', Intensity : ''},
+      required: false,
+      Intensity : false,
+      muscleZone : false,
+      equipment : false,
     }
   },
   methods: {
     confirm(){
-      if(this.exerciseName === ''){
+      if(this.exerciseName === '' || !this.Intensity || !this.muscleZone || !this.equipment){
         this.updateTitleIsEmpty()
+        this.required=true;
         this.$vuetify.goTo(this.target, this.options)
+        console.log(this.required)
+        console.log(this.Intensity)
       } else {
         this.exerciseSaved()
       }
+    },
+    uploadUrl(url){
+      this.url=url
+      this.mediaDialog = false
+      this.showContent = true;
     },
     updateTitleIsEmpty(){
       this.titleIsEmpty = (this.exerciseName === '')
@@ -178,20 +200,21 @@ export default {
       this.result = JSON.stringify(result, null, 2)
     },
     async exerciseSaved(){
-      this.$emit("exerciseSaved")
-      const exerciseCreated = new Exercise(this.exerciseName, this.details, "exercise", null)
+      const exerciseCreated = new Exercise(this.exerciseName, this.details, "exercise", this.metaData)
       try {
         if(this.exerciseId === -1){
           this.exercise = await this.$addExercise(exerciseCreated);
+          const videoCreated = new Video(1, this.url);
+          await this.$uploadVideo(this.exercise.id, videoCreated);
         }
-        console.log(this.exercise)
+        else{
+          this.exercise = await this.$modifyExercise(this.exerciseId, exerciseCreated);
+        }
         this.setResult(this.exercise)
-        console.log("subido")
       } catch (e) {
         console.log(e)
       }
-      console.log("listo")
-
+      this.$emit("exerciseSaved")
     },
     cancelExercise() {
       // El padre debe cerrar el popUp
@@ -199,11 +222,24 @@ export default {
     },
     ...mapActions(useExercises, {
       $addExercise: 'addExerciseToApiAndStore',
-      $modifyExercise: ''
+      $modifyExercise : 'modifyExerciseInApiAndStore',
+      $uploadVideo: 'addVideo'
     }),
     detailsInput(value, input) {
       this.detailsIsEmpty=value;
       this.details=input;
+    },
+    inputEquipment(id, option){
+      this.metaData.equipment = option;
+      this.equipment = true;
+    },
+    inputMuscleZone(id, option){
+      this.metaData.muscleZone = option;
+      this.muscleZone = true;
+    },
+    inputIntensity(id, option){
+      this.metaData.Intensity = option;
+      this.Intensity = true;
     },
     ...mapActions(useUsers, {getUser: 'getCurrentUser'}),
     ...mapActions(useExercises, {getExercise: 'getExerciseByIdFromStore'})
@@ -237,15 +273,27 @@ export default {
     },
     // TODO: Requiere de metadata
     getEquipmentValue(){
-      return 'Sin equipamiento'
+      if(this.exerciseId === -1){
+        return '';
+      } else {
+        return this.getExercise(this.exerciseId).metadata.equipment;
+      }
     },
     // TODO: Requiere de metadata
     getMuscleZone(){
-      return 'Todo el cuerpo'
+      if(this.exerciseId === -1){
+        return '';
+      } else {
+        return this.getExercise(this.exerciseId).metadata.muscleZone;
+      }
     },
     // TODO: Requiere de metadata
     getIntensity(){
-      return 'Baja'
+      if(this.exerciseId === -1){
+        return '';
+      } else {
+        return this.getExercise(this.exerciseId).metadata.Intensity;
+      }
     },
     getDetail(){
       if(this.exerciseId === -1){
@@ -253,10 +301,20 @@ export default {
       } else {
         return this.getExercise(this.exerciseId).detail;
       }
-    }
+    },
+    getBoolean(){
+      return this.exerciseId !== -1
+    },
   },
   beforeMount() {
     this.exerciseName = this.getExerciseName;
+    this.details = this.getDetail;
+    this.metaData.equipment = this.getEquipmentValue;
+    this.metaData.muscleZone = this.getMuscleZone;
+    this.metaData.Intensity = this.getIntensity;
+    this.Intensity = this.getBoolean;
+    this.muscleZone = this.getBoolean;
+    this.equipment = this.getBoolean;
   }
 }
 </script>
@@ -304,6 +362,11 @@ export default {
 .author-style span, .details-style span {
   font-size: 30px;
   font-weight: bold;
+}
+
+.iframe-class{
+  border: 0 white;
+  border-radius: 0;
 }
 
 </style>

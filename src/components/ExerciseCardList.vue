@@ -4,7 +4,7 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="id in ids" :key="id" cols="6">
-        <ExerciseCard :id="id" :details="false" :editRemove="true" @editTouched="editExercise"/>
+        <ExerciseCard :id="id" :key="id + '_'+ version" :details="false" :editRemove="true" @editTouched="editExercise" @deleteTouched="deleteExercise"/>
       </v-col>
     </v-row>
   </v-container>
@@ -24,6 +24,10 @@ export default {
     ids:{
       type:Array[Number],
       required:true
+    },
+    version:{
+      type:Number,
+      required:true
     }
   },
   methods: {
@@ -33,6 +37,9 @@ export default {
     },
     editExercise(exerciseId){
       this.$emit('editExercise', exerciseId);
+    },
+    deleteExercise(exerciseId){
+      this.$emit('deleteExercise', exerciseId);
     }
     // ...mapActions(useExercises,['getExerciseById'])
   },

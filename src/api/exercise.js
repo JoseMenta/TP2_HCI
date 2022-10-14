@@ -1,6 +1,6 @@
 import {Api} from "@/api/api";
 
-export {ExerciseApi, Exercise}
+export {ExerciseApi, Exercise, Video}
 
 class ExerciseApi {
 
@@ -11,7 +11,7 @@ class ExerciseApi {
         return `${ExerciseApi.getUrl(exerciseId)}/images${imageId?`/${imageId}`:''}`
     }
     static getVideoUrl(exerciseId,videoId){
-        return `${ExerciseApi.getUrl(exerciseId)}/videos/${videoId?`/${videoId}`:''}`
+        return `${ExerciseApi.getUrl(exerciseId)}/videos${videoId?`/${videoId}`:''}`
     }
 // body{
 //     name: "Jumping Jacks",
@@ -82,5 +82,12 @@ class Exercise {
         this.detail = detail;
         this.type = type;
         this.metadata = metadata
+    }
+}
+
+class Video {
+    constructor(number, url) {
+        this.number = number;
+        this.url = url;
     }
 }
