@@ -4,10 +4,6 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="routine in routines" :key="routine.id" cols="6">
-<!--        <router-link :to="{-->
-<!--          name:'routine_details',-->
-<!--          params:{name:elem.name}-->
-<!--        }"></router-link>-->
         <RoutineCard :routine-data="routine" @favoriteTouched="changeFavorite" />
 
       </v-col>

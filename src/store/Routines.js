@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { RoutineApi } from "@/api/routine";
 
 import {useFavourites} from "@/store/Favourites";
-
+import {useUsers} from "@/store/User";
 import {useCategories} from "@/store/Categories";
 import {useRoutineCycles} from "@/store/RoutineCycles";
 import {useCycleExercises} from "@/store/CycleExercises";
@@ -63,6 +63,7 @@ class CycleIdMap{
     constructor(clientId, serverId) {
         this.clientId = clientId;
         this.serverId = serverId;
+        this.deleted = false;
     }
 }
 
@@ -74,90 +75,28 @@ export const DIFICULTY_LEVELS = {
     EXPERT: {name: 'expert', value: 5}
 };
 
-const example = {
-    id: 1,
-    name: 'Fulbo',
-    detail: require('@/assets/lionel-messi.webp'),
-    date: 1602646871112,
-    score: 4,
-    isPublic: true,
-    difficulty: DIFICULTY_LEVELS.ROOKIE,
-    user: {
-        id: 1,
-        username: 'raulsarmiento@mail.com',
-        avatarUrl: require('@/assets/avatar.jpg'),
-        date: 1602139940660,
-        lastActivity: 1602646870971
-    },
-    category: {
-        id: 1,
-        name: 'Full body',
-        detail: 'Full body'
-    },
-    metadata: {
-        slug: 'fulbo',
-        votes: 2340,
-        tags: ['Pelota', 'Equipo', 'Fútbol']
-    }
-};
-
-const example2 = {
-    id: 1,
-    name: 'Fulbo2',
-    detail: require('@/assets/lionel-messi.webp'),
-    date: 1602646871115,
-    score: 3,
-    isPublic: true,
-    difficulty: DIFICULTY_LEVELS.ROOKIE,
-    user: {
-        id: 0,
-        username: 'raulsarmiento@mail.com',
-        avatarUrl: require('@/assets/avatar.jpg'),
-        date: 1602139940660,
-        lastActivity: 1602646870971
-    },
-    category: {
-        id: 0,
-        name: 'Full body',
-        detail: 'Full body'
-    },
-    metadata: {
-        slug: 'fulbo',
-        votes: 2340,
-        tags: ['Pelota', 'Equipo', 'Fútbol']
-    }
-};
-
 export const NEW_ROUTINE_ID = -1;
 
-const NEW_ROUTINE = {
-    id: NEW_ROUTINE_ID,
-    name: '',
-    detail: 'hola',
-    score: 0,
-    isPublic: true,
-    difficulty: DIFICULTY_LEVELS.ROOKIE.name,
-    category: {},
-    metadata: {
-        votes: 0,
-        tags: []
-    },
-    nextId: 3,
-    cycles: Cycle.newInitialRoutine()
+class NewRoutine {
+    constructor(){
+        this.id = NEW_ROUTINE_ID;
+        this.name = '';
+        this.detail = '';
+        this.score = 0;
+        this.isPublic = true;
+        this.difficulty = DIFICULTY_LEVELS.ROOKIE;
+        this.category = {};
+        this.metadata = {
+            image: require('@/assets/placeholder.jpg'),
+            votes: 0,
+            tags: []
+        };
+        this.nextId = 3;
+        this.cycles = Cycle.newInitialRoutine()
+    }
 }
-// function getRoutineBody(routineData){
-//     return {
-//         id:routineData.id,
-//         name:routineData.name,
-//         detail:routineData.detail,
-//         isPublic:routineData.isPublic,
-//         difficulty:routineData.difficulty,
-//         category:{
-//         id:categoriesStore.getCategories.indexOf(routineData.category)
-//     },
-//         metadata:routineData.metadata
-//     }
-// }
+
+
 export const useRoutines = defineStore('routines', {
     state:()=>({
         routines: [],
@@ -168,15 +107,16 @@ export const useRoutines = defineStore('routines', {
     getters: {
         // Devuelve todas las rutinas almacenadas en cache
         getRoutines(){
-            return this.routines.map((routine) => this.returnRoutineInfo(routine));
+            if(!this.routines.content){
+                return [];
+            }
+            return this.routines.content;
         },
         // Devuelve la rutinas creadas por el usuario logueado
         getRoutinesFromCurrentUser(){
-            // TODO: Users.js
-            // const usersStore = useUsers();
-            // const currentUser = usersStore.getCurrentUser();
-            // return this.getRoutinesFromUserId(currentUser.id);
-            return this.getRoutinesFromUserId(0);
+            const usersStore = useUsers();
+            return this.getRoutinesFromUserId(usersStore.user.id);
+            // return this.getRoutinesFromUserId(0);
         },
         // Devuelve las rutinas favoritas del usuario actual
         getFavouriteRoutinesFromCurrentUser(){
@@ -185,93 +125,46 @@ export const useRoutines = defineStore('routines', {
         }
     },
     actions: {
-        async executeActions(){
-            console.log("Acciones")
-            console.log(this.actions)
-            for(let action of this.actions){
-                console.log("Acccion")
-                console.log(action);
-                if(action.type===TYPES.ROUTINE){
-                    action.data.difficulty = action.data.difficulty.name;
-                    if(action.action===ACTIONS.ADD){
-                        const ans = await  this.addRoutine(action.data);
-                        this.editingRoutine.id = ans.api.id
-                    }else if(action.action === ACTIONS.modify){
-                        await this.modifyRoutine(action.data)
-                    }else if(action.action === ACTIONS.delete){
-                        await this.deleteRoutine(action.data)
-                    }
-                    return;
-                }else if(action.type === TYPES.CYCLE){
-                    const mapping =  this.cycleIdMaps.find((cycle)=>cycle.clientId===action.parentId.clientId)
-                    if(action.action === ACTIONS.ADD){
-                        const ans = await routineCyclesStore.addCycleToRoutine(this.editingRoutine.id,action.data)
-                        mapping.serverId = ans.id
-                    }else if(action.action === ACTIONS.MODIFY){
-                        await routineCyclesStore.modifyCycleInRoutine(this.editingRoutine.id,mapping.serverId,action.data)
-                    }else if(action.action === ACTIONS.delete){
-                        await routineCyclesStore.removeCycleRoutine(this.editingRoutine.id,mapping.serverId,action.data)
-                    }
-                    return
-                }else{
-                    //action.type === TYPES.EXERCISE
-                    const mapping = this.cycleIdMaps.find((cycle)=>cycle.clientId===action.parentId.clientId)
-                    if(action.action === ACTIONS.ADD){
-                        await  cycleExercisesStore.addExerciseToCycleInApi(mapping.serverId,action.data.id,action.data)
-                    }else if(action.action === ACTIONS.MODIFY){
-                        await cycleExercisesStore.modifyExerciseFromCycleInApi(mapping.serverId,action.data.id,action.data)
-                    }else if(action.action === ACTIONS.delete){
-                        await cycleExercisesStore.deleteExerciseFromCycleInApi(mapping.serverId,action.data.id)
-                    }
-                }
-            }
-            await this.fetchRoutines();
-            console.log(this.routines);
-        },
-        // Dada una rutina, devuelve toda su informacion
-        returnRoutineInfo(routine){
-            return {
-                id:routine.id,
-                name:routine.name,
-                detail: routine.detail,
-                date: routine.date,
-                score: routine.score,
-                isPublic: routine.isPublic,
-                difficulty: routine.difficulty,
-                user: routine.user,
-                category: routine.category,
-                metadata:routine.metadata,
-            }
-        },
         // Devuelve la rutina por id
         // Devuelve -1 si no existe rutina con dicho id
         getRoutineById(id){
-            const routine = this.routines.find((routine) => routine.id === id);
+            if(!this.routines.content){
+                return -1;
+            }
+            const routine = this.routines.content.find((routine) => routine.id === id);
             if(!routine){
                 return -1;
             }
-            return this.returnRoutineInfo(routine);
+            return routine;
         },
         // Devuelve la rutina por nombre
         // Devuelve -1 si no existe rutina con dicho nombre
         getRoutineByName(name){
-            const routine = this.routines.find((routine) => routine.name === name);
+            if(!this.routines.content){
+                return -1;
+            }
+            const routine = this.routines.content.find((routine) => routine.name === name);
             if(!routine){
                 return -1;
             }
-            return this.returnRoutineInfo(routine);
+            return routine;
         },
         // Devuelve el indice de la rutina routine en el store
         // -1 si no esta en el store
         getRoutineIndex(routine){
-            return this.routines.findIndex((routineInStore) => {
+            if(!this.routines.content){
+                return -1;
+            }
+            return this.routines.content.findIndex((routineInStore) => {
                 return routineInStore.id === routine.id
             })
         },
         // Devuelve aquellas rutinas cuyo creador tenga el mismo id que userId
         getRoutinesFromUserId(userId){
-            const routines = this.routines.filter((routine) => routine.user.id === userId);
-            return routines.map((routine) => this.returnRoutineInfo(routine));
+            if(!this.routines.content){
+                return [];
+            }
+            return this.routines.content.filter((routine) => routine.user.id === userId);
         },
         // Devuelve true si la rutina con id routineId es una rutina del usuario con id userId
         isRoutineFromUserId(userId, routineId){
@@ -281,31 +174,33 @@ export const useRoutines = defineStore('routines', {
         // Agrega una nueva rutina al store
         // Es void
         addRoutineToStore(routine) {
-            this.routines = Array.from(this.routines);
-            this.routines.push(routine);
+            if(!this.routines.content){
+                this.routines.content = [];
+            }
+            this.routines.content.push(routine);
         },
         // Reemplaza la rutina en el indice index del store por routine
         // Devuelve -1 si index es invalido, 0 en caso de exito
         modifyRoutineByIndexInStore(index, routine) {
-            if(index >= this.routines.length || index < 0){
+            if(index >= this.routines.content.length || index < 0){
                 return -1;
             }
-            this.routines[index] = routine;
+            this.routines.content[index] = routine;
             return 0;
         },
         // Elimina la rutina en la posicion index
         // Devuelve -1 si index es invalido, 0 en caso de exito
         removeRoutineByIndexInStore(index) {
-            if(index >= this.routines.length || index < 0){
+            if(index >= this.routines.content.length || index < 0){
                 return -1;
             }
-            this.routines.splice(index, 1);
+            this.routines.content.splice(index, 1);
             return 0;
         },
         // Elimina las rutinas guardadas en el store y las reemplaza por routines
         // Es void
-        replaceAllRoutinesInStore(routines) {
-            this.routines = routines;
+        replaceAllRoutinesInStore(data) {
+            this.routines = data;
         },
         // Agrega la routine a la api y, si no estaba, en el store
         // Devuelve la respuesta de la API en caso de exito, -1 en caso de error
@@ -373,10 +268,6 @@ export const useRoutines = defineStore('routines', {
                 return -1;
             }
             this.replaceAllRoutinesInStore(apiRoutines);
-            // TODO: Prueba -----------
-            this.addRoutineToStore(example);
-            this.addRoutineToStore(example2);
-            // TODO: Prueba ---------
             return 0;
         },
         // Agrega una rutina a la API y (si no esta) en el store
@@ -417,7 +308,7 @@ export const useRoutines = defineStore('routines', {
         // Deja el estado preparado para crear una nueva rutina
         createNewRoutine() {
             this.actions = [];
-            this.editingRoutine = NEW_ROUTINE;
+            this.editingRoutine = new NewRoutine();
             this.editingRoutine.category = categoriesStore.getCategories[0];
 
             // Indicamos que vamos a crear una nueva rutina y vamos a agregar 3 ciclos
@@ -513,6 +404,7 @@ export const useRoutines = defineStore('routines', {
             console.log(this.actions)
         },
 
+        // Elimina el ejercicio con id exerciseId del ciclo con id cycleId
         deleteCycleExercise(cycleId, exerciseId){
             // Buscamos el mapeo de id del ciclo cuyo id de cliente es cycleId
             const cycleIdMap = this.cycleIdMaps.find((cycleIdMap) => cycleIdMap.clientId === cycleId);
@@ -525,6 +417,49 @@ export const useRoutines = defineStore('routines', {
                 this.actions.push(new ApiAction(TYPES.EXERCISE, ACTIONS.DELETE, exerciseId, cycleId, cycleIdMap.serverId))
             }
             console.log(this.actions)
-        }
+        },
+
+        // Realiza las operaciones necesarias para guardar la rutina y su informacion en la API
+        async executeActions(){
+            for(let action of this.actions){
+                if(action.type === TYPES.ROUTINE){
+                    action.data.difficulty = action.data.difficulty.name;
+                    action.data.detail = action.data.name;
+                    if(action.action===ACTIONS.ADD){
+                        const ans = await this.addRoutine(action.data);
+                        this.editingRoutine.id = ans.api.id
+                    } else if(action.action === ACTIONS.MODIFY){
+                        await this.modifyRoutine(action.data)
+                    }
+                }
+                else if(action.type === TYPES.CYCLE){
+                    const mapping = this.cycleIdMaps.find((cycle) => cycle.clientId === action.data.id);
+                    if(action.action === ACTIONS.ADD){
+                        const ans = await routineCyclesStore.addCycleToRoutine(this.editingRoutine.id,action.data)
+                        mapping.serverId = ans.api.id
+                    }else if(action.action === ACTIONS.MODIFY){
+                        await routineCyclesStore.modifyCycleInRoutine(this.editingRoutine.id,mapping.serverId,action.data)
+                    }else if(action.action === ACTIONS.DELETE){
+                        // Para evitar problemas de agregar o modificar ejercicios de un ciclo, si se elimina un ciclo,
+                        // entonces las operaciones sobre sus ejercicios no se aplican
+                        mapping.deleted = true;
+                        await routineCyclesStore.removeCycleRoutine(this.editingRoutine.id,mapping.serverId,action.data)
+                    }
+                }else{
+                    const mapping = this.cycleIdMaps.find((cycle)=> cycle.clientId === action.parentId.clientId)
+                    if(!mapping.deleted){
+                        if(action.action === ACTIONS.ADD){
+                            await cycleExercisesStore.addExerciseToCycleInApi(mapping.serverId,action.data.data.id,action.data)
+                        }else if(action.action === ACTIONS.MODIFY){
+                            await cycleExercisesStore.modifyExerciseFromCycleInApi(mapping.serverId,action.data.data.id,action.data)
+                        }else if(action.action === ACTIONS.DELETE){
+                            await cycleExercisesStore.deleteExerciseFromCycleInApi(mapping.serverId,action.data.data.id)
+                        }
+                    }
+                }
+            }
+            await this.fetchRoutines();
+            console.log(this.routines);
+        },
     },
 })

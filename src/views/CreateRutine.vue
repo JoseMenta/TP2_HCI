@@ -45,7 +45,7 @@
       </v-sheet>
       <v-sheet width="30%" class="d-flex flex-column justify-end" flat>
         <v-img
-            :src="routineData.detail"
+            :src="routineData.metadata.image"
             max-height="200"
             width="auto" @mouseover="imageHover = true" @mouseleave="imageHover = false"
             class="img_rutine elevation-5 d-flex justify-center align-center"
@@ -121,11 +121,7 @@ export default {
   data(){
     return{
       routineId: -1,
-      // routineData: {},
-      // routineCycles: [],
-      // level :0,
-      // tags: 0,
-      // tagsText: [],
+
       imageHover: false,
       addTagDialog: false,
       alertDialog: false,

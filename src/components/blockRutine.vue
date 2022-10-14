@@ -201,6 +201,8 @@ export default {
     },
     ...mapActions(useRoutineCycles, {getCycleExercises: "getCycleExercises"}),
     removeBlock(){
+      // Para que al checkear los nombres de los ciclos este no sea considerado como invalido
+      this.$emit('input', true, this.cycleData.name, this.cycleId);
       routinesStore.deleteCycle(this.cycleId);
     }
   },
@@ -222,6 +224,10 @@ export default {
   beforeMount() {
     this.cycleData = routineCyclesStore.getCycleById(this.cycleId);
     this.dataLoaded = true;
+  },
+  mounted() {
+    // Para que el padre lo reconozca apenas se crea
+    this.updateIsEmpty();
   }
 }
 </script>
