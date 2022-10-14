@@ -1,9 +1,10 @@
 <template>
-  <v-btn-toggle class="btn-toggle-style" mandatory borderless v-model="select">
+  <v-btn-toggle class="btn-toggle-style" mandatory borderless v-model="select" >
     <v-btn v-for="(name, index) in filters" :key="index"
            :width="150"
            height="36"
-           :class="format(index)">
+           :class="format(index)"
+           @click="sentSelect(index)">
       <span class="span-style">{{capitalizeText(name)}}</span>
     </v-btn>
   </v-btn-toggle>
@@ -29,6 +30,9 @@ export default {
     },
     capitalizeText(text){
       return text.charAt(0).toUpperCase() + text.slice(1)
+    },
+    sentSelect(index){
+      this.$emit('sentSelect', index)
     }
   },
 }

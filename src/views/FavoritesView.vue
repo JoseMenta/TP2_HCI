@@ -33,15 +33,6 @@ export default {
     RoutineFilterSearch,
     RoutineCardList
   },
-  // props: {
-  //   language: {
-  //     type: String,
-  //     required: true,
-  //     validator(value) {
-  //       return ['es', 'en'].includes(value)
-  //     }
-  //   },
-  // },
   data(){
     return {
       dataLoaded: false,

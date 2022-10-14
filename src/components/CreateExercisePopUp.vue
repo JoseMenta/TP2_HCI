@@ -31,7 +31,7 @@
         <v-col :cols="12">
           <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
-              <iframe v-if="true" :src="url" height="100%" width="100%" class="iframe-class"></iframe>
+              <iframe v-if="showContent" :src="metaData.url" height="100%" width="100%" class="iframe-class"></iframe>
               <v-img v-else :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
                 <v-icon v-text="$vuetify.icons.values.playCircle"
                         color="#1C1B1F"
@@ -51,7 +51,7 @@
       <v-row>
         <v-col :cols="12">
           <v-text-field id="title"
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.duplicate]"
                         :error="titleIsEmpty"
                         @input="updateTitleIsEmpty"
                         placeholder="Ingrese el nombre del ejercicio"
@@ -87,15 +87,15 @@
             <v-col :cols="4">
               <!-- TODO: Definir equipamientos posibles para un ejercicio -->
               <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195"  :condition="required && !equipment" errorText="Es necesario el Equipamento"
-                          :placeholder="getEquipmentValue" @menuChanged="inputEquipment" :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"/>
+                          :placeholder="getEquipmentValue" @menuChanged="inputEquipment" :options="['Con Equipamiento','Sin Equipamiento']"/>
             </v-col>
             <v-col :cols="4">
               <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4"  :condition="required && !muscleZone" errorText="Es necesaria la zona muscular"
-                          :width="195" :placeholder="getMuscleZone" @menuChanged="inputMuscleZone" :options="['Todo el cuerpo', 'Zona inferior', 'Zona media', 'Zona superior']"/>
+                          :width="195" :placeholder="getMuscleZone" @menuChanged="inputMuscleZone" :options="['Zona Inferior','Zona Media','Zona Superior']"/>
             </v-col>
             <v-col :cols="4">
               <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :condition="required && !Intensity" errorText="Es necesario la Intensidad"
-                          :width="195" :placeholder="getIntensity" @menuChanged="inputIntensity" :options="['Baja', 'Media', 'Alta']"/>
+                          :width="195" :placeholder="getIntensity" @menuChanged="inputIntensity" :options="['Baja Intensidad','Media Intensidad','Alta Intensidad']"/>
             </v-col>
           </v-row>
         </v-container>
@@ -115,7 +115,7 @@ import ExerciseDetail from "@/components/ExerciseDetail";
 import AlertPopUp from "@/components/AlertPopUp";
 
 import {useExercises} from "@/store/Exercises";
-import { mapActions } from "pinia";
+import {mapActions, mapState} from "pinia";
 import {Exercise} from "@/api/exercise";
 import {Video} from "@/api/exercise";
 
@@ -158,27 +158,28 @@ export default {
       mediaDialog: false,
       details: '',
       detailsIsEmpty: false,
-      url: "https://player.vimeo.com/video/705745212?h=9e77c9b220",
       showContent: false,
 
       rules: {
-        required: value => !!value || 'El titulo del ejercicio es requerido.'
+        required: value => !!value || 'El titulo del ejercicio es requerido.',
+        duplicate: value => !this.getExercises.map(exercise => exercise.name).includes(value) || 'Otro ejercicio cuenta con este nombre.',
       },
 
       // Datos requeridos para el scroll
       duration: 200,
       offset: 0,
       easing: 'easeInOutCubic',
-      metaData: {equipment : '', muscleZone : '', Intensity : ''},
+      metaData: {equipment : '', muscleZone : '', Intensity : '', url: ''},
       required: false,
       Intensity : false,
       muscleZone : false,
       equipment : false,
+      duplicateName: false,
     }
   },
   methods: {
     confirm(){
-      if(this.exerciseName === '' || !this.Intensity || !this.muscleZone || !this.equipment){
+      if(this.exerciseName === '' || !this.Intensity || !this.muscleZone || !this.equipment || this.duplicateName){
         this.updateTitleIsEmpty()
         this.required=true;
         this.$vuetify.goTo(this.target, this.options)
@@ -189,12 +190,16 @@ export default {
       }
     },
     uploadUrl(url){
-      this.url=url
+      this.metaData.url=url
       this.mediaDialog = false
       this.showContent = true;
     },
     updateTitleIsEmpty(){
       this.titleIsEmpty = (this.exerciseName === '')
+      if(this.getExercises.map(exercise => exercise.name).includes(this.exerciseName))
+        this.duplicateName = true;
+      else
+        this.duplicateName = false;
     },
     setResult(result){
       this.result = JSON.stringify(result, null, 2)
@@ -245,6 +250,7 @@ export default {
     ...mapActions(useExercises, {getExercise: 'getExerciseByIdFromStore'})
   },
   computed: {
+    ...mapState(useExercises, {getExercises: 'getExercises'}),
     target () {
       return '#title'
     },
@@ -302,6 +308,13 @@ export default {
         return this.getExercise(this.exerciseId).detail;
       }
     },
+    getUrl(){
+      if(this.exerciseId === -1){
+        return '';
+      } else {
+        return this.getExercise(this.exerciseId).metadata.url;
+      }
+    },
     getBoolean(){
       return this.exerciseId !== -1
     },
@@ -312,9 +325,12 @@ export default {
     this.metaData.equipment = this.getEquipmentValue;
     this.metaData.muscleZone = this.getMuscleZone;
     this.metaData.Intensity = this.getIntensity;
+    this.metaData.url = this.getUrl;
     this.Intensity = this.getBoolean;
     this.muscleZone = this.getBoolean;
     this.equipment = this.getBoolean;
+    this.showContent = this.getBoolean;
+    console.log(this.metaData.url)
   }
 }
 </script>

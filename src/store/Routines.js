@@ -57,6 +57,33 @@ const example = {
     }
 };
 
+const example2 = {
+    id: 1,
+    name: 'Fulbo2',
+    detail: require('@/assets/lionel-messi.webp'),
+    date: 1602646871115,
+    score: 3,
+    isPublic: true,
+    difficulty: DIFICULTY_LEVELS.ROOKIE,
+    user: {
+        id: 0,
+        username: 'raulsarmiento@mail.com',
+        avatarUrl: require('@/assets/avatar.jpg'),
+        date: 1602139940660,
+        lastActivity: 1602646870971
+    },
+    category: {
+        id: 0,
+        name: 'Full body',
+        detail: 'Full body'
+    },
+    metadata: {
+        slug: 'fulbo',
+        votes: 2340,
+        tags: ['Pelota', 'Equipo', 'Fútbol']
+    }
+};
+
 export const useRoutines = defineStore('routines', {
     state:()=>({
         routines: []
@@ -226,6 +253,7 @@ export const useRoutines = defineStore('routines', {
             this.replaceAllRoutinesInStore(apiRoutines);
             // TODO: Prueba -----------
             this.addRoutineToStore(example);
+            this.addRoutineToStore(example2);
             // TODO: Prueba ---------
             return 0;
         },

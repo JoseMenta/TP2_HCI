@@ -93,10 +93,14 @@ const routes = [
     meta:{requiresAuth:false}
   },
   {
-    path: '/search',
+    path: '/search/:textSearch',
     name: 'search',
     component:() => import(/* webpackChunkName: "search" */ '@/views/SearchResultsView'),
-    props: {language: 'es'}
+    props(route) { return {textSearch : route.params.textSearch}},
+    meta:{
+      requiresAuth:true,
+      displayName:'Busqueda'
+    }
     //TODO: ver si necesita autenticacion
   },
   {

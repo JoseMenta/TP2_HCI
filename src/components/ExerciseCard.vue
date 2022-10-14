@@ -23,7 +23,7 @@
       </v-sheet>
     </v-card >
 <!-- Ojo cambiar imagen, es para meterme despues con la meta data-->
-    <iframe v-if="!isRest" src="https://player.vimeo.com/video/705745212?h=9e77c9b220" height="100%" width="auto" class="iframe-class"></iframe>
+    <iframe v-if="!isRest" :src="exerciseData.metadata.url" height="100%" width="auto" class="iframe-class"></iframe>
     <v-img v-else :src="require('@/assets/rest.png')" :alt="'Descanso'" contain class="img-format" height="100%"  width="130"/>
   </v-card>
 </template>

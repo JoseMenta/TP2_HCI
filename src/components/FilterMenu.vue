@@ -74,7 +74,7 @@ export default {
   methods:{
     clickOption(index){
       this.optionIndex = index
-      this.$emit('menuChanged',this.id,this.options[this.optionIndex])
+      this.$emit('menuChanged',index,this.options[this.optionIndex])
       this.icon = "arrow_drop_down"
     },
     changeMenu(){

@@ -4,8 +4,9 @@
     <FilterMenu :id="0"
                 :options="['Nombre de la rutina', 'Nombre del creador']"
                 :width="175"
-                :left-border-radius="4" :right-border-radius="0"/>
-    <input class="text-field-style pl-1" type="text" v-model="filterSearchText"/>
+                :left-border-radius="4" :right-border-radius="0"
+                @menuChanged="getFilter"/>
+    <input class="text-field-style pl-1" type="text" v-model="filterSearchText" @input="getText"/>
   </div>
 </template>
 
@@ -29,6 +30,7 @@ export default {
   data() {
     return {
       filterSearchText: '',
+      filter: 'Nombre de la rutina'
       // searchNameFilterMenu: [
       //   {elements: ['Nombre de la rutina', 'Nombre del creador'], lang: 'es'},
       //   {elements: ['Routine name', 'Creator name'], lang: 'en'}
@@ -36,9 +38,12 @@ export default {
     }
   },
   methods: {
-    // getArrayTexts(componentArrayText){
-    //   return componentArrayText[componentArrayText.map(e => e.lang).indexOf(this.language)].elements
-    // }
+    getFilter(id, value){
+      this.filter = value;
+    },
+    getText(){
+      this.$emit('FilterSearch', this.filter, this.filterSearchText)
+    }
   }
 }
 </script>

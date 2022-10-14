@@ -1,6 +1,6 @@
 <!-- Componente para indicar por qué se busca: Rutina o creador -->
 <template>
-  <BinaryFilter :filters="getArrayTexts(searchNameFilterMenu)"/>
+  <BinaryFilter :filters="getArrayTexts(searchNameFilterMenu)" @sentSelect="sentSelect"/>
 </template>
 
 <script>
@@ -31,6 +31,9 @@ export default {
   methods: {
     getArrayTexts(componentArrayText){
       return componentArrayText[componentArrayText.map(e => e.lang).indexOf(this.language)].elements
+    },
+    sentSelect(value){
+      this.$emit('sentSelect', value);
     }
   }
 }

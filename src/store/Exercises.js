@@ -53,14 +53,12 @@ export const useExercises = defineStore('exercises', {
         exercises:[]
     }),
     getters: {
-        // Devuelve el id de los ejercicios almacenados
         getExercises() {
             // Si hay error, y no se guarda nada en exercises, devuelve un arreglo vacio
             if(!this.exercises.content){
                 return [];
             }
-            console.log(this.exercises.content)
-            return this.exercises.content.map((exercise) => exercise.id);
+            return this.exercises.content;
         },
 
     },

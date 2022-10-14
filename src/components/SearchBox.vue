@@ -9,6 +9,7 @@
                     background-color="#DAE1E7"
                     color="#1C1B1F"
                     solo flat hide-details single-line clearable
+                    v-model="inputSearch"
                     @click="expandBox">
         <v-icon slot="prepend-inner"
                 class="mx-3"
@@ -87,10 +88,6 @@ export default {
         return ['es', 'en'].includes(value)
       }
     },
-    searchMethod: {
-      type: Function,
-      required: true
-    },
     searchBoxWidth: {
       type: Number,
       required: true
@@ -118,6 +115,7 @@ export default {
   },
   data(){
     return {
+      inputSearch: '',
       expand: false,
       avoidClose: false,
       // Defino una variable para poder parametrizar el CSS
@@ -146,6 +144,10 @@ export default {
     }
   },
   methods: {
+    searchMethod(){
+      this.retractBox()
+      this.$router.push('/search/' + this.inputSearch)
+    },
     expandBox(){
       this.searchWidth = this.searchBoxWidth + 300;
       this.expand = true;
