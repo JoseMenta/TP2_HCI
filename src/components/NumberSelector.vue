@@ -59,6 +59,13 @@ export default {
       type: Boolean,
       required: false,
       default(){return false}
+    },
+    minimum: {
+      type: Number,
+      required: false,
+      default() {
+        return 0;
+      }
     }
   },
   data(){
@@ -81,15 +88,25 @@ export default {
       if(this.deactivate) {
         return
       }
-      this.numberValue = parseInt((this.numberValue - 1 < 0) ? 0 : this.numberValue - 1)
+      this.numberValue = parseInt((this.numberValue - 1 < this.minimum) ? this.minimum : this.numberValue - 1)
     }
   },
   beforeUpdate() {
-    this.numberValue = parseInt((this.numberValue % 1 === 0) ? this.numberValue : 0)
+    this.numberValue = parseInt((this.numberValue % 1 === 0) ? this.numberValue : this.minimum)
+  },
+  updated() {
+    this.$emit('valueChanged', this.numberValue)
   },
   computed: {
     styleFunction(){
       return ((this.deactivate) ? 'deactivate-style' : '') + ' ' + ((this.error) ? 'error-style' : '')
+    }
+  },
+  watch: {
+    numberValue: function (val) {
+      if(val < this.minimum) {
+        this.numberValue = this.minimum
+      }
     }
   }
 }

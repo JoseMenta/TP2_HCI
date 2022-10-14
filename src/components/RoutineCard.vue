@@ -122,7 +122,7 @@ export default {
       this.$emit('favoriteTouched',this.routine.id,this.favourite)
     },
     touchEdit(){
-      console.log(`Edit touched in RoutineCard ${this.routine.id}`)
+      this.changeView({name: 'createRoutine', query: {id: this.routine.id}})
       this.$emit('editTouched',this.routine.id)
     },
     async touchDelete(){
@@ -134,14 +134,8 @@ export default {
       console.log(`RoutineCard ${this.routine.id} touched`)
       this.$emit('cardTouched',this.id)
     },
-    changeView(){
-      this.$router.push(
-          { name:'routine_details',
-            params:{
-              name:this.name,
-              id:this.id
-            }
-          })
+    changeView(view){
+      this.$router.push(view)
     },
   },
   computed: {

@@ -96,6 +96,9 @@ export default {
     // Da formato a los inputs
     this.formatString()
   },
+  updated() {
+    this.$emit('newTime', this.time)
+  },
   methods: {
     // Agrega 5 segundos al tiempo total
     add5Seconds(){

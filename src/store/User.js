@@ -75,6 +75,7 @@ export const useUsers = defineStore("users", {
         async login(credentials, rememberMe) {
             try {
                 const result = await UserApi.login(credentials);
+                await this.getCurrentUser();
                 console.log(result.token);
                 this.updateToken(result.token, rememberMe);
             } catch(e){
@@ -98,8 +99,6 @@ export const useUsers = defineStore("users", {
         // Devuelve la información del usuario
         // Devuelve -1 en caso de error
         async getCurrentUser() {
-            if (this.user)
-                return this.user;
             try {
                 const result = await UserApi.getCurrentUser();
                 this.setUser(result);
@@ -136,12 +135,12 @@ export const useUsers = defineStore("users", {
         async verifyEmail(email, code) {
             try {
                 await UserApi.verifyEmail({email: email, code: code});
-                return -1;
+                return 0;
             } catch(e) {
                 if(e.code === 400){
                     return 1;
                 }
-                return e.code
+                return -1;
             }
         },
         // Actualiza el usuario en la API y en el store

@@ -2,29 +2,26 @@
   <v-card class="d-inline-flex flex-row main_card justify-space-between" outlined hover width="100%" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
       <v-card class="d-inline-flex align-center" flat>
-        <h2 v-if="!isRest" class="text-truncate" >{{exerciseData.name}}</h2>
-        <h2 v-else class="text-truncate">Descanso</h2>
+        <h2 class="text-truncate" >{{exerciseData.name}}</h2>
 <!--       TODO: sacar estos iconos-->
-        <v-icon v-if="editRemove" v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon ml-auto"></v-icon>
-        <v-icon v-if="editRemove" v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
+        <v-icon v-if="force || (!isRest && editRemove)" v-text="$vuetify.icons.values.edit" color="black" @click="touchEdit" class="action_icon ml-auto"></v-icon>
+        <v-icon v-if="force || (!isRest && editRemove)" v-text="$vuetify.icons.values.delete" color="black" @click="touchDelete" class="action_icon"></v-icon>
       </v-card>
-        <p v-if="!isRest" v-show="exerciseData.detail.length<90">{{exerciseData.detail}}</p>
-        <p v-if="!isRest" v-show="exerciseData.detail.length>=90">{{exerciseData.detail.substring(0,98)+'..'}}</p>
-        <p v-else>Tomate un descanso.</p>
-      <v-sheet v-if="details" class="d-inline-flex align-end mb-2" height="100%">
-        <v-sheet class="ml-5 mr-10">
+        <p v-show="exerciseData.detail.length<90">{{exerciseData.detail}}</p>
+        <p v-show="exerciseData.detail.length>=90">{{exerciseData.detail.substring(0,98)+'..'}}</p>
+      <v-sheet v-if="details.needed" class="d-inline-flex align-end mb-2" height="100%">
+        <v-sheet v-if="details.repetitions > 0" class="ml-5 mr-10">
           <v-icon class="mr-2" color="black">replay</v-icon>
-          <span>Hola</span>
+          <span>{{details.repetitions}}</span>
         </v-sheet>
-        <v-sheet>
+        <v-sheet v-if="details.duration > 0">
           <v-icon class="mr-2" color="black">alarm</v-icon>
-          <span>Hola</span>
+          <span>{{getTime}}</span>
         </v-sheet>
       </v-sheet>
     </v-card >
 <!-- Ojo cambiar imagen, es para meterme despues con la meta data-->
-    <iframe v-if="!isRest" :src="exerciseData.metadata.url" height="100%" width="auto" class="iframe-class"></iframe>
-    <v-img v-else :src="require('@/assets/rest.png')" :alt="'Descanso'" contain class="img-format" height="100%"  width="130"/>
+    <iframe :src="exerciseData.metadata.url" height="100%" width="auto" class="iframe-class"></iframe>
   </v-card>
 </template>
 
@@ -38,44 +35,39 @@ export default {
       url : ''
     }
   },
+  // --------------------------------------
+  // Number id: Id del ejercicio
+  // Number order: Orden en el que debe aparecer el ejercicio
+  // Boolean editRemove: Indica si los iconos de editar y borrar deben aparecer
+  // Object details: Indica si deben aparecer los datos de repeticiones y tiempo y la cantidad de cada uno (tiempo en segundos)
+  // Boolean force: Indica si deben aparecer los iconos de edicion y borrar mas alla de que sea una tarjeta de descanso
   props:{
     id:{
       type:Number,
       required:true
+    },
+    order: {
+      type: Number,
+      required: false,
     },
     editRemove:{
       type: Boolean,
       required: true
     },
     details:{
-      type:Boolean,
-      required: true
+      type: Object,
+      required: false,
+      default() {
+        return {needed: false, duration: 0, repetitions: 0}
+      }
     },
-    // Si se indica y es true, utiliza el formato de tarjeta de descanso
-    rest: {
+    force: {
       type: Boolean,
-      required: false
+      required: false,
+      default() {
+        return false;
+      }
     }
-    // name:{
-    //   type:String,
-    //   required:true
-    // },
-    // description:{
-    //   type:String,
-    //   required:false,
-    //   default(){return ''}
-    // },
-    // img:{
-    //   type:String,
-    //   required:true
-    // },
-    // alt:{
-    //   type:String,
-    //   required:false,
-    //   default() {
-    //     return "";
-    //   }
-    // }
   },
   computed:{
     exerciseData(){
@@ -83,21 +75,28 @@ export default {
       return exercises.getExerciseByIdFromStore(this.id)
     },
     isRest(){
-      return (this.rest === true)
+      return (this.exerciseData.type === "rest");
     },
+    getTime(){
+      let minutes = parseInt(parseInt(this.details.duration) / 60);
+      let seconds = parseInt(parseInt(this.details.duration) % 60);
+      minutes = (minutes < 10) ? '0' + minutes : minutes;
+      seconds = (seconds < 10) ? '0' + seconds : seconds;
+      return `${minutes}:${seconds}`
+    }
   },
   methods:{
     touchEdit(){
       console.log(`edit touched in ExerciseCard ${this.id}`)
-      this.$emit('editTouched', this.id)
+      this.$emit('editTouched', this.id, this.order)
     },
     touchDelete(){
       console.log(`delete touched in ExerciseCard ${this.id}`)
-      this.$emit('deleteTouched', this.id)
+      this.$emit('deleteTouched', this.id, this.order)
     },
     touchCard(){
       console.log(`ExerciseCard ${this.id} touched`)
-      this.$emit('cardTouched', this.id)
+      this.$emit('cardTouched', this.id, this.order)
     },
   },
   /*

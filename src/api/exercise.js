@@ -1,6 +1,6 @@
 import {Api} from "@/api/api";
 
-export {ExerciseApi, Exercise, Video}
+export {ExerciseApi, Exercise, Video, CycleExercise}
 
 class ExerciseApi {
 
@@ -89,5 +89,14 @@ class Video {
     constructor(number, url) {
         this.number = number;
         this.url = url;
+    }
+}
+
+class CycleExercise {
+    constructor(id, order, duration, repetitions) {
+        this.data = {id: id};
+        this.order = order;
+        this.duration = duration;
+        this.repetitions = repetitions;
     }
 }

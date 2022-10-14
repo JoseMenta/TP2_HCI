@@ -6,11 +6,7 @@ class CategoriesApi{
     static getUrl(slug){
         return `${Api.baseUrl}/categories${slug? `/${slug}`:''}`
     }
-    // info:{
-    //     id: null/id,
-    //     name: "Full Body",
-    //     detail: "Full Body"
-    // }
+
     static async getAll(){
         return await Api.get(CategoriesApi.getUrl(),true)
     }

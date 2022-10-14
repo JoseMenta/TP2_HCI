@@ -9,12 +9,14 @@
     </v-card-text>
     <v-divider/>
     <v-card-actions class="justify-end">
-      <v-btn :color="$vuetify.theme.themes.light.blue" @click="closeWarning">
-        <span class="white--text">Cancelar</span>
-      </v-btn>
-      <v-btn :color="$vuetify.theme.themes.light.green" @click="cancel">
-        <span class="white--text">Aceptar</span>
-      </v-btn>
+      <slot name="actions">
+        <v-btn :color="$vuetify.theme.themes.light.blue" @click="closeWarning">
+          <span class="white--text">Cancelar</span>
+        </v-btn>
+        <v-btn :color="$vuetify.theme.themes.light.green" @click="cancel">
+          <span class="white--text">Aceptar</span>
+        </v-btn>
+      </slot>
     </v-card-actions>
   </v-card>
 </template>

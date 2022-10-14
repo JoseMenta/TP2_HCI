@@ -135,7 +135,7 @@ router.beforeEach((to,from,next)=>{
       next();
     }
   }else{
-    debugger
+    // debugger
     if(to.name==='default'){
       if(users.isLoggedIn){
         next({name:'createdRoutines'})

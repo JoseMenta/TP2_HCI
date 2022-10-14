@@ -1,6 +1,13 @@
 <template>
-  <v-card class="block-rutine" flat>
-    <v-card height="80" class="d-flex justify-space-between ma-5" color="#E8F1F6" flat>
+  <v-card v-if="dataLoaded" class="block-rutine" flat>
+    <v-btn v-if="cycleData.metadata.deletable" @click="removeBlock"
+           class="remove-icon-style" :color="$vuetify.theme.themes.light.blue">
+      <h6 class="white--text mr-1">Eliminar bloque</h6>
+      <v-icon v-text="$vuetify.icons.values.delete" :size="15" color="white"/>
+    </v-btn>
+    <h3 class="cycle-type-style mt-3 ml-5 font-italic">{{getTypeName}}</h3>
+    <v-card height="80" class="d-flex justify-space-between align-center mx-5" color="#E8F1F6" flat>
+
       <v-text-field
           :rules="[rules.required]"
           :error="required"
@@ -10,23 +17,27 @@
           flat
           class="title_block mb-7 mt-5"
           background-color="#E8F1F6"
-          v-model="title"
+          v-model="cycleData.name"
       ></v-text-field>
-      <NumberSelector :component-width="190" :text-size="16" :component-border-radius="4" data-text="Repeticiones" :data-value="5" class="mt-5" :deactivate="false" :error="false"/>
+      <NumberSelector class="align-self-start" @valueChanged="updateCycleRepetitions"
+                      :component-width="190" :text-size="16" :component-border-radius="4"
+                      data-text="Repeticiones" :data-value="getRepetitions"
+                      :deactivate="false" :error="false" :minimum="1"/>
     </v-card>
 
-    <div class="mt-1">
+    <div class="mb-5">
       <v-container>
         <v-row>
-          <v-col v-for="i in exercise" :key="'exercise_'+i" cols="6">
-            <ExerciseCard :name="'Abdominales'" :id="i" :details="false" :editRemove="true"
-                          @editTouched="editExercise(i)" @deleteTouched="exercise--"
-                          description="Es un ejercicio dificil que no se logra completar si se come mucho antes de realizarlo pues desdulta masydasd" :img="require('@/assets/estiramiento.png')"></ExerciseCard>
+          <v-col v-for="(cycleExercise, index) in getCycleExercises(cycleId)" :key="'exercise_'+index" cols="6">
+            <ExerciseCard :id="cycleExercise.data.id" :order="cycleExercise.data.order"
+                          :details="{needed: true, duration: cycleExercise.duration, repetitions: cycleExercise.repetitions}"
+                          :editRemove="true" :force="true"
+                          @editTouched="editExerciseCard" @deleteTouched="removeExercise"/>
           </v-col>
-          <v-col v-for="i in rest" :key="'rest_'+i" cols="6">
-            <ExerciseCard :id="i" :details="false" :edit-remove="true" :rest="true"
-                          @editTouched="addRestDialog = true" @deleteTouched="rest--"/>
-          </v-col>
+<!--          <v-col v-for="i in rest" :key="'rest_'+i" cols="6">-->
+<!--            <ExerciseCard :id="i" :details="false" :edit-remove="true" :rest="true"-->
+<!--                          @editTouched="addRestDialog = true" @deleteTouched="rest&#45;&#45;"/>-->
+<!--          </v-col>-->
           <v-col class="d-flex flex-column align-center justify-space-between"  cols="6">
             <v-dialog persistent v-model="selectExerciseDialog">
               <template v-slot:activator="{on, attrs}">
@@ -35,22 +46,21 @@
                          @click.native="selectExerciseDialog = true"/>
               </template>
               <SelectExercisePopUp :key="selectExercisePopUpKey"
-                                   :edit-exercise="editExerciseId"
+                                   :edit-exercise="editExerciseData"
                                    @closeWindow="reRenderSelectExercise"
-                                   @exerciseEdited="reRenderSelectExercise"
+                                   @exerciseEdited="editExercise"
                                    @exerciseSelected="addExercise"/>
             </v-dialog>
             <v-dialog persistent v-model="addRestDialog">
               <template v-slot:activator="{on, attrs}">
                 <NewTask name="Agregar Descanso" icon="history_toggle_off"
                          v-bind="attrs" v-on="on"
-                         @click.native="addRestDialog = true"
+                         @click.native="selectRest"
                          :height="50"/>
               </template>
               <SelectExerciseConfigPopUp :key="addRestPopUpKey"
-                                         :is-rest="true"
                                          @goBack="reRenderAddRest()"
-                                         @confirmExercise="addRest"/>
+                                         @confirmExercise="addExercise"/>
             </v-dialog>
 
           </v-col>
@@ -61,6 +71,15 @@
 
     </div>
 
+    <v-dialog width="30%" v-model="openAlert">
+      <AlertPopUp title="ERROR" :text="alertText">
+        <template v-slot:actions>
+          <v-btn :color="$vuetify.theme.themes.light.green" @click="openAlert = false">
+            <span class="white--text">Cerrar</span>
+          </v-btn>
+        </template>
+      </AlertPopUp>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -70,12 +89,27 @@ import ExerciseCard from "@/components/ExerciseCard";
 import NewTask from "@/components/NewTask";
 import SelectExercisePopUp from "@/components/SelectExercisePopUp";
 import SelectExerciseConfigPopUp from "@/components/SelectExerciseConfigPopUp";
+import AlertPopUp from "@/components/AlertPopUp";
+
+
+import {useRoutines} from "@/store/Routines";
+const routinesStore = useRoutines();
+
+import {useRoutineCycles} from "@/store/RoutineCycles";
+const routineCyclesStore = useRoutineCycles();
+
+import {useCycleExercises} from "@/store/CycleExercises";
+const cycleExercisesStore = useCycleExercises()
+
+import {CycleTypes} from "@/api/cycles";
+import {mapActions} from "pinia";
+
 
 export default {
   name: "blockRutine",
-  components: {SelectExerciseConfigPopUp, SelectExercisePopUp, NumberSelector, ExerciseCard, NewTask},
+  components: {AlertPopUp, SelectExerciseConfigPopUp, SelectExercisePopUp, NumberSelector, ExerciseCard, NewTask},
   props:{
-    id:{
+    cycleId:{
       type: Number,
       required: true
     },
@@ -86,53 +120,108 @@ export default {
   },
   data(){
     return{
-      exercise: 2,
-      rest: 0,
+      cycleData: {},
+      dataLoaded: false,
 
       selectExercisePopUpKey: 0,
       selectExerciseDialog: false,
       addRestPopUpKey: 0,
       addRestDialog: false,
-      editExerciseId: undefined,
+      editExerciseData: undefined,
+      openAlert: false,
+      alertText: '',
 
-      title: '',
-      IsEmpty: false,
+      // title: '',
+      isEmpty: false,
       rules: {
         required: value => !!value || "Necesita Ingresar un titulo de Bloque"
       },
     }
   },
   methods: {
-    addExercise() {
-      this.selectExerciseDialog = false
-      this.exercise = this.exercise+1;
-      this.$emit('newExercise')
-      this.reRenderSelectExercise()
+    addExercise(exerciseId, duration, repetitions) {
+      const result = routineCyclesStore.addExerciseToCycle(this.cycleId, exerciseId, duration, repetitions);
+      if(result === -1){
+        this.alertText = 'No se puede tener el mismo ejercicio más de una vez en el mismo ciclo.';
+        this.openAlert = true;
+      }
+      this.reRenderSelectExercise();
+      this.reRenderAddRest();
     },
-    addRest(){
-      this.selectExerciseDialog = false
-      this.rest++
-      this.$emit('newRest')
-      this.reRenderAddRest()
+    removeExercise(exerciseId){
+      const result = routineCyclesStore.removeExerciseFromCycle(this.cycleId, exerciseId);
+      if(result === -1){
+        this.alertText = 'El ejercicio no está agregado al ciclo';
+        this.openAlert = true;
+      }
+      this.reRenderSelectExercise();
+      this.reRenderAddRest();
     },
+    editExercise(exerciseId, duration, repetitions){
+      const result = routineCyclesStore.modifyExerciseFromCycle(this.cycleId, exerciseId, duration, repetitions);
+      if(result === -1){
+        this.alertText = 'No se pudo modificar el ejercicio';
+        this.openAlert = true;
+      }
+      this.editExerciseData = undefined;
+      this.reRenderSelectExercise();
+      this.reRenderAddRest();
+    },
+    editExerciseCard(exerciseId){
+      cycleExercisesStore.setExerciseSelectedId(exerciseId);
+      this.editExerciseData = {toEdit: true, id:exerciseId};
+      this.reRenderSelectExercise();
+      this.reRenderAddRest();
+      this.selectExerciseDialog = true;
+    },
+    selectRest(){
+      cycleExercisesStore.setExerciseSelectedIdAsRest();
+      this.addRestDialog = true
+    },
+    // addRest(){
+    //   this.selectExerciseDialog = false
+    //   // this.rest++
+    //   // this.$emit('newRest')
+    //   this.reRenderAddRest()
+    // },
     reRenderSelectExercise() {
       this.selectExerciseDialog = false;
-      this.editExerciseId = undefined
       this.selectExercisePopUpKey++;
     },
     updateIsEmpty() {
-      this.IsEmpty = (this.title === '')
-      this.$emit('input', !this.IsEmpty, this.title, this.id)
+      this.isEmpty = (this.cycleData.name === '')
+      this.$emit('input', !this.isEmpty, this.cycleData.name, this.cycleId)
     },
     reRenderAddRest(){
       this.addRestDialog = false;
       this.addRestPopUpKey++;
     },
-    editExercise(id) {
-      this.editExerciseId = id.toString()
-      this.selectExercisePopUpKey++;
-      this.selectExerciseDialog = true
+    updateCycleRepetitions(newValue){
+      this.cycleData.repetitions = newValue;
+    },
+    ...mapActions(useRoutineCycles, {getCycleExercises: "getCycleExercises"}),
+    removeBlock(){
+      routinesStore.deleteCycle(this.cycleId);
     }
+  },
+  computed: {
+    getTypeName(){
+      switch (this.cycleData.type) {
+        case CycleTypes.WARMUP:
+          return 'Calentamiento'
+        case CycleTypes.COOLDOWN:
+          return 'Elongación'
+        default:
+          return 'Ejercitamiento'
+      }
+    },
+    getRepetitions(){
+      return this.cycleData.repetitions;
+    }
+  },
+  beforeMount() {
+    this.cycleData = routineCyclesStore.getCycleById(this.cycleId);
+    this.dataLoaded = true;
   }
 }
 </script>
@@ -155,5 +244,15 @@ export default {
   background-color: #E8F1F6;
   border: #79747E solid;
   border-radius: 20px !important;
+}
+
+.remove-icon-style {
+  position: absolute;
+  top: -15px;
+  right: 20px;
+}
+
+.cycle-type-style {
+  color: var(--v-darkBlue-base);
 }
 </style>

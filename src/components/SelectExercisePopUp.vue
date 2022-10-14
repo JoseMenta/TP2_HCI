@@ -1,6 +1,6 @@
 <!-- PopUp para elegir un ejercicio al crear una rutina -->
 <template>
-  <v-carousel hide-delimiters hide-delimiter-background :show-arrows="false" height="auto" v-model="step">
+  <v-carousel v-if="dataLoaded" hide-delimiters hide-delimiter-background :show-arrows="false" height="auto" v-model="step">
     <v-carousel-item>
       <v-card class="card-style">
         <v-app-bar class="topbar-style" color="white">
@@ -12,7 +12,7 @@
                      :search-box-width="445"
                      :icon-size="30"
                      :btn-border-radius="12"
-                     :text-size="20" class="mx-auto" language="es" :filters="false"/>
+                     :text-size="20" class="mx-auto mt-3" language="es" :filters="false"/>
         </v-app-bar>
         <v-container fluid>
           <v-row class="mt-5 mx-16">
@@ -45,13 +45,13 @@
             </v-col>
           </v-row>
           <v-row class="mt-10">
-            <ExerciseCardList class="mx-10" @cardTouched="openExercise"/>
+            <ExerciseCardList :version="0" class="mx-10" @exerciseTouched="openExercise" :edit-remove-card="false" :ids="this.getExercisesIds"/>
           </v-row>
         </v-container>
       </v-card>
     </v-carousel-item>
     <v-carousel-item>
-      <SelectExerciseConfigPopUp :is-rest="false" @goBack="step--" @confirmExercise="exerciseSelected"/>
+      <SelectExerciseConfigPopUp @goBack="step--" @confirmExercise="exerciseSelected"/>
     </v-carousel-item>
   </v-carousel>
 
@@ -62,18 +62,30 @@ import SearchBox from "@/components/SearchBox";
 import FilterMenu from "@/components/FilterMenu";
 import ExerciseCardList from "@/components/ExerciseCardList";
 import SelectExerciseConfigPopUp from "@/components/SelectExerciseConfigPopUp";
+
+import {useExercises} from "@/store/Exercises";
+import {mapState} from "pinia";
+const exercisesStore = useExercises();
+
+import {useCycleExercises} from "@/store/CycleExercises";
+const cycleExercisesStore = useCycleExercises();
+
 export default {
   name: "SelectExercisePopUp",
   props: {
     editExercise: {
-      type: String,
-      required: false
+      type: Object,
+      required: false,
+      default() {
+        return {toEdit: false, exerciseId: -1}
+      }
     }
   },
   components: {SelectExerciseConfigPopUp, ExerciseCardList, FilterMenu, SearchBox},
   data() {
     return {
-      step: 0
+      step: 0,
+      dataLoaded: false
     }
   },
   methods: {
@@ -86,20 +98,33 @@ export default {
       this.$emit("closeWindow")
     },
     openExercise(id) {
-      console.log(id)
-      this.step++
+      cycleExercisesStore.setExerciseSelectedId(id);
+      this.step++;
     },
-    exerciseSelected() {
-      if(this.editExercise){
-        this.$emit("exerciseEdited")
+    exerciseSelected(exerciseId, duration, repetitions) {
+      if(this.editExercise.toEdit){
+        this.$emit("exerciseEdited", exerciseId, duration, repetitions);
       } else {
-        this.$emit("exerciseSelected")
+        this.$emit("exerciseSelected", exerciseId, duration, repetitions);
       }
     }
   },
-  beforeMount() {
-    this.step = (this.editExercise) ? 1 : 0
-  }
+  computed: {
+    ...mapState(useExercises, {getExercises: "getNonRestExercises"}),
+    getExercisesIds(){
+      return this.getExercises.map((exercise) => exercise.id);
+    }
+  },
+  async beforeMount(){
+    await exercisesStore.fetchExercises();
+    if(this.editExercise.toEdit){
+      this.step = 1;
+    } else {
+      this.step = 0;
+      cycleExercisesStore.setExerciseSelectedId(-1);
+    }
+    this.dataLoaded = true;
+  },
 }
 </script>
 

@@ -13,7 +13,7 @@
       <RoutineCardList v-if="dataLoaded" :routines="this.getRutinesFilter">
         <template v-slot:header>
           <v-col class="d-flex" cols="6">
-            <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="changeView({name: 'createRoutine'})">
+            <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="newRoutine">
               <v-icon v-text="$vuetify.icons.values.add" color="#1C1B1F" :size="70"/>
               <span class="new-routine-text-style">Nueva rutina</span>
             </v-card>
@@ -31,7 +31,7 @@ import RoutineFilterSearch from "@/components/RoutineFilterSearch";
 
 import {mapState} from "pinia";
 
-import {useRoutines} from "@/store/Routines";
+import {useRoutines, NEW_ROUTINE_ID} from "@/store/Routines";
 const routinesStore = useRoutines();
 
 import {useFavourites} from "@/store/Favourites";
@@ -59,8 +59,8 @@ export default {
     // getText(componentText){
     //   return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
     // },
-    changeView(nameView) {
-      this.$router.push(nameView)
+    changeView(view) {
+      this.$router.push(view)
     },
     getFilterSearch(filter, textSearch){
       this.textSearch= textSearch;
@@ -69,6 +69,9 @@ export default {
     getFilter(value){
       this.filter = value;
       console.log(this.filter)
+    },
+    newRoutine(){
+      this.changeView({name: 'createRoutine', query: {id: NEW_ROUTINE_ID}})
     }
   },
   computed:{

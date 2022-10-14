@@ -41,6 +41,11 @@ import LoginButton from "@/components/LoginButton";
 
 import {useUsers} from "@/store/User";
 
+import {useCategories} from "@/store/Categories";
+
+import {useExercises} from "@/store/Exercises";
+import {mapActions} from "pinia";
+
 export default {
   name: "LoginView",
   components: {
@@ -60,6 +65,8 @@ export default {
     }
   },
   methods:{
+    ...mapActions(useCategories, {initializeCategories: "initialize"}),
+    ...mapActions(useExercises, {initializeExercises: "initialize"}),
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)
@@ -100,6 +107,8 @@ export default {
           break;
         case 0:
           this.incorrect = false;
+          await this.initializeCategories();
+          await this.initializeExercises();
           this.changeView(redirectPath);
       }
     },

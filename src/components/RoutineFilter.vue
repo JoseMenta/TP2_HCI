@@ -17,7 +17,7 @@
                   @menuChanged="getDificultadFilter"/>
       <!-- TODO: Ver qué va en Categoria -->
       <FilterMenu :id="3"
-                  :options="['Cuerpo completo', 'Tren superior', 'Tren inferior', 'Tren medio']"
+                  :options="getCategoryNames"
                   :width="150"
                   :placeholder="'Categoría'"
                   :left-border-radius="4" :right-border-radius="4"
@@ -41,6 +41,9 @@
 
 <script>
 import FilterMenu from "@/components/FilterMenu";
+
+import {useCategories} from "@/store/Categories";
+import {mapState} from "pinia";
 
 export default {
   name: "RoutineFilter",
@@ -86,6 +89,12 @@ export default {
     },
     emitSignal(){
       this.$emit('getFilters', this.filters);
+    }
+  },
+  computed: {
+    ...mapState(useCategories, {getCategories: 'getCategories'}),
+    getCategoryNames() {
+      return this.getCategories.map((category) => category.name);
     }
   }
 }

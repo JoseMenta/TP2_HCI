@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 
-import {ExerciseApi} from "@/api/exercise";
+import {Exercise, ExerciseApi} from "@/api/exercise";
+
+const restCard = new Exercise("Descanso", "Tomate un descanso", "rest", {equipment : 'Sin Equipamiento', muscleZone : 'Zona Media', Intensity : 'Baja Intensidad', url: require('@/assets/rest.png')})
 
 export const useExercises = defineStore('exercises', {
     state:() => ({
@@ -50,7 +52,8 @@ export const useExercises = defineStore('exercises', {
         //         metadata: null
         //     }
         // ],
-        exercises:[]
+        exercises:[],
+        restCardId: -1
     }),
     getters: {
         getExercises() {
@@ -60,10 +63,24 @@ export const useExercises = defineStore('exercises', {
             }
             return this.exercises.content;
         },
-
+        getNonRestExercises(){
+            return this.getExercises.filter((exercise) => exercise.type !== "rest");
+        },
+        getRestExercise(){
+            return this.getExercises.find((exercise) => exercise.type === "rest");
+        }
     },
     actions: {
-
+        // Verifica que se haya cargado el ejercicio de descanso
+        async initialize(){
+            await this.fetchExercises();
+            const restIndex = this.exercises.content.findIndex((exercise) => exercise.type === 'rest');
+            // Si no se agrego lo carga en la API y los vuelve a recuperar
+            if(restIndex === -1){
+                await this.addExerciseToApi(restCard);
+                await this.fetchExercises();
+            }
+        },
         //FUnciones usando el Store No son Await porque ya no usa la conexion al servidor
         getExerciseIndex(exercise){
             if(!this.exercises.content){

@@ -54,6 +54,10 @@ export default {
       type:Array[String],
       required:true,
     },
+    initialOption: {
+      type: String,
+      required: false
+    },
     width:{
       type: Number,
       required: true
@@ -87,7 +91,10 @@ export default {
     }
   },
   created() {
-    if(this.placeholder === undefined){
+    if(this.initialOption){
+      this.optionIndex = this.options.findIndex((option) => option === this.initialOption)
+    }
+    else if(this.placeholder === undefined){
       this.optionIndex = 0
     }
   },

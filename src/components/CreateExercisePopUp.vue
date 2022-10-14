@@ -1,6 +1,6 @@
 <!-- Componente para el popup de creacion de ejercicios -->
 <template>
-  <v-card class="card-style">
+  <v-card v-if="dataLoaded" class="card-style">
     <v-container class="container-style">
       <v-row justify="space-between" class="top-style">
         <v-col :cols="1">
@@ -31,7 +31,7 @@
         <v-col :cols="12">
           <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
-              <iframe v-if="showContent" :src="metaData.url" height="100%" width="100%" class="iframe-class"></iframe>
+              <iframe v-if="showContent" :src="getSrc" height="100%" width="100%" class="iframe-class"></iframe>
               <v-img v-else :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
                 <v-icon v-text="$vuetify.icons.values.playCircle"
                         color="#1C1B1F"
@@ -41,8 +41,8 @@
                         v-on="on"/>
               </v-img>
             </template>
-            <UploadUrl title="Cargar URL video:"
-                        text="Colocar el url a un video, preferentemente no de youtube"
+            <UploadUrl title="Cargar contenido (URL)"
+                        text="Colocar el url de una imagen o video, preferentemente que no sea de youtube"
                         @closeWarning="mediaDialog = false" @subir="uploadUrl"/>
           </v-dialog>
 
@@ -66,7 +66,7 @@
         <v-col :cols="12">
           <div class="d-inline author-style">
             <span>Autor: </span>
-            <span>{{this.getUser.firstName}} {{this.getUser.lastName}}</span>
+            <span>{{ getUserName }}</span>
           </div>
         </v-col>
       </v-row>
@@ -87,15 +87,15 @@
             <v-col :cols="4">
               <!-- TODO: Definir equipamientos posibles para un ejercicio -->
               <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195"  :condition="required && !equipment" errorText="Es necesario el Equipamento"
-                          :placeholder="getEquipmentValue" @menuChanged="inputEquipment" :options="['Con Equipamiento','Sin Equipamiento']"/>
+                          :placeholder="getEquipmentValue" @menuChanged="inputEquipment" :options="['Con equipamiento','Sin equipamiento']"/>
             </v-col>
             <v-col :cols="4">
               <FilterMenu :id="1" :left-border-radius="4" :right-border-radius="4"  :condition="required && !muscleZone" errorText="Es necesaria la zona muscular"
-                          :width="195" :placeholder="getMuscleZone" @menuChanged="inputMuscleZone" :options="['Zona Inferior','Zona Media','Zona Superior']"/>
+                          :width="195" :placeholder="getMuscleZone" @menuChanged="inputMuscleZone" :options="['Todo el cuerpo','Zona inferior','Zona media','Zona superior']"/>
             </v-col>
             <v-col :cols="4">
               <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :condition="required && !Intensity" errorText="Es necesario la Intensidad"
-                          :width="195" :placeholder="getIntensity" @menuChanged="inputIntensity" :options="['Baja Intensidad','Media Intensidad','Alta Intensidad']"/>
+                          :width="195" :placeholder="getIntensity" @menuChanged="inputIntensity" :options="['Baja intensidad','Media intensidad','Alta intensidad']"/>
             </v-col>
           </v-row>
         </v-container>
@@ -159,6 +159,7 @@ export default {
       details: '',
       detailsIsEmpty: false,
       showContent: false,
+      dataLoaded: false,
 
       rules: {
         required: value => !!value || 'El titulo del ejercicio es requerido.',
@@ -191,7 +192,8 @@ export default {
     },
     uploadUrl(url){
       this.metaData.url=url
-      this.mediaDialog = false
+      console.log(this.metaData)
+      this.mediaDialog = false;
       this.showContent = true;
     },
     updateTitleIsEmpty(){
@@ -246,10 +248,10 @@ export default {
       this.metaData.Intensity = option;
       this.Intensity = true;
     },
-    ...mapActions(useUsers, {getUser: 'getCurrentUser'}),
     ...mapActions(useExercises, {getExercise: 'getExerciseByIdFromStore'})
   },
   computed: {
+    ...mapState(useUsers, {user: 'user'}),
     ...mapState(useExercises, {getExercises: 'getExercises'}),
     target () {
       return '#title'
@@ -267,6 +269,9 @@ export default {
       } else {
         return this.getExercise(this.exerciseId).name;
       }
+    },
+    getUserName(){
+      return this.user.firstName + ' ' + this.user.lastName
     },
     getExerciseImage(){
       // if(this.exerciseId === -1){
@@ -318,6 +323,9 @@ export default {
     getBoolean(){
       return this.exerciseId !== -1
     },
+    getSrc(){
+      return this.metaData.url;
+    }
   },
   beforeMount() {
     this.exerciseName = this.getExerciseName;
@@ -331,6 +339,11 @@ export default {
     this.equipment = this.getBoolean;
     this.showContent = this.getBoolean;
     console.log(this.metaData.url)
+  },
+  async beforeCreate(){
+    const usersStore = useUsers();
+    await usersStore.getCurrentUser();
+    this.dataLoaded = true;
   }
 }
 </script>

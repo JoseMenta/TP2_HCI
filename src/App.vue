@@ -42,7 +42,8 @@ export default {
   },
   data: () => ({
     routes:[],
-    loginViews:['landing', 'register1', 'register2', 'register','login', 'resendVerification', 'verification']
+    loginViews:['landing', 'register1', 'register2', 'register','login', 'resendVerification', 'verification'],
+    // dataLoaded: false
   }),
   methods:{
     changeFavorite(id,status){
@@ -76,7 +77,7 @@ export default {
   },
   async created() {
     const users = useUsers();
-    await users.initialize()
+    await users.initialize();
   },
   watch:{
     //TODO: ver si dejamos a los breadcrumbs

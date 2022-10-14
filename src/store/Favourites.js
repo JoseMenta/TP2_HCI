@@ -146,7 +146,6 @@ export const useFavourites = defineStore('favourites', {
             const favourites = await this.getFavouritesFromApi();
             // TODO: Prueba
             this.favourites = example;
-            console.log(this.favourites)
             // TODO: Prueba
             if(favourites === -1){
                 return favourites;

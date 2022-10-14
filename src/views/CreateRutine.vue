@@ -1,17 +1,24 @@
 <template>
-  <div class="mx-7 mt-7">
+  <div v-if="dataLoaded" class="mx-7 mt-7">
     <v-sheet class="d-inline-flex justify-space-around mb-10" flat width="100%">
       <v-sheet class="d-flex flex-column" width="70%" flat>
         <v-text-field
             :rules="[rules.required]"
             :error="required"
             @input="updateIsEmpty"
-            v-model="RutineName"
+            v-model="routineData.name"
             placeholder="Nombre de Rutina"
             solo
             flat
             class="title_rutine mb-2 pa-0 ml-0"
         ></v-text-field>
+        <v-card class="d-inline-flex mb-5" flat tile>
+          <h2 class="text-truncate mr-2">Categoría: </h2>
+          <FilterMenu :id="0" @menuChanged="updateRoutineCategory"
+                      :options="getCategoryNames" :initial-option="this.routineData.category.name"
+                      :width="200"
+                      :left-border-radius="4" :right-border-radius="4"/>
+        </v-card>
         <v-card class="d-inline-flex mb-5" flat tile>
           <h2 class="text-truncate mr-2">Dificultad: </h2>
           <v-icon v-for="i in 5" :key="i" :color="setColorLevel(i)" @click="setLevel(i)">bolt</v-icon>
@@ -27,7 +34,7 @@
               <AddTagPopUp @closeWindow="closeTagPopUp" @addTag="newTag"/>
             </v-dialog>
           </v-card>
-          <v-card v-for="(tag, index) in tagsText" :color="$vuetify.theme.themes.light.grey"
+          <v-card v-for="(tag, index) in routineData.metadata.tags" :color="$vuetify.theme.themes.light.grey"
                   :key="index" height="56" class="mr-4 d-inline-flex align-center tag-style">
             <v-card-text class="text-h6 font-weight-bold black--text">{{tag}}</v-card-text>
             <v-btn icon class="tag-icon-style" color="white" @click="removeTag(index)">
@@ -38,7 +45,7 @@
       </v-sheet>
       <v-sheet width="30%" class="d-flex flex-column justify-end" flat>
         <v-img
-            :src="require('@/assets/placeholder.jpg')"
+            :src="routineData.detail"
             max-height="200"
             width="auto" @mouseover="imageHover = true" @mouseleave="imageHover = false"
             class="img_rutine elevation-5 d-flex justify-center align-center"
@@ -53,7 +60,7 @@
                  ripple
                  width="45%"
                  height="auto"
-                 @click="saveRutine({name: 'createdRoutines'})">
+                 @click="saveRoutine({name: 'createdRoutines'})">
             <v-icon small color="white">done</v-icon>
             <span class="white--text my-3 mx-3 text-style">Guardar</span>
           </v-btn>
@@ -77,10 +84,10 @@
         </v-card>
       </v-sheet>
     </v-sheet>
-    <v-card flat  >
-      <blockRutine class="mb-5" v-for="i in blocks" :key="i.id" @input="readTitle" :id="i.id" :required="required"></blockRutine>
-      <NewBlock class="mb-5" :action="addBlock"></NewBlock>
-      <block-rutine class="mb-5" @input="readTitle" :id="-1" :required="required"></block-rutine>
+    <v-card v-if="dataLoaded" flat>
+      <BlockRutine class="mb-5" v-for="i in getWarmUpAndExerciseCycles(this.routineData.cycles)" :key="i.id" @input="readTitle" :cycle-id="i.id" :required="required"/>
+      <NewBlock class="mb-5" :action="addBlock"/>
+      <BlockRutine class="mb-5" v-for="i in getCooldownCycles(this.routineData.cycles)" @input="readTitle" :key="i.id" :cycle-id="i.id" :required="required"/>
     </v-card>
   </div>
 </template>
@@ -90,59 +97,95 @@ import BlockRutine from "@/components/blockRutine";
 import NewBlock from "@/components/NewBlock";
 import AddTagPopUp from "@/components/AddTagPopUp";
 import AlertPopUp from "@/components/AlertPopUp";
+import FilterMenu from "@/components/FilterMenu";
+
+import {DIFICULTY_LEVELS, useRoutines} from "@/store/Routines";
+const routinesStore = useRoutines();
+
+import {useRoutineCycles} from "@/store/RoutineCycles";
+const routineCyclesStore = useRoutineCycles();
+
+import {useCategories} from "@/store/Categories";
+const categoriesStore = useCategories();
+
+import {useExercises} from "@/store/Exercises";
+const exercisesStore = useExercises();
+
+import {CycleTypes} from "@/api/cycles";
+
+import {mapState} from "pinia";
+
 
 export default {
   name: "CreateRutine",
   data(){
     return{
-      level :0,
-      tags: 0,
-      tagsText: [],
+      routineId: -1,
+      // routineData: {},
+      // routineCycles: [],
+      // level :0,
+      // tags: 0,
+      // tagsText: [],
       imageHover: false,
       addTagDialog: false,
       alertDialog: false,
       tagKey: 0,
-      RutineName: '',
-      NameEmpty: true,
+      // routineName: '',
+      isNameEmpty: true,
       required: false,
-      blocks: [{id: 0, name:"pepe", empty: false}, {id:1, name:"jose", empty: false}],
-      finalBlock:{id: -1, name:"", empty: false},
+      blocks: [],
       rules: {
-        required: value => !!value || "Es necesario un Titulo de Rutina"
+        required: value => !!value || "Es necesario un título de rutina"
       },
+      dataLoaded: false
     }
   },
-  components: {AlertPopUp, AddTagPopUp, NewBlock, BlockRutine},
+  components: {FilterMenu, AlertPopUp, AddTagPopUp, NewBlock, BlockRutine},
   methods: {
     addBlock() {
-      this.blocks.push({id: this.blocks.length, name:"jose", empty: false})
-      this.$emit('newExercise')
+      routinesStore.addNewCycle();
     },
     setLevel(i){
-      this.level = i;
+      switch (i){
+        case 1:
+          this.routineData.difficulty = DIFICULTY_LEVELS.ROOKIE;
+          return;
+        case 2:
+          this.routineData.difficulty = DIFICULTY_LEVELS.BEGINNER;
+          return;
+        case 3:
+          this.routineData.difficulty = DIFICULTY_LEVELS.INTERMEDIATE;
+          return;
+        case 4:
+          this.routineData.difficulty = DIFICULTY_LEVELS.ADVANCED;
+          return;
+        default:
+          this.routineData.difficulty = DIFICULTY_LEVELS.EXPERT;
+          return;
+      }
     },
     setColorLevel(i){
-      return i>this.level ? "grey" : "black";
+      return i>this.routineData.difficulty.value ? "grey" : "black";
     },
     newTag(name){
-      this.tagsText.push(name)
-      this.tags = this.tags + 1;
+      this.routineData.metadata.tags.push(name)
       this.closeTagPopUp()
     },
     removeTag(index){
-      this.tagsText.splice(index, 1)
+      this.routineData.metadata.tags.splice(index, 1)
     },
-    saveRutine(nameView) {
-      this.required=true;
+    saveRoutine(nameView) {
+      this.required = true;
       for(const index in this.blocks){
         if(!this.blocks[index].empty){
           return;
         }
       }
-      if(!this.finalBlock.empty || this.NameEmpty){
+      if(this.isNameEmpty){
         return;
       }
-      this.$router.push(nameView)
+      routinesStore.executeActions();
+      this.$router.push(nameView);
     },
     removeRutine(nameView) {
       this.$router.push(nameView)
@@ -155,22 +198,48 @@ export default {
       this.addTagDialog = false
     },
     readTitle(value, title, id){
-      if(id === -1){
-        this.finalBlock.empty=value;
-        this.finalBlock.name=title;
-        return
+      if(!this.blocks[id]){
+        this.blocks[id] = {empty: value, name: title}
+        return;
       }
       this.blocks[id].empty=value;
       this.blocks[id].name=title;
     },
     updateIsEmpty() {
-      this.NameEmpty = (this.RutineName === '')
+      this.isNameEmpty = (this.routineData.name === '')
+    },
+    updateRoutineCategory(filterId, categoryName){
+      this.routineData.category = categoriesStore.getCategoryByName(categoryName);
+    },
+    getWarmUpAndExerciseCycles(cycles){
+      return cycles.filter((cycle) => cycle.type !== CycleTypes.COOLDOWN);
+    },
+    getCooldownCycles(cycles){
+      return cycles.filter((cycle) => cycle.type === CycleTypes.COOLDOWN);
     }
   },
   computed: {
+    ...mapState(useRoutines, {routineData: 'editingRoutine'}),
     showImageEditIcon(){
       return (this.imageHover) ? 'image-hover-style' : ''
+    },
+    ...mapState(useCategories, {getCategories: 'getCategories', categoriesLoaded: "categoriesLoaded"}),
+    getCategoryNames(){
+      console.log(this.getCategories)
+      return this.getCategories.map((category) => category.name);
     }
+  },
+  async created(){
+    this.routineId = this.$route.query.id;
+    await categoriesStore.fetchCategories();
+    if(parseInt(this.routineId) !== -1){
+      await routinesStore.fetchRoutines();
+      await routineCyclesStore.fetchRoutineCycles(this.routineId);
+    } else {
+      routinesStore.createNewRoutine();
+    }
+    await exercisesStore.fetchExercises();
+    this.dataLoaded = true;
   }
 }
 </script>
