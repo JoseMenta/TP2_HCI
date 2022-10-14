@@ -7,17 +7,18 @@
              @click="changeView('landing')"/>
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
-      <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
+      <v-card class="d-flex login-card-style justify-center flex-column" flat>
         <h1 class="d-flex justify-center mb-5">Verificación</h1>
-        <h3 class="d-flex justify-start margin-style text-format">Código de Verificación:</h3>
-        <h3 class="d-flex justify-start mb-10 pl-10 margin-style text-format">Esta acción requiere verificación de correo, revise su buzón e ingrese el código.</h3>
+        <h3 class="d-flex justify-start margin-style text-format">Ingrese el código de verificación enviado a su mail</h3>
+        <v-spacer></v-spacer>
         <v-otp-input
             :length="length"
             v-model="otp"
             plain
             class="margin-style"
         ></v-otp-input>
-        <LoginButton class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive" :waiting="waiting">
+        <h3 v-if="incorrect" class="red--text d-flex justify-center text- mb-2">{{errorMessage}}</h3>
+        <LoginButton :disabled="otp.length===0" :loading="buttonLoading" class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive" :waiting="waiting">
         </LoginButton>
       </v-card>
     </v-sheet>
@@ -36,6 +37,9 @@ export default {
     otp:'',
     length: 6,
     waiting:false,
+    buttonLoading:false,
+    incorrect:false,
+    errorMessage:'',
   }),
   props:{
     user: {
@@ -54,11 +58,6 @@ export default {
       return this.otp.length === this.length
     },
   },
-  created() {
-    console.log(this.code)
-    console.log(this.email)
-    console.log(this.otp)
-  },
   components: {
     LoginButton,
   },
@@ -71,23 +70,31 @@ export default {
       this.$router.push(nameView)
     },
     async verify(){
-      this.waiting = true
+      this.buttonLoading = true
       const users = useUsers();
-      let mail = this.email
-      if(this.email.length===0){
-        mail=users.user.email
-      }
-      console.log(users.user.email)
-      const result = await users.verifyEmail(mail,this.otp);
-      this.waiting = false
+      const result = await users.verifyEmail(this.email,this.otp);
+      this.buttonLoading = false
+      console.log(result)
       switch(result){
-        case -1:
+        case 0:
           console.log('Error crítico.');
+          this.errorMessage = 'Error desconocido';
+          this.incorrect = true
+          return;
+        case 99:
+          this.errorMessage = 'No fue posible conectarse con el servidor';
+          this.incorrect = true;
+          return
+        case 8:
+          this.errorMessage = 'El codigo ingresado no es correcto, intente nuevamente';
+          this.incorrect = true;
           return;
         case 1:
           console.log('El código es incorrecto.');
+          this.errorMessage = 'El código ingresado no es correcto, intente nuevamente';
+          this.incorrect = true
           return;
-        case 0:
+        case -1:
           console.log('Codigo correcto, cuenta verificada');
           this.changeView({name: 'login'});
       }
@@ -113,6 +120,7 @@ export default {
 .login-card-style{
   border-radius: 12px;
   border: 1px solid black;
+  padding-bottom: 20px;
   background: white;
 }
 
@@ -123,14 +131,15 @@ export default {
 }
 
 .margin-style{
-  margin-right: 50px;
-  margin-left: 50px;
+  margin-right: 5%;
+  margin-left: 5%;
+  margin-bottom: 30px;
 }
 
 
 .center-card-margin{
-  margin-left: 200px;
-  margin-right: 200px;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
 .v-date-picker-header {

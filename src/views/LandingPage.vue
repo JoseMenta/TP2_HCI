@@ -13,7 +13,7 @@
             class="mx-4"
             color="white"
             plain
-            @click="changeView({name: 'register1'})"
+            @click="changeView({name: 'register'})"
         >
           Registrarte
         </v-btn>
@@ -24,9 +24,6 @@
             @click="changeView({name: 'login'})"
         >
           Iniciar Sesión
-        </v-btn>
-        <v-btn @click="data">
-          Hola
         </v-btn>
       </div>
     </v-sheet>
@@ -46,22 +43,13 @@
 </template>
 
 <script>
-import {useNewStore} from "@/store/newStore";
-import {mapWritableState} from "pinia";
 
 export default {
   name: "LandingPage",
-  computed:{
-    ...mapWritableState(useNewStore,['items'])
-  },
   methods: {
     changeView(nameView){
       this.$router.push(nameView)
     },
-    data(){
-      this.items.push('Hola')
-      console.log(this.items)
-    }
   }
 }
 </script>

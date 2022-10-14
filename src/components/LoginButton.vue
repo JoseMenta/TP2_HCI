@@ -3,14 +3,14 @@
 <template>
   <!-- Al poner width=auto y height=auto, el tamaño del boton se ajustara al margen del contenido interno -->
   <v-btn class="text-capitalize btn-style"
-         color="#00909E"
-         ripple
+         color="green"
          width="auto"
-         height="auto"
+         height="65"
          @click="action ? action : null"
-        :disabled=status>
-    <span class="white--text my-3 mx-16 text-style" v-if="!waiting">{{text}}</span>
-    <span class="white--text my-3 mx-16 text-style" v-else><v-progress-circular indeterminate></v-progress-circular></span>
+        :disabled="disabled||loading"
+        :loading="loading"
+  >
+    <span class="white--text my-3 mx-10 text-style">{{text}}</span>
   </v-btn>
 </template>
 
@@ -39,12 +39,12 @@ export default {
       type: Function,
       required: false
     },
-    status: {
-      type: Boolean,
-      required: false,
+    loading:{
+      type:Boolean,
+      required:false,
       default: false
     },
-    waiting:{
+    disabled:{
       type:Boolean,
       required:false,
       default: false
@@ -70,5 +70,4 @@ export default {
 .text-style {
   font-size: v-bind(textSizeCSS);
 }
-
 </style>

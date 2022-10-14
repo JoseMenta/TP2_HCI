@@ -10,7 +10,7 @@
         solo
         counter
         flat
-        v-model="input"
+        v-model="content"
         background-color="#DAE1E7"
     >
       <v-icon slot="append"
@@ -27,7 +27,7 @@ export default {
   name: "PasswordInput",
   data () {
     return {
-      input: '',
+      content: '',
       show1: false,
       IsEmpty: false,
       rules: {
@@ -47,17 +47,20 @@ export default {
     placeHolder:{
       type: String,
       required: true
+    },
+    value:{
+      type:String,
+      required:true,
     }
   },
   methods: {
     updateIsEmpty() {
       this.IsEmpty = (this.input === '')
-      this.$emit('input', !this.IsEmpty, this.input)
+      this.$emit('input', this.content)
     }
   },
 }
 </script>
 
 <style scoped>
-
 </style>

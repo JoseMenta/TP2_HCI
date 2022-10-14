@@ -12,7 +12,7 @@
       <v-list-item
           v-for="item in basic_items"
           :key="item.title"
-          :to="{name: item.name}"
+          :to="item.route"
           link
           active-class="active_item"
       >
@@ -34,7 +34,8 @@
       <v-list-item
           v-for="item in other_items"
           :key="item.title"
-          :to="{name: item.name}"
+          @click="item.action"
+          :to="item.route"
           link
           active-class="active_item"
       >
@@ -50,21 +51,23 @@
 </template>
 
 <script>
-
 export default {
   name: "NavigationDrawer",
   data () {
     return {
       basic_items: [
-        { title: 'Rutinas creadas', icon: 'fitness_center', name: 'createdRoutines'},
-        { title: 'Ejercicios creados', icon: 'directions_run', name: 'createdExercises'},
-        { title: 'Favoritos', icon:'favorite', name:'favorites'},
+        { title: 'Rutinas creadas', icon: 'fitness_center',route:{name: 'createdRoutines'},action:()=>{}},
+        { title: 'Ejercicios creados', icon: 'directions_run',route:{name: 'createdExercises'},action:()=>{}},
+        { title: 'Favoritos', icon:'favorite',route:{name: 'favorites'},action:()=>{}},
       ],
       right: null,
       other_items:[
           // TODO: Hacer la pagina de configuracion
-        {title: 'Configuración',icon:'settings', name:'createdRoutines'},
-        {title:'Cerrar sesión',icon:'logout', name: 'landing'}
+        {title: 'Configuración',icon:'settings', route:{name: 'createdRoutines'},action:()=>{}},
+        {title:'Cerrar sesión',icon:'logout', route:{name: 'landing'},action:()=>{
+          //quiero que esto haga el logout
+          console.log('hello')
+          }},
       ]
     }
   },

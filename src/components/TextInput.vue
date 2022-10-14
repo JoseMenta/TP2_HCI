@@ -35,12 +35,16 @@ export default {
     placeHolder:{
       type: String,
       required: true
+    },
+    value:{
+      type:String,
+      required:true
     }
   },
   methods: {
     updateIsEmpty() {
       this.IsEmpty = (this.input === '')
-      this.$emit('input', !this.IsEmpty, this.input)
+      this.$emit('input', this.input)
     }
   }
 }

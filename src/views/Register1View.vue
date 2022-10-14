@@ -6,6 +6,7 @@
              class="image-style"
              @click="changeView('landing')"/>
     </v-card>
+<!--    Esto es lo que tengo que pasar a v-carrousel-->
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="400" flat>
         <h1 class="d-flex justify-center mb-7 mt-8">Registro</h1>
