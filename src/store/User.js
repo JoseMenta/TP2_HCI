@@ -135,13 +135,11 @@ export const useUsers = defineStore("users", {
         async verifyEmail(email, code) {
             try {
                 await UserApi.verifyEmail({email: email, code: code});
-                return 0;
-            } catch(e) {
-                if(e.code === 400){
-                    return 1;
-                }
                 return -1;
+            } catch(e) {
+                return e.code
             }
+
         },
         // Actualiza el usuario en la API y en el store
         // Devuelve el resultado de la API, o -1 en caso de error

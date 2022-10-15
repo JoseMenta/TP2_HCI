@@ -8,7 +8,7 @@
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" flat>
-        <h1 class="d-flex justify-center mb-2">Inicio de Sesion</h1>
+        <h1 class="d-flex justify-center mb-2 my-4">Inicio de Sesion</h1>
         <TextInput class="margin-style" v-model="inputEmail"
                    :required="required" textError="Se requiere un email"
                    placeHolder="Ingrese Email"></TextInput>
@@ -16,11 +16,16 @@
                    :required="required" textError="Se requiere una contraseña"
                    placeHolder="Ingrese Contraseña"></PasswordInput>
         <h3 v-if="incorrect" class="red--text d-flex justify-center mb-2">{{errorMessage}}</h3>
-        <v-checkbox
-            v-model="rememberMe"
-            :label="`Mantener la sesión iniciada:${this.rememberMe}`"
-            class="px-4"
-        ></v-checkbox>
+        <v-switch
+          v-model="rememberMe"
+          label="Mantener mi sesión iniciada"
+          class="switch-class"
+        ></v-switch>
+<!--        <v-checkbox-->
+<!--            v-model="rememberMe"-->
+<!--            :label="`Mantener la sesión iniciada:${this.rememberMe}`"-->
+<!--            class="px-4"-->
+<!--        ></v-checkbox>-->
         <LoginButton :disabled = "!inputEmail ||!inputPassword" class="d-flex margin-btn-style" :text-size="20" text="Ingresar" :border-radius="12" @click.native="logIn"/>
         <a class="d-inline-flex text-decoration-underline justify-center mt-5 text-h6" @click="changeView({name: 'resendVerification'})"
         >Reenviar el código de verificación</a>
@@ -158,6 +163,9 @@ export default {
 .center-card-margin{
   margin-left: 15%;
   margin-right: 15%;
+}
+.switch-class{
+  padding-left: 5%;
 }
 
 </style>
