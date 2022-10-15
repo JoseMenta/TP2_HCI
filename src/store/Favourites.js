@@ -2,42 +2,6 @@ import {defineStore} from "pinia";
 
 import {FavouriteApi} from "@/api/favourite";
 
-// TODO: Prueba -----------------------------------------------------------------------------
-
-const example = {
-    totalCount: 1,
-    orderBy: 'id',
-    direction: 'asc',
-    content: [
-        {
-            id: 0,
-            name: 'Fulbo',
-            detail: require('@/assets/lionel-messi.webp'),
-            created: 1602646871112,
-            score: 4,
-            isPublic: true,
-            difficulty: 'rookie',
-            user: {
-                id: 0,
-                username: 'raulsarmiento@mail.com',
-                avatarUrl: require('@/assets/avatar.jpg'),
-                date: 1602139940660,
-                lastActivity: 1602646870971
-            },
-            category: {
-                id: 0,
-                name: 'Full body',
-                detail: 'Full body'
-            }
-        }
-    ],
-    size: 10,
-    page: 0,
-    isLastPage: true
-};
-
-// TODO: Prueba -----------------------------------------------------------------------------
-
 export const useFavourites = defineStore('favourites', {
     state: () => ({
         favourites: {}
@@ -90,10 +54,10 @@ export const useFavourites = defineStore('favourites', {
         },
         // Busca las rutinas favoritas del usuario
         // Devuelve las rutinas en caso de exito, devuelve -1 en caso de error
-        async getFavouritesFromApi(){
+        async getFavouritesFromApi(page){
             let result;
             try {
-                result = await FavouriteApi.getFavourites();
+                result = await FavouriteApi.getFavourites(page);
             } catch (e) {
                 console.log(e);
                 return -1;
@@ -143,15 +107,20 @@ export const useFavourites = defineStore('favourites', {
         // Obtiene las rutinas favoritas del usuario y actualiza el store
         // Devuelve -1 en caso de error, 0 en caso de exito
         async fetchFavourites(){
-            const favourites = await this.getFavouritesFromApi();
-            // TODO: Prueba
-            this.favourites = example;
-            // TODO: Prueba
-            if(favourites === -1){
-                return favourites;
-            }
-            this.updateFavouritesInStore(favourites);
-
+            let apiResult, result, page = 0;
+            do {
+                apiResult = await this.getFavouritesFromApi(page);
+                if(apiResult === -1){
+                    return -1;
+                }
+                if(page === 0){
+                    result = apiResult;
+                } else {
+                    apiResult.content.forEach((routine) => result.content.push(routine));
+                }
+                page++;
+            } while(!apiResult.isLastPage);
+            this.updateFavouritesInStore(result);
             return 0;
         },
         // Devuelve true si routineId es una rutina favorita del usuario, false si no

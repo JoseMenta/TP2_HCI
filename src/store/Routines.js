@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import { RoutineApi } from "@/api/routine";
+import { RoutineApi, ApiAction, ACTIONS, NewRoutine, TYPES, CycleIdMap, EditRoutine } from "@/api/routine";
 
 import {useFavourites} from "@/store/Favourites";
 import {useUsers} from "@/store/User";
@@ -9,14 +9,8 @@ import {useRoutineCycles} from "@/store/RoutineCycles";
 import {useCycleExercises} from "@/store/CycleExercises";
 
 import {Cycle, CycleTypes} from "@/api/cycles";
+import {CycleExercise} from "@/api/exercise";
 
-const categoriesStore = useCategories();
-
-const routineCyclesStore = useRoutineCycles();
-
-const cycleExercisesStore = useCycleExercises();
-
-// import {useUsers} from "@/store/User";
 
 // Rutinas:
 //      - id: Identificador de la rutina
@@ -34,67 +28,7 @@ const cycleExercisesStore = useCycleExercises();
 //          - votes: Cantidad de votos que tiene la rutina
 //          - tags: Tags asociados a la rutina
 
-const ACTIONS = {
-    ADD: 'add',
-    MODIFY: 'modify',
-    DELETE: 'delete',
-    // NONE: 'none'
-}
 
-const TYPES = {
-    ROUTINE: 'routine',
-    CYCLE: 'cycle',
-    EXERCISE: 'exercise'
-}
-
-class ApiAction{
-    constructor(type, action, data, clientId, serverId) {
-        this.type = type;
-        this.action = action;
-        this.data = data;
-        this.parentId = {
-            clientId: clientId,
-            serverId: serverId
-        }
-    }
-}
-
-class CycleIdMap{
-    constructor(clientId, serverId) {
-        this.clientId = clientId;
-        this.serverId = serverId;
-        this.deleted = false;
-    }
-}
-
-export const DIFICULTY_LEVELS = {
-    ROOKIE: {name: 'rookie', value: 1},
-    BEGINNER: {name: 'beginner', value: 2},
-    INTERMEDIATE: {name: 'intermediate', value: 3},
-    ADVANCED: {name: 'advanced', value: 4},
-    EXPERT: {name: 'expert', value: 5}
-};
-
-export const NEW_ROUTINE_ID = -1;
-
-class NewRoutine {
-    constructor(){
-        this.id = NEW_ROUTINE_ID;
-        this.name = '';
-        this.detail = '';
-        this.score = 0;
-        this.isPublic = true;
-        this.difficulty = DIFICULTY_LEVELS.ROOKIE;
-        this.category = {};
-        this.metadata = {
-            image: require('@/assets/placeholder.jpg'),
-            votes: 0,
-            tags: []
-        };
-        this.nextId = 3;
-        this.cycles = Cycle.newInitialRoutine()
-    }
-}
 
 
 export const useRoutines = defineStore('routines', {
@@ -112,7 +46,7 @@ export const useRoutines = defineStore('routines', {
             }
             return this.routines.content;
         },
-        // Devuelve la rutinas creadas por el usuario logueado
+        // Devuelve las rutinas creadas por el usuario logueado
         getRoutinesFromCurrentUser(){
             const usersStore = useUsers();
             return this.getRoutinesFromUserId(usersStore.user.id);
@@ -131,7 +65,7 @@ export const useRoutines = defineStore('routines', {
             if(!this.routines.content){
                 return -1;
             }
-            const routine = this.routines.content.find((routine) => routine.id === id);
+            const routine = this.routines.content.find((routine) => routine.id === parseInt(id));
             if(!routine){
                 return -1;
             }
@@ -169,7 +103,7 @@ export const useRoutines = defineStore('routines', {
         // Devuelve true si la rutina con id routineId es una rutina del usuario con id userId
         isRoutineFromUserId(userId, routineId){
             const userIdRoutines = this.getRoutinesFromUserId(userId);
-            return userIdRoutines.map((routine) => routine.id).includes(routineId);
+            return userIdRoutines.map((routine) => routine.id).includes(parseInt(routineId));
         },
         // Agrega una nueva rutina al store
         // Es void
@@ -250,10 +184,10 @@ export const useRoutines = defineStore('routines', {
             return result;
         },
         // Devuelve todas las rutinas almacenadas en la API (o -1, en caso de error)
-        async getRoutinesFromApi(){
+        async getRoutinesFromApi(page){
             let result;
             try {
-                result = await RoutineApi.getAll();
+                result = await RoutineApi.getAll(page);
             } catch(e) {
                 console.log(e);
                 return -1;
@@ -263,11 +197,22 @@ export const useRoutines = defineStore('routines', {
         // Guarda las rutinas almacenadas en la Api en el store (lo actualiza)
         // Devuelve 0 en caso de exito, -1 en caso de error
         async fetchRoutines(){
-            const apiRoutines = await this.getRoutinesFromApi();
-            if(apiRoutines === -1){
-                return -1;
-            }
-            this.replaceAllRoutinesInStore(apiRoutines);
+            let apiRoutines;
+            let result;
+            let page = 0;
+            do {
+                apiRoutines = await this.getRoutinesFromApi(page);
+                if(apiRoutines === -1){
+                    return -1;
+                }
+                if(page === 0){
+                    result = apiRoutines;
+                } else {
+                    apiRoutines.content.forEach((routine) => result.content.push(routine));
+                }
+                page++;
+            } while(!apiRoutines.isLastPage);
+            this.replaceAllRoutinesInStore(result);
             return 0;
         },
         // Agrega una rutina a la API y (si no esta) en el store
@@ -307,7 +252,10 @@ export const useRoutines = defineStore('routines', {
         // -----------------------------------------------------------------------------------------------
         // Deja el estado preparado para crear una nueva rutina
         createNewRoutine() {
-            this.actions = [];
+            const routineCyclesStore = useRoutineCycles();
+            const categoriesStore = useCategories();
+            // Por seguridad, borramos los datos
+            this.discardChanges();
             this.editingRoutine = new NewRoutine();
             this.editingRoutine.category = categoriesStore.getCategories[0];
 
@@ -331,6 +279,8 @@ export const useRoutines = defineStore('routines', {
         },
         // Agrega un nuevo ciclo a la rutina
         addNewCycle(){
+            const routineCyclesStore = useRoutineCycles();
+
             let moveOrder = false;
             let index = 0;
             // Colocamos el nuevo ciclo en la posicion correcta (justo antes de los ejercicios COOLDOWN)
@@ -363,6 +313,7 @@ export const useRoutines = defineStore('routines', {
         },
         // Elimina el ciclo con id cycleId de la rutina
         deleteCycle(cycleId){
+            const routineCyclesStore = useRoutineCycles();
             let reduceOrder = false;
             let index = 0;
             for(let cycle of this.editingRoutine.cycles){
@@ -401,7 +352,6 @@ export const useRoutines = defineStore('routines', {
             else {
                 this.actions.push(new ApiAction(TYPES.EXERCISE, ACTIONS.ADD, exercise, cycleId, cycleIdMap.serverId))
             }
-            console.log(this.actions)
         },
 
         // Elimina el ejercicio con id exerciseId del ciclo con id cycleId
@@ -416,50 +366,244 @@ export const useRoutines = defineStore('routines', {
             else {
                 this.actions.push(new ApiAction(TYPES.EXERCISE, ACTIONS.DELETE, exerciseId, cycleId, cycleIdMap.serverId))
             }
-            console.log(this.actions)
         },
 
         // Realiza las operaciones necesarias para guardar la rutina y su informacion en la API
         async executeActions(){
+            const routineCyclesStore = useRoutineCycles();
+            const cycleExercisesStore = useCycleExercises();
+
+            let result = 0, routineAction, routine;
             for(let action of this.actions){
+                console.log(action)
                 if(action.type === TYPES.ROUTINE){
                     action.data.difficulty = action.data.difficulty.name;
                     action.data.detail = action.data.name;
                     if(action.action===ACTIONS.ADD){
+                        routineAction = ACTIONS.ADD;
+                        routine = action.data;
                         const ans = await this.addRoutine(action.data);
+                        if(ans.api === -1){
+                            return -1;
+                        }
                         this.editingRoutine.id = ans.api.id
                     } else if(action.action === ACTIONS.MODIFY){
-                        await this.modifyRoutine(action.data)
+                        routineAction = ACTIONS.MODIFY;
+                        result = await this.modifyRoutine(action.data)
                     }
                 }
                 else if(action.type === TYPES.CYCLE){
                     const mapping = this.cycleIdMaps.find((cycle) => cycle.clientId === action.data.id);
                     if(action.action === ACTIONS.ADD){
                         const ans = await routineCyclesStore.addCycleToRoutine(this.editingRoutine.id,action.data)
+                        if(ans.api === -1){
+                            if(routineAction === ACTIONS.ADD){
+                                await this.deleteRoutine(routine);
+                            }
+                            return -1;
+                        }
                         mapping.serverId = ans.api.id
                     }else if(action.action === ACTIONS.MODIFY){
-                        await routineCyclesStore.modifyCycleInRoutine(this.editingRoutine.id,mapping.serverId,action.data)
+                        const ans = await routineCyclesStore.modifyCycleInRoutine(this.editingRoutine.id,mapping.serverId,action.data)
+                        if(ans.api === -1){
+                            if(routineAction === ACTIONS.ADD){
+                                await this.deleteRoutine(routine);
+                            }
+                            return -1;
+                        }
+                        mapping.serverId = ans.api.id
                     }else if(action.action === ACTIONS.DELETE){
                         // Para evitar problemas de agregar o modificar ejercicios de un ciclo, si se elimina un ciclo,
                         // entonces las operaciones sobre sus ejercicios no se aplican
                         mapping.deleted = true;
-                        await routineCyclesStore.removeCycleRoutine(this.editingRoutine.id,mapping.serverId,action.data)
+                        result = await routineCyclesStore.removeCycleRoutine(this.editingRoutine.id,mapping.serverId,action.data)
                     }
                 }else{
-                    const mapping = this.cycleIdMaps.find((cycle)=> cycle.clientId === action.parentId.clientId)
+                    const mapping = this.cycleIdMaps.find((cycle)=> parseInt(cycle.clientId) === parseInt(action.parentId.clientId))
                     if(!mapping.deleted){
                         if(action.action === ACTIONS.ADD){
-                            await cycleExercisesStore.addExerciseToCycleInApi(mapping.serverId,action.data.data.id,action.data)
+                            result = await cycleExercisesStore.addExerciseToCycleInApi(mapping.serverId,action.data.data.id,action.data)
                         }else if(action.action === ACTIONS.MODIFY){
-                            await cycleExercisesStore.modifyExerciseFromCycleInApi(mapping.serverId,action.data.data.id,action.data)
+                            result = await cycleExercisesStore.modifyExerciseFromCycleInApi(mapping.serverId,action.data.data.id,action.data)
                         }else if(action.action === ACTIONS.DELETE){
-                            await cycleExercisesStore.deleteExerciseFromCycleInApi(mapping.serverId,action.data.data.id)
+                            result = await cycleExercisesStore.deleteExerciseFromCycleInApi(mapping.serverId,action.data.data.id)
                         }
                     }
                 }
+                // En caso de un error, si la rutina es nueva la elimina por seguridad
+                // Si esta siendo editada no se puede manejar mucho el error
+                if(result === -1){
+                    if(routineAction === ACTIONS.ADD){
+                        await this.deleteRoutine(routine);
+                    }
+                    return -1;
+                }
             }
+            // Por seguridad, borramos los datos
+            this.discardChanges();
             await this.fetchRoutines();
-            console.log(this.routines);
+            console.log(this.routines)
+            return 0;
         },
-    },
+
+        // Elimina los cambios realizados sobre la rutina (editingRoutine)
+        discardChanges(){
+            const routineCyclesStore = useRoutineCycles();
+            this.editingRoutine = {};
+            this.actions = [];
+            this.cycleIdMaps = [];
+            routineCyclesStore.cycles = {};
+        },
+
+        // Deja todo preparado para editar la rutina con id routineId
+        async editRoutine(routineId){
+            const routineCyclesStore = useRoutineCycles();
+            const cycleExercisesStore = useCycleExercises();
+
+            // Por seguridad, borramos los datos
+            this.discardChanges();
+            // Obtenemos la rutina
+            const routine = this.getRoutineById(routineId);
+            if(routine === -1){
+                return -1;
+            }
+
+
+            // Creamos un objeto para editar y lo agregamos como accion para editar
+            const editedRoutine = new EditRoutine(routine.id, routine.name, routine.score, routine.isPublic, routine.difficulty, routine.category, routine.metadata);
+            this.actions.push(new ApiAction(TYPES.ROUTINE, ACTIONS.MODIFY, editedRoutine, routineId, routineId));
+
+            // Obtenemos los ciclos de la rutina
+            if(await routineCyclesStore.fetchRoutineCycles(routineId) === -1){
+                this.discardChanges();
+                return -1;
+            }
+
+
+            // Aca se ira almacenando los datos de los ciclos de la rutina
+            let cycles = [];
+            cycleExercisesStore.restartStore();
+            for(let cycle of routineCyclesStore.cycles.content){
+                // Actualizamos el proximo ID para asignar a un nuevo ciclo
+                if(editedRoutine.nextId <= cycle.id){
+                    editedRoutine.nextId = cycle.id + 1;
+                }
+
+                // Creamos un objeto con los datos utiles del ciclo y lo agregamos como accion para editar
+                const editedCycle = new Cycle(cycle.id, cycle.name, cycle.detail, cycle.type, cycle.order, cycle.repetitions, cycle.metadata, [], 1);
+                this.actions.push(new ApiAction(TYPES.CYCLE, ACTIONS.MODIFY, editedCycle, routineId, routineId));
+
+                // Agregamos el mapeo de ids
+                this.cycleIdMaps.push(new CycleIdMap(cycle.id, cycle.id));
+
+                // Obtenemos los ejercicios del ciclo
+                if(await cycleExercisesStore.fetchCycleExercises(cycle.id) === -1){
+                    this.discardChanges();
+                    return -1;
+                }
+
+
+                // Aca se ira guardando los ejercicios del ciclo
+                let exercises = [];
+                // Recorremos los ejercicios del ciclo
+                for(let exercise of cycleExercisesStore.getCycle(cycle.id)){
+                    // Nos aseguramos que el proximo ejercicio tenga el orden correcto
+                    if(editedCycle.nextExerciseOrder <= exercise.order){
+                        editedCycle.nextExerciseOrder = exercise.order + 1;
+                    }
+
+
+                    // Creamos un objeto con los datos utiles del ejercicio
+                    const editedExercise = new CycleExercise(exercise.exercise.id, exercise.order, exercise.duration, exercise.repetitions)
+                    exercises.push(editedExercise);
+                    // Creamos una accion para indicar que el ejercicio se va a editar
+                    this.actions.push(new ApiAction(TYPES.EXERCISE, ACTIONS.MODIFY, editedExercise, cycle.id, cycle.id))
+                }
+
+                // Ordenamos los ejercicios por su orden de aparicion
+                exercises.sort((a,b) => a.order - b.order);
+
+                // Le asignamos al ciclo sus ejercicios
+                editedCycle.exercises = exercises;
+
+                // Agregamos el ciclo a los ciclos de la rutina
+                cycles.push(editedCycle);
+            }
+
+            // Ordenamos los ciclos por su orden de aparicion
+            cycles.sort((a, b) => a.order - b.order);
+
+            // Le asginamos a la rutina con sus ciclos
+            editedRoutine.cycles = cycles;
+
+            // Guardamos la edicion de la rutina
+            this.editingRoutine = editedRoutine;
+
+            // Actualizamos los ciclos que se deben mostrar
+            routineCyclesStore.cycles = {
+                content: this.editingRoutine.cycles
+            }
+        },
+
+        // Dado el id de una rutina, se encarga de cargar todos los datos de la rutina (ciclos y sus ejercicios)
+        async getRoutineData(routineId){
+            const routineCyclesStore = useRoutineCycles();
+            const cycleExercisesStore = useCycleExercises();
+
+            // Limpiamos los ciclos por seguridad
+            routineCyclesStore.cycles = {};
+
+            // Obtenemos la rutina
+            const routine = this.getRoutineById(routineId);
+            if(routine === -1){
+                return -1;
+            }
+
+            // Obtenemos los ciclos de la rutina
+            if(await routineCyclesStore.fetchRoutineCycles(routineId) === -1){
+                this.discardChanges();
+                return -1;
+            }
+
+            let cycles = [];
+            cycleExercisesStore.restartStore();
+
+            for(let cycle of routineCyclesStore.cycles.content){
+                // Creamos un objeto con los datos del ciclo
+                const cycleData = new Cycle(cycle.id, cycle.name, cycle.detail, cycle.type, cycle.order, cycle.repetitions, cycle.metadata, [], 1);
+
+                // Obtenemos los ejercicios del ciclo
+                if(await cycleExercisesStore.fetchCycleExercises(cycle.id) === -1){
+                    this.discardChanges();
+                    return -1;
+                }
+
+                // Aca se ira guardando los ejercicios del ciclo
+                let exercises = [];
+                // Recorremos los ejercicios del ciclo
+                for(let exercise of cycleExercisesStore.getCycle(cycle.id)){
+                    // Creamos un objeto con los datos utiles del ejercicio
+                    const editedExercise = new CycleExercise(exercise.exercise.id, exercise.order, exercise.duration, exercise.repetitions)
+                    exercises.push(editedExercise);
+                }
+
+                // Ordenamos los ejercicios por su orden de aparicion
+                exercises.sort((a,b) => a.order - b.order);
+
+                // Le asignamos al ciclo sus ejercicios
+                cycleData.exercises = exercises;
+
+                // Agregamos el ciclo a los ciclos de la rutina
+                cycles.push(cycleData);
+            }
+
+            // Ordenamos los ciclos por su orden de aparicion
+            cycles.sort((a, b) => a.order - b.order);
+
+            // Ponemos la información los ciclos que se deben mostrar
+            routineCyclesStore.cycles = {
+                content: cycles
+            }
+        }
+    }
 })

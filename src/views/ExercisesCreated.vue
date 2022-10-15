@@ -1,12 +1,12 @@
 <template>
-  <div class="mx-7 mt-7">
+  <div class="mx-7 mt-7 main-div-style">
     <h1 class="title-style my-5">Ejercicios Creados</h1>
     <v-sheet class="d-flex justify-space-between mr-3" width="40%">
       <FilterMenu :id="1" placeholder='Equipamiento' v-bind:options="['Con Equipamiento','Sin Equipamiento']"  :width="150" @menuChanged="getEquipment" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
       <FilterMenu :id="1" placeholder='Zona Muscular' v-bind:options="['Zona Inferior','Zona Media','Zona Superior']"  :width="150" @menuChanged="getMuscleZone" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
       <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja Intensidad','Media Intensidad','Alta Intensidad']"  :width="150" @menuChanged="getIntensity" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
     </v-sheet>
-    <v-sheet>
+    <v-sheet v-if="dataLoaded">
       <div class="mt-12">
         <ExerciseCardList v-if="this.dataLoaded" :version="this.version" @editExercise="editExercise" @deleteExercise="deleteExercise"
                           :ids="this.getIdsFilter" >
@@ -31,6 +31,9 @@
         </ExerciseCardList>
       </div>
     </v-sheet>
+    <div v-else class="d-flex align-center justify-center div-loading-style mt-10">
+      <v-progress-circular size="200" indeterminate :width="20" :color="$vuetify.theme.themes.light.blue"/>
+    </div>
   </div>
 </template>
 
@@ -132,6 +135,14 @@ export default {
   border: black solid 1px;
   aspect-ratio : 4 / 1;
   background-color: white;
+}
+
+.main-div-style {
+  height: 100%;
+}
+
+.div-loading-style {
+  height: 100%;
 }
 
 </style>

@@ -52,7 +52,7 @@ const routes = [
     }
   },
   {
-    path: '/routine_details/:name',
+    path: '/routine_details',
     name: 'routine_details',
     component:() => import(/* webpackChunkName: "createdRoutines" */ '@/views/routineDetails'),
     props:true,

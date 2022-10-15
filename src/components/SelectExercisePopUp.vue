@@ -45,13 +45,13 @@
             </v-col>
           </v-row>
           <v-row class="mt-10">
-            <ExerciseCardList :version="0" class="mx-10" @exerciseTouched="openExercise" :edit-remove-card="false" :ids="this.getExercisesIds"/>
+            <ExerciseCardList :view-details="false" :version="0" class="mx-10" @exerciseTouched="openExercise" :edit-remove-card="false" :ids="this.getExercisesIds"/>
           </v-row>
         </v-container>
       </v-card>
     </v-carousel-item>
     <v-carousel-item>
-      <SelectExerciseConfigPopUp @goBack="step--" @confirmExercise="exerciseSelected"/>
+      <SelectExerciseConfigPopUp :initial-data="this.exerciseData" @goBack="step--" @confirmExercise="exerciseSelected"/>
     </v-carousel-item>
   </v-carousel>
 
@@ -85,7 +85,9 @@ export default {
   data() {
     return {
       step: 0,
-      dataLoaded: false
+      dataLoaded: false,
+
+      exerciseData: undefined
     }
   },
   methods: {
@@ -117,9 +119,16 @@ export default {
   },
   async beforeMount(){
     await exercisesStore.fetchExercises();
+    console.log(this.editExercise)
     if(this.editExercise.toEdit){
+      if(this.editExercise.duration || this.editExercise.repetitions){
+        this.exerciseData = {duration: this.editExercise.duration, repetitions: this.editExercise.repetitions};
+      } else {
+        this.exerciseData = undefined;
+      }
       this.step = 1;
     } else {
+      this.exerciseData = undefined;
       this.step = 0;
       cycleExercisesStore.setExerciseSelectedId(-1);
     }

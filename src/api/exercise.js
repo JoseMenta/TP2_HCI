@@ -4,8 +4,8 @@ export {ExerciseApi, Exercise, Video, CycleExercise}
 
 class ExerciseApi {
 
-    static getUrl(slug) {
-        return `${Api.baseUrl}/exercises${slug ? `/${slug}` : ''}`
+    static getUrl(slug, page) {
+        return `${Api.baseUrl}/exercises${slug ? `/${slug}` : ''}${(page === 0 || page) ? `?page=${page}` : ''}`
     }
     static getImageUrl(exerciseId, imageId){
         return `${ExerciseApi.getUrl(exerciseId)}/images${imageId?`/${imageId}`:''}`
@@ -31,8 +31,8 @@ class ExerciseApi {
     static async getExercise(exercisesId){
         return await Api.get(ExerciseApi.getUrl(exercisesId),true)
     }
-    static async getAll(){
-        return await Api.get(ExerciseApi.getUrl(),true)
+    static async getAll(page){
+        return await Api.get(ExerciseApi.getUrl(undefined, page),true)
     }
     //FUNCIONES SOBRE LAS IMAGENES
 //     body:{

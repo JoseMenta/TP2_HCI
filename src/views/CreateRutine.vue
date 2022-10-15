@@ -15,7 +15,7 @@
         <v-card class="d-inline-flex mb-5" flat tile>
           <h2 class="text-truncate mr-2">Categoría: </h2>
           <FilterMenu :id="0" @menuChanged="updateRoutineCategory"
-                      :options="getCategoryNames" :initial-option="this.routineData.category.name"
+                      :options="getCategoryNames" :initial-option="routineData.category.name"
                       :width="200"
                       :left-border-radius="4" :right-border-radius="4"/>
         </v-card>
@@ -25,7 +25,7 @@
         </v-card>
         <div class="d-flex overflow-auto py-4 px-1">
           <v-card class="tag-style" flat>
-            <v-dialog persistent v-model="addTagDialog" :key="tagKey">
+            <v-dialog width="30%" persistent v-model="addTagDialog" :key="tagKey">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn label class="tag rounded-lg mr-4" height="56"
                        v-bind="attrs" :color="$vuetify.theme.themes.light.grey"
@@ -44,16 +44,25 @@
         </div>
       </v-sheet>
       <v-sheet width="30%" class="d-flex flex-column justify-end" flat>
-        <v-img
-            :src="routineData.metadata.image"
-            max-height="200"
-            width="auto" @mouseover="imageHover = true" @mouseleave="imageHover = false"
-            class="img_rutine elevation-5 d-flex justify-center align-center"
-        >
-          <v-icon v-text="$vuetify.icons.values.edit" :size="80" color="black"
-                  class="d-flex mx-auto image-icon-style" :class="showImageEditIcon"
-                  @click="changeImage"/>
-        </v-img>
+        <v-dialog width="50%" persistent v-model="imageDialog">
+          <template v-slot:activator="{ on, attrs }">
+            <v-img
+                :src="routineData.metadata.image"
+                max-height="200" contain
+                width="auto" @mouseover="imageHover = true" @mouseleave="imageHover = false"
+                class="img_rutine elevation-5 d-flex justify-center align-center"
+            >
+              <v-icon v-text="$vuetify.icons.values.edit" :size="80" color="black"
+                      class="d-flex mx-auto image-icon-style" :class="showImageEditIcon"
+                      @click="changeImage" v-on="on" v-bind="attrs"/>
+            </v-img>
+
+          </template>
+          <UploadUrl title="Cargar contenido (URL)"
+                     text="Colocar el url de una imagen o video, preferentemente que no sea de youtube"
+                     @closeWarning="imageDialog = false" @subir="uploadUrl"/>
+        </v-dialog>
+
         <v-card class="d-inline-flex justify-center justify-space-between" flat>
           <v-btn class="text-capitalize btn-style"
                  color="#00909E"
@@ -90,6 +99,27 @@
       <BlockRutine class="mb-5" v-for="i in getCooldownCycles(this.routineData.cycles)" @input="readTitle" :key="i.id" :cycle-id="i.id" :required="required"/>
     </v-card>
   </div>
+  <div v-else class="d-flex align-center justify-center div-loading-style">
+    <v-dialog width="50%" persistent v-model="errorDialog">
+      <AlertPopUp :title="errorTitle" :text="errorText">
+        <template v-slot:actions>
+          <v-btn :color="$vuetify.theme.themes.light.green" @click="cancel">
+            <span class="white--text">Cerrar</span>
+          </v-btn>
+        </template>
+      </AlertPopUp>
+    </v-dialog>
+    <v-dialog width="50%" persistent v-model="sendErrorDialog">
+      <AlertPopUp :title="errorTitle" :text="errorText">
+        <template v-slot:actions>
+          <v-btn :color="$vuetify.theme.themes.light.green" @click="retry">
+            <span class="white--text">Cerrar</span>
+          </v-btn>
+        </template>
+      </AlertPopUp>
+    </v-dialog>
+    <v-progress-circular size="200" indeterminate :width="20" :color="$vuetify.theme.themes.light.blue"/>
+  </div>
 </template>
 
 <script>
@@ -98,12 +128,13 @@ import NewBlock from "@/components/NewBlock";
 import AddTagPopUp from "@/components/AddTagPopUp";
 import AlertPopUp from "@/components/AlertPopUp";
 import FilterMenu from "@/components/FilterMenu";
+import UploadUrl from "@/components/UploadUrl";
 
-import {DIFICULTY_LEVELS, useRoutines} from "@/store/Routines";
+import {useRoutines} from "@/store/Routines";
 const routinesStore = useRoutines();
 
-import {useRoutineCycles} from "@/store/RoutineCycles";
-const routineCyclesStore = useRoutineCycles();
+import {useUsers} from "@/store/User";
+const usersStore = useUsers();
 
 import {useCategories} from "@/store/Categories";
 const categoriesStore = useCategories();
@@ -113,6 +144,8 @@ const exercisesStore = useExercises();
 
 import {CycleTypes} from "@/api/cycles";
 
+import {DIFICULTY_LEVELS, NEW_ROUTINE_ID} from "@/api/routine";
+
 import {mapState} from "pinia";
 
 
@@ -120,13 +153,20 @@ export default {
   name: "CreateRutine",
   data(){
     return{
-      routineId: -1,
+      routineId: NEW_ROUTINE_ID,
+
+      errorText: '',
+      errorTitle: 'ERROR',
+      errorDialog: false,
+      sendErrorDialog: false,
+
+      imageDialog: false,
+      showContent: false,
 
       imageHover: false,
       addTagDialog: false,
       alertDialog: false,
       tagKey: 0,
-      // routineName: '',
       isNameEmpty: true,
       required: false,
       blocks: [],
@@ -136,7 +176,7 @@ export default {
       dataLoaded: false
     }
   },
-  components: {FilterMenu, AlertPopUp, AddTagPopUp, NewBlock, BlockRutine},
+  components: {FilterMenu, AlertPopUp, AddTagPopUp, NewBlock, BlockRutine, UploadUrl},
   methods: {
     addBlock() {
       routinesStore.addNewCycle();
@@ -170,7 +210,7 @@ export default {
     removeTag(index){
       this.routineData.metadata.tags.splice(index, 1)
     },
-    saveRoutine(nameView) {
+    async saveRoutine(nameView) {
       this.required = true;
       for(const index in this.blocks){
         if(!this.blocks[index].empty){
@@ -180,14 +220,22 @@ export default {
       if(this.isNameEmpty){
         return;
       }
-      routinesStore.executeActions();
-      this.$router.push(nameView);
+      this.dataLoaded = false;
+      const result = await routinesStore.executeActions();
+      // En caso de error al guardar la rutina, el usuario tendra otra oportunidad para enviarlo
+      if(result === -1){
+        this.errorText = 'Se produjo un error al guardar la rutina';
+        this.sendErrorDialog = true;
+      } else {
+        await this.$router.push(nameView);
+      }
     },
     removeRutine(nameView) {
+      routinesStore.discardChanges();
       this.$router.push(nameView)
     },
     changeImage(){
-      alert("Upload new image.")
+      this.imageDialog = true;
     },
     closeTagPopUp(){
       this.tagKey++
@@ -212,6 +260,18 @@ export default {
     },
     getCooldownCycles(cycles){
       return cycles.filter((cycle) => cycle.type === CycleTypes.COOLDOWN);
+    },
+    uploadUrl(url){
+      this.routineData.metadata.image = url
+      this.imageDialog = false;
+      this.showContent = true;
+    },
+    cancel(){
+      this.$router.push({name: 'createdRoutines'});
+    },
+    retry(){
+      this.sendErrorDialog = false;
+      this.dataLoaded = true;
     }
   },
   computed: {
@@ -221,21 +281,32 @@ export default {
     },
     ...mapState(useCategories, {getCategories: 'getCategories', categoriesLoaded: "categoriesLoaded"}),
     getCategoryNames(){
-      console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
-    }
+    },
   },
   async created(){
     this.routineId = this.$route.query.id;
     await categoriesStore.fetchCategories();
-    if(parseInt(this.routineId) !== -1){
+    if(parseInt(this.routineId) > NEW_ROUTINE_ID){
       await routinesStore.fetchRoutines();
-      await routineCyclesStore.fetchRoutineCycles(this.routineId);
+      const user = await usersStore.getCurrentUser();
+      // Verifica que exista una rutina con dicho nombre
+      if(routinesStore.getRoutineById(this.routineId) === -1){
+        this.errorText = 'No existe una rutina con el ID: ' + this.routineId
+        this.errorDialog = true;
+      } else if (!routinesStore.isRoutineFromUserId(user.id, this.routineId)){
+        this.errorText = 'No eres el creador de esta rutina (ID: ' + this.routineId + ')'
+        this.errorDialog = true;
+      }
+      else {
+        await routinesStore.editRoutine(this.routineId);
+      }
     } else {
       routinesStore.createNewRoutine();
     }
     await exercisesStore.fetchExercises();
-    this.dataLoaded = true;
+    this.dataLoaded = (!this.errorDialog);
+    this.updateIsEmpty();
   }
 }
 </script>
@@ -287,4 +358,9 @@ export default {
 .text-style {
   font-size: v-bind(textSizeCSS);
 }
+
+.div-loading-style {
+  height: 100%;
+}
+
 </style>

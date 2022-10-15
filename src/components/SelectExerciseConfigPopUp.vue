@@ -4,12 +4,12 @@
     <v-container fluid>
       <v-row justify="space-between" class="top-style">
         <v-col :cols="1">
-          <v-icon v-text="$vuetify.icons.values.arrowBack"
+          <v-icon v-text="getIcon"
                   color="#1C1B1F"
                   :size="50"
                   @click="goBack"/>
         </v-col>
-        <v-col :cols="1" class="d-flex justify-center">
+        <v-col v-if="!readOnly" :cols="1" class="d-flex justify-center">
           <v-icon v-text="$vuetify.icons.values.done"
                   color="#1C1B1F"
                   :size="50"
@@ -19,19 +19,6 @@
       <v-row class="img-style">
         <v-col :cols="12">
           <iframe :src="imageSrc" height="100%" width="auto" class="iframe-class"></iframe>
-<!--          <v-dialog persistent v-model="mediaDialog">-->
-<!--            <template v-slot:activator="{ on, attrs }">-->
-<!--              <v-img :src="this.exerciseData.metadata.url" class="d-flex justify-center align-center">-->
-<!--                <v-icon v-text="$vuetify.icons.values.playCircle"-->
-<!--                        color="#1C1B1F"-->
-<!--                        :size="83"-->
-<!--                        class="play-button-style"-->
-<!--                        v-bind="attrs"-->
-<!--                        v-on="on"/>-->
-<!--              </v-img>-->
-<!--            </template>-->
-<!--            <MediaPopUp :img-src="this.exerciseData.metadata.url" @closeWarning="mediaDialog = false"/>-->
-<!--          </v-dialog>-->
         </v-col>
       </v-row>
       <v-row class="align-center mr-2">
@@ -39,7 +26,7 @@
           <h1 class="d-flex text-truncate">{{this.exerciseData.name}}</h1>
 <!--          <h1 v-else class="d-flex text-truncate">Descanso</h1>-->
         </v-col>
-        <v-col :cols="4" class="d-flex justify-end align-center">
+        <v-col v-if="!readOnly" :cols="4" class="d-flex justify-end align-center">
           <v-checkbox hide-details dense
                       class="ml-auto checkbox-style pa-0"
                       v-model="timeCheckbox" :class="optionNoSelected"/>
@@ -54,16 +41,15 @@
           <div class="author-style">
             <span>Autor: </span>
             <span>{{ `${this.user.firstName} ${this.user.lastName}` }}</span>
-<!--            <span v-else>FITI</span>-->
           </div>
         </v-col>
-        <v-col v-if="!isRest" :cols="4" class="d-flex justify-end align-center">
+        <v-col v-if="!readOnly && !isRest" :cols="4" class="d-flex justify-end align-center">
           <v-checkbox hide-details dense
                       class="ml-auto checkbox-style pa-0"
                       v-model="seriesCheckbox" :class="optionNoSelected"/>
           <NumberSelector class="ml-3" @valueChanged="updateSeries"
                           :component-width="150" :component-border-radius="4"
-                          data-text="Series" :data-value="10" :text-size="16"
+                          data-text="Series" :data-value="series" :text-size="16"
                           :deactivate="!seriesCheckbox" :error="noOptionSelected"/>
         </v-col>
       </v-row>
@@ -108,7 +94,6 @@
 </template>
 
 <script>
-// import MediaPopUp from "@/components/MediaPopUp";
 import ExerciseDetail from "@/components/ExerciseDetail";
 import NumberSelector from "@/components/NumberSelector";
 import TimeSelector from "@/components/TimeSelector";
@@ -124,12 +109,22 @@ export default {
   // -------------------------------------------
   // isRest: Indica si la tarjeta es un ejercicio o el descanso por default
   // -------------------------------------------
-  // props: {
-  //   isRest: {
-  //     type: Boolean,
-  //     required: true
-  //   }
-  // },
+  props: {
+    initialData: {
+      type: Object,
+      required: false,
+      default() {
+        return undefined;
+      }
+    },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default() {
+        return false;
+      }
+    }
+  },
   components: {
     TimeSelector,
     NumberSelector,
@@ -155,8 +150,10 @@ export default {
     },
     // Avisa al padre que se selecciono y configuro un ejercicio
     confirmExercise(){
-      if(!this.seriesCheckbox && !this.timeCheckbox){
+      if((!this.seriesCheckbox && !this.timeCheckbox) || (this.series === 0 && this.time === 0) ||
+          (this.series === 0 && !this.timeCheckbox) || (this.time === 0 && !this.seriesCheckbox)){
         this.noOptionSelected = true
+        console.log(this.noOptionSelected)
       } else {
         this.time = (this.timeCheckbox) ? this.time : 0;
         this.series = (this.seriesCheckbox) ? this.series : 0;
@@ -202,15 +199,32 @@ export default {
         return 'Baja intensidad';
       }
       return this.exerciseData.metadata.Intensity;
+    },
+    getIcon(){
+      return (this.readOnly) ? this.$vuetify.icons.values.clear : this.$vuetify.icons.values.arrowBack;
     }
   },
   beforeUpdate() {
-    if(this.seriesCheckbox || this.timeCheckbox)
+    if(!((!this.seriesCheckbox && !this.timeCheckbox) || (this.series === 0 && this.time === 0) ||
+        (this.series === 0 && !this.timeCheckbox) || (this.time === 0 && !this.seriesCheckbox)))
       this.noOptionSelected = false
   },
   async created() {
     await userStore.getCurrentUser();
     this.dataLoaded = true;
+  },
+  beforeMount(){
+    if(!this.initialData){
+      this.series = 10;
+      this.seriesCheckbox = false;
+      this.time = 10;
+      this.timeCheckbox = true;
+    } else {
+      this.series = this.initialData.repetitions;
+      this.time = this.initialData.duration;
+      this.seriesCheckbox = (this.series > 0);
+      this.timeCheckbox = (this.time > 0);
+    }
   }
 }
 </script>

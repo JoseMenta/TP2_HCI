@@ -4,12 +4,12 @@ export {RoutineCyclesApi, ExerciseCycleApi, Cycle};
 
 // Handler para la ciclos de una rutina
 class RoutineCyclesApi {
-    static getUrl(routineId, cycleId){
-        return `${Api.baseUrl}/routines/${routineId}/cycles${ (cycleId) ? `/${cycleId}` : ''}`
+    static getUrl(routineId, cycleId, page){
+        return `${Api.baseUrl}/routines/${routineId}/cycles${ (cycleId) ? `/${cycleId}` : ''}${(page === 0 || page) ? `?page=${page}` : ''}`
     }
 
-    static async getRoutineCycles(routineId) {
-        return await Api.get(RoutineCyclesApi.getUrl(routineId), true);
+    static async getRoutineCycles(routineId, page) {
+        return await Api.get(RoutineCyclesApi.getUrl(routineId, undefined, page), true);
     }
 
     static async getRoutineCycle(routineId, cycleId) {
@@ -31,11 +31,11 @@ class RoutineCyclesApi {
 
 // Handler para los ejercicios de un ciclo
 class ExerciseCycleApi{
-    static getUrl(cycleId,exerciseId){
-        return `${Api.baseUrl}/cycles/${cycleId}/exercises${exerciseId?`/${exerciseId}`:''}`
+    static getUrl(cycleId,exerciseId, page){
+        return `${Api.baseUrl}/cycles/${cycleId}/exercises${exerciseId?`/${exerciseId}`:''}${(page === 0 || page) ? `?page=${page}` : ''}`
     }
-    static async getExercises(cycleId){
-        return await Api.get(ExerciseCycleApi.getUrl(cycleId),true)
+    static async getExercises(cycleId, page){
+        return await Api.get(ExerciseCycleApi.getUrl(cycleId, undefined, page),true)
     }
     static async getExercise(cycleId,exerciseId){
         return await Api.get(ExerciseCycleApi.getUrl(cycleId,exerciseId),true)
@@ -51,13 +51,6 @@ class ExerciseCycleApi{
     }
 }
 
-const ACTIONS = {
-    ADD: 'add',
-    MODIFY: 'modify',
-    DELETE: 'delete',
-    NONE: 'none'
-}
-
 export const CycleTypes = {
     WARMUP: 'warmup',
     EXERCISE: 'exercise',
@@ -65,7 +58,7 @@ export const CycleTypes = {
 }
 
 class Cycle {
-    constructor(id, name, detail, type, order, repetitions, metadata, action, exercises, nextExerciseOrder) {
+    constructor(id, name, detail, type, order, repetitions, metadata, exercises, nextExerciseOrder) {
         this.id = id;
         this.name = name;
         this.detail = detail;
@@ -73,7 +66,6 @@ class Cycle {
         this.order = order;
         this.repetitions = repetitions;
         this.metadata = metadata;
-        this.action = action;
         this.exercises = exercises;
         this.nextExerciseOrder = nextExerciseOrder;
     }
@@ -81,13 +73,13 @@ class Cycle {
     // Devuelve los ciclos de una rutina nueva
     static newInitialRoutine(){
         return [
-            new Cycle(0, '', '', CycleTypes.WARMUP, 1, 3, {deletable: false}, ACTIONS.ADD, [], 1),
-            new Cycle(1, '', '', CycleTypes.EXERCISE, 2, 3, {deletable: false}, ACTIONS.ADD, [], 1),
-            new Cycle(2, '', '', CycleTypes.COOLDOWN, 3, 3, {deletable: false}, ACTIONS.ADD, [], 1),
+            new Cycle(0, '', '', CycleTypes.WARMUP, 1, 3, {deletable: false}, [], 1),
+            new Cycle(1, '', '', CycleTypes.EXERCISE, 2, 3, {deletable: false}, [], 1),
+            new Cycle(2, '', '', CycleTypes.COOLDOWN, 3, 3, {deletable: false}, [], 1),
         ];
     }
 
     static newRoutineCycle() {
-        return new Cycle(-1, '', '', CycleTypes.EXERCISE, -1, 3, {deletable: true}, ACTIONS.ADD, [], 1)
+        return new Cycle(-1, '', '', CycleTypes.EXERCISE, -1, 3, {deletable: true}, [], 1);
     }
 }

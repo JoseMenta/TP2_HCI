@@ -211,10 +211,10 @@ export const useExercises = defineStore('exercises', {
 
 
         // Devuelve todos los exercicios almacenadas en la API (o -1, en caso de error)
-        async getExercisesFromApi(){
+        async getExercisesFromApi(page){
             let result;
             try {
-                result = await ExerciseApi.getAll();
+                result = await ExerciseApi.getAll(page);
             } catch(e) {
                 console.log(e);
                 return -1;
@@ -224,13 +224,20 @@ export const useExercises = defineStore('exercises', {
         // Guarda los exercicios almacenadas en la Api en el store (lo actualiza)
         // Devuelve 0 en caso de exito, -1 en caso de error
         async fetchExercises(){
-            try {
-                const apiExercise = await this.getExercisesFromApi();
-                this.replaceAllExercisesFromStore(apiExercise);
-            } catch (e) {
-                console.log(e);
-                return -1;
-            }
+            let apiResult, result, page = 0;
+            do {
+                apiResult = await this.getExercisesFromApi(page);
+                if(apiResult === -1){
+                    return -1;
+                }
+                if(page === 0){
+                    result = apiResult;
+                } else {
+                    apiResult.content.forEach((routine) => result.content.push(routine));
+                }
+                page++;
+            } while(!apiResult.isLastPage);
+            this.replaceAllExercisesFromStore(result);
             return 0;
         },
 

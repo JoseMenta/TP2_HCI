@@ -136,12 +136,12 @@ export const useRoutineCycles = defineStore('routineCyclesStore', {
         updateStore(cyclesInfo){
             this.cycles = cyclesInfo;
         },
-        // Obtiene todas las rutinas del ciclo
+        // Obtiene todas los ciclo de la rutina
         // Devuelve el resultado de la API en caso de exito, -1 en caso de error
-        async getAllRoutineCycles(routineId){
+        async getAllRoutineCycles(routineId, page){
             let result;
             try {
-                result = await RoutineCyclesApi.getRoutineCycles(routineId);
+                result = await RoutineCyclesApi.getRoutineCycles(routineId, page);
             } catch (e) {
                 console.log(e);
                 return -1;
@@ -199,11 +199,20 @@ export const useRoutineCycles = defineStore('routineCyclesStore', {
         // Actualiza el store con los ciclos de la rutina con id routineId
         // Devuelve -1 en caso de error, 0 en caso de exito
         async fetchRoutineCycles(routineId) {
-            const apiResult = await this.getAllRoutineCycles(routineId);
-            if(apiResult === -1){
-                return -1;
-            }
-            this.updateStore(apiResult);
+            let apiResult, result, page = 0;
+            do {
+                apiResult = await this.getAllRoutineCycles(routineId, page)
+                if(apiResult === -1){
+                    return -1;
+                }
+                if(page === 0){
+                    result = apiResult;
+                } else {
+                    apiResult.content.forEach((routine) => result.content.push(routine));
+                }
+                page++;
+            } while(!apiResult.isLastPage);
+            this.updateStore(result);
             return 0;
         },
         // Agrega un ciclo de la rutina a la API y al store

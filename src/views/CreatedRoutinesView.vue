@@ -1,6 +1,6 @@
 <!-- Vista de la pagina principal -->
 <template>
-  <div class="ml-7">
+  <div class="ml-7 main-div-style">
     <h1 class="title-style my-5">Rutinas creadas</h1>
     <RoutineFilter @getFilters="getFilter">
       <template v-slot:firstFilter>
@@ -8,9 +8,8 @@
       </template>
     </RoutineFilter>
 
-    <div class="mt-12">
-      <!-- TODO: Corregir User.js -->
-      <RoutineCardList v-if="dataLoaded" :routines="this.getRoutinesFilter">
+    <div class="mt-12" v-if="dataLoaded">
+      <RoutineCardList  :routines="this.getRoutinesFilter">
         <template v-slot:header>
           <v-col class="d-flex" cols="6">
             <v-card class="d-flex flex-column align-center justify-center rounded new-routine-card-style" color="#E8F1F6" hover @click="newRoutine">
@@ -20,6 +19,10 @@
           </v-col>
         </template>
       </RoutineCardList>
+
+    </div>
+    <div v-else class="d-flex align-center justify-center div-loading-style mt-10">
+      <v-progress-circular size="200" indeterminate :width="20" :color="$vuetify.theme.themes.light.blue"/>
     </div>
   </div>
 </template>
@@ -31,7 +34,7 @@ import RoutineFilterSearch from "@/components/RoutineFilterSearch";
 
 import {mapState} from "pinia";
 
-import {useRoutines, NEW_ROUTINE_ID} from "@/store/Routines";
+import {useRoutines} from "@/store/Routines";
 const routinesStore = useRoutines();
 
 import {useFavourites} from "@/store/Favourites";
@@ -39,6 +42,8 @@ const favouritesStore = useFavourites();
 
 import {useUsers} from "@/store/User";
 const usersStore = useUsers();
+
+import {NEW_ROUTINE_ID} from "@/api/routine";
 
 export default {
   name: "CreatedRoutinesView",
@@ -109,7 +114,6 @@ export default {
     // Busca las rutinas favoritas del usuario
     await favouritesStore.fetchFavourites();
     // Tomo los datos del usuario para obtener su id
-    // TODO: Corregir User.js
     await usersStore.getCurrentUser();
     // Aviso que ya se cargo la informacion
     this.dataLoaded = true;
@@ -130,6 +134,14 @@ export default {
 .new-routine-text-style {
   font-size: 48px;
   color: #1C1B1F;
+}
+
+.main-div-style {
+  height: 100%;
+}
+
+.div-loading-style {
+  height: 100%;
 }
 
 </style>

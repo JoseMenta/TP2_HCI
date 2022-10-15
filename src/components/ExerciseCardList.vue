@@ -4,7 +4,7 @@
     <v-row>
       <slot name="header"></slot>
       <v-col v-for="id in ids" :key="id" cols="6">
-        <ExerciseCard :id="id" :key="id + '_'+ version" :editRemove="editRemoveCard" @cardTouched="exerciseTouched" @editTouched="editExercise" @deleteTouched="deleteExercise"/>
+        <ExerciseCard :id="id" :key="id + '_'+ version" :view-details="viewDetails" :editRemove="editRemoveCard" @cardTouched="exerciseTouched" @editTouched="editExercise" @deleteTouched="deleteExercise"/>
       </v-col>
     </v-row>
   </v-container>
@@ -33,6 +33,13 @@ export default {
       required: false,
       default(){
         return true
+      }
+    },
+    viewDetails: {
+      type: Boolean,
+      required: false,
+      default() {
+        return true;
       }
     }
   },

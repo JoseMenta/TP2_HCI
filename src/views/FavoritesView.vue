@@ -1,6 +1,6 @@
 <!-- Vista de los favoritos -->
 <template>
-  <div class="ml-7">
+  <div class="ml-7 main-div-style">
     <h1 class="title-style my-5">Favoritos</h1>
     <RoutineFilter>
       <template v-slot:firstFilter>
@@ -8,8 +8,11 @@
       </template>
     </RoutineFilter>
 
-    <div class="mt-12">
+    <div v-if="dataLoaded" class="mt-12">
       <RoutineCardList v-if="dataLoaded" :routines="getFavouriteRoutines"/>
+    </div>
+    <div v-else class="d-flex align-center justify-center div-loading-style mt-10">
+      <v-progress-circular size="200" indeterminate :width="20" :color="$vuetify.theme.themes.light.blue"/>
     </div>
   </div>
 </template>
@@ -65,6 +68,14 @@ export default {
 
 .title-style {
   font-size: 48px;
+}
+
+.main-div-style {
+  height: 100%;
+}
+
+.div-loading-style {
+  height: 100%;
 }
 
 </style>
