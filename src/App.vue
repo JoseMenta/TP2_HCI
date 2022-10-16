@@ -1,6 +1,7 @@
 <template>
 
   <v-app>
+    <div v-if="online">
     <!-- <NavigationDrawer/>  ya tiene en su interior la estructura necesaria
     <v-navigation-drawer app>
     </v-navigation-drawer>
@@ -22,7 +23,10 @@
         <!-- If using vue-router -->
         <router-view :key="$route.path"></router-view>
     </v-main>
-
+    </div>
+    <div v-else>
+      <LostConnectionView></LostConnectionView>
+    </div>
   </v-app>
 </template>
 
@@ -30,17 +34,19 @@
 import NavigationDrawer from "@/components/NavigationDrawer";
 import TopBarMenu from "@/components/TopBarMenu";
 import {useUsers} from "@/store/User";
+import LostConnectionView from "@/views/LostConnectionView";
 // import TopBreadcrums from "@/components/TopBreadcrums";
-
 export default {
   name: 'App',
 
   components: {
+    LostConnectionView,
     NavigationDrawer,
     TopBarMenu,
     // TopBreadcrums
   },
   data: () => ({
+    online:window.navigator.onLine,
     routes:[],
     loginViews:['landing','pageNotFound', 'register1', 'register2', 'register','login', 'resendVerification', 'verification'],
     // dataLoaded: false
@@ -75,9 +81,11 @@ export default {
       })
     }
   },
-  async created() {
+  created() {
+    window.addEventListener('online',()=>this.online = true)
+    window.addEventListener('offline',()=>this.online = false)
     const users = useUsers();
-    await users.initialize();
+    users.initialize();
   },
   watch:{
     //TODO: ver si dejamos a los breadcrumbs

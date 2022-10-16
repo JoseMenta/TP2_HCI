@@ -6,10 +6,10 @@
          @click="profileMethod">
     <v-row class="d-inline-flex py-2 px-1 row-style">
       <v-col :cols="8" class="pr-0">
-        <span class="font-weight-bold text-style">{{userName}}</span>
+        <span class="font-weight-bold text-style">{{`${user.firstName} ${user.lastName}`}}</span>
       </v-col>
       <v-col :cols="4">
-        <v-img :src="userNameImg"
+        <v-img :src="user.avatarUrl"
                contain :height="imgSize" :width="imgSize"
                class="image-style ml-auto mr-2"/>
       </v-col>
@@ -20,6 +20,9 @@
 </template>
 
 <script>
+import {useUsers} from "@/store/User";
+import {mapState} from "pinia";
+
 export default {
   name: "ProfileButton",
   // --------------------------------------------
@@ -71,8 +74,15 @@ export default {
       // Defino una variable para poder parametrizar el CSS
       textSizeCSS: this.textSize + 'px',
       btnBorderRadiusCSS: this.btnBorderRadius + 'px',
-      imgBorderRadiusCSS: this.imgBorderRadius + 'px'
+      imgBorderRadiusCSS: this.imgBorderRadius + 'px',
     }
+  },
+  computed:{
+    ...mapState(useUsers,{user:'getUser'})
+  },
+  async created() {
+    const userStore = useUsers()
+    await userStore.getCurrentUser()
   }
 }
 </script>

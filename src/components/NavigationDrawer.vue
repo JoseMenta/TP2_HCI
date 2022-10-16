@@ -64,7 +64,6 @@ export default {
       right: null,
       other_items:[
           // TODO: Hacer la pagina de configuracion
-        {title: 'Configuración',icon:'settings', route:{name: 'createdRoutines'},action:()=>{}},
         {title:'Cerrar sesión',icon:'logout', route:{name: 'landing'},action:()=>{
           const users = useUsers();
           users.logout()

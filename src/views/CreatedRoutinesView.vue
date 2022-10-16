@@ -38,7 +38,9 @@ import RoutineFilterSearch from "@/components/RoutineFilterSearch";
 import {mapState} from "pinia";
 import {useCategories} from "@/store/Categories";
 const categoriesStore = useCategories();
-import {useRoutines, NEW_ROUTINE_ID} from "@/store/Routines";
+import {useRoutines} from "@/store/Routines";
+
+import {NEW_ROUTINE_ID} from "@/api/routine";
 
 const routinesStore = useRoutines();
 
