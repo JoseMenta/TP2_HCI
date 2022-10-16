@@ -8,7 +8,7 @@
     </v-card>
     <v-sheet class="d-flex center-card-margin flex-column" flat>
       <v-card class="d-flex login-card-style justify-center flex-column" flat>
-        <h1 class="d-flex justify-center mb-2">Inicio de Sesion</h1>
+        <h1 class="d-flex justify-center mb-2 my-4">Inicio de Sesion</h1>
         <TextInput class="margin-style" v-model="inputEmail"
                    :required="required" textError="Se requiere un email"
                    placeHolder="Ingrese Email"></TextInput>
@@ -16,12 +16,17 @@
                    :required="required" textError="Se requiere una contraseña"
                    placeHolder="Ingrese Contraseña"></PasswordInput>
         <h3 v-if="incorrect" class="red--text d-flex justify-center mb-2">{{errorMessage}}</h3>
-        <v-checkbox
-            v-model="rememberMe"
-            :label="`Mantener la sesión iniciada:${this.rememberMe}`"
-            class="px-4"
-        ></v-checkbox>
-        <LoginButton :disabled = "!inputEmail ||!inputPassword" class="d-flex margin-btn-style" :text-size="20" text="Ingresar" :border-radius="12" @click.native="logIn"/>
+        <v-switch
+          v-model="rememberMe"
+          label="Mantener mi sesión iniciada"
+          class="switch-class"
+        ></v-switch>
+<!--        <v-checkbox-->
+<!--            v-model="rememberMe"-->
+<!--            :label="`Mantener la sesión iniciada:${this.rememberMe}`"-->
+<!--            class="px-4"-->
+<!--        ></v-checkbox>-->
+        <LoginButton :disabled = "!inputEmail ||!inputPassword" class="d-flex margin-btn-style" :text-size="20" text="Ingresar" :border-radius="12" @click.native="logIn" :loading="this.buttonLoading"/>
         <a class="d-inline-flex text-decoration-underline justify-center mt-5 text-h6" @click="changeView({name: 'resendVerification'})"
         >Reenviar el código de verificación</a>
       </v-card>
@@ -61,7 +66,8 @@ export default {
       required: false,
       incorrect: false,
       errorMessage: '',
-      rememberMe:false
+      rememberMe:false,
+      buttonLoading: false
     }
   },
   methods:{
@@ -82,18 +88,22 @@ export default {
       }
       const users = useUsers();
       const redirectPath = this.$route.query.redirect || '/created_routines'
+      this.buttonLoading = true;
       switch(await users.login({username: this.inputEmail, password: this.inputPassword}, this.rememberMe)){
         case -1:
           this.errorMessage = 'Error crítico.';
           this.incorrect = true;
+          this.buttonLoading = false;
           break;
         case 4:
           this.errorMessage = 'El usuario o la contraseña son incorrectos'
           this.incorrect = true;
+          this.buttonLoading = false;
           break
         case 1:
           this.errorMessage = 'El email y/o la contraseña son inválidos.';
           this.incorrect = true;
+          this.buttonLoading = false;
           break;
         case 8:
           this.changeView({name:'verification',
@@ -104,6 +114,7 @@ export default {
         case 99:
           this.errorMessage = 'No fue posible comunicarse con el servidor';
           this.incorrect = true;
+          this.buttonLoading = false;
           break;
         case 0:
           this.incorrect = false;
@@ -158,6 +169,9 @@ export default {
 .center-card-margin{
   margin-left: 15%;
   margin-right: 15%;
+}
+.switch-class{
+  padding-left: 5%;
 }
 
 </style>

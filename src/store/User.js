@@ -16,7 +16,8 @@ export const useUsers = defineStore("users", {
             email:'',
             password:''
         }, //para agregar un usuario
-        name:'' //verificar donde se usa esto
+        name:'' ,//verificar donde se usa esto
+        executions:undefined
     }),
     getters: {
         // Devuelve true si el usuario esta logueado, false si no
@@ -135,13 +136,11 @@ export const useUsers = defineStore("users", {
         async verifyEmail(email, code) {
             try {
                 await UserApi.verifyEmail({email: email, code: code});
-                return 0;
-            } catch(e) {
-                if(e.code === 400){
-                    return 1;
-                }
                 return -1;
+            } catch(e) {
+                return e.code
             }
+
         },
         // Actualiza el usuario en la API y en el store
         // Devuelve el resultado de la API, o -1 en caso de error
@@ -191,7 +190,41 @@ export const useUsers = defineStore("users", {
                 return -1;
             }
             return result;
+        },
+        async getCurrentExecutionsFromApi(page){
+            let result;
+            try {
+                result = await UserApi.getCurrentExecutions(page);
+            } catch(e) {
+                console.log(e);
+                return -1
+            }
+            return result;
+        },
+        async getCurrentExecutions(){
+            let apiExecutions;
+            let result;
+            let page = 0;
+            do {
+                apiExecutions = await this.getCurrentExecutionsFromApi(page)
+                if(apiExecutions === -1){
+                    return -1;
+                }
+                if(page === 0){
+                    result = apiExecutions;
+                } else {
+                    apiExecutions.content.forEach((routine) => result.content.push(routine));
+                }
+                page++;
+            } while(!apiExecutions.isLastPage);
+            this.executions = result
+            return result
+        },
+        async getExecutedSeconds(){
+            const result = await this.getCurrentExecutions()
+            return result.content.reduce((prev,curr)=>prev+curr.duration,0)
         }
 
     },
+
 });

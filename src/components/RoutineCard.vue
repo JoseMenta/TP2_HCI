@@ -1,7 +1,7 @@
 <template>
-    <v-card class="d-flex flex-column rounded" :width="width" hover @click="touchCard">
+    <v-card v-if="dataLoaded" class="d-flex flex-column rounded" :width="width" hover @click="touchCard">
       <v-card class="d-flex rounded-t" flat tile>
-        <v-img :src="routine.metadata.image" :width="width" :alt="routine.name" :height="100" @click="changeView({name: 'routineDetails'})"></v-img>
+        <v-img :src="routine.metadata.image" :width="width" :alt="routine.name" :height="100" @click="changeView({name: 'routine_details', query: {id: routineData.id}})"/>
       </v-card>
     <v-card class="d-flex rounded-b justify-space-between px-2 pt-2" :color="color" :width="width" flat tile>
       <v-card class="d-inline-flex" flat tile :color="color" >
@@ -53,8 +53,9 @@ const routinesStore = useRoutines();
 import {useFavourites} from "@/store/Favourites";
 const favouritesStore = useFavourites();
 
-// import {useUsers} from "@/store/User";
-// const usersStore = useUsers();
+import {useUsers} from "@/store/User";
+const usersStore = useUsers();
+
 
 export default {
   name: "RoutineCard",
@@ -104,7 +105,9 @@ export default {
       routine: this.routineData,
       favourite: false,
       width:'auto',
-      color:'lightBlue'
+      color:'lightBlue',
+      user: {},
+      dataLoaded: false
     }
   },
   methods:{
@@ -121,7 +124,7 @@ export default {
       //Le avisamos al padre que se cambio el estado, para que lo mande a la api
       this.$emit('favoriteTouched',this.routine.id,this.favourite)
     },
-    touchEdit(){
+    async touchEdit(){
       this.changeView({name: 'createRoutine', query: {id: this.routine.id}})
       this.$emit('editTouched',this.routine.id)
     },
@@ -140,15 +143,15 @@ export default {
   },
   computed: {
     belongsToUser(){
-      // TODO: Corregir User.js
-      // const user = usersStore.getCurrentUser();
-      // return routinesStore.isRoutineFromUserId(user.id, this.routine.id);
-      return routinesStore.isRoutineFromUserId(0, this.routine.id);
-    },
-
+      return routinesStore.isRoutineFromUserId(this.user.id, this.routine.id);
+    }
   },
   beforeMount() {
     this.favourite = favouritesStore.isRoutineFavourite(this.routine.id);
+  },
+  async beforeCreate(){
+    this.user = await usersStore.getCurrentUser();
+    this.dataLoaded = true
   }
 }
 </script>

@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import {useUsers} from "@/store/User";
 export default {
   name: "NavigationDrawer",
   data () {
@@ -65,8 +66,8 @@ export default {
           // TODO: Hacer la pagina de configuracion
         {title: 'Configuración',icon:'settings', route:{name: 'createdRoutines'},action:()=>{}},
         {title:'Cerrar sesión',icon:'logout', route:{name: 'landing'},action:()=>{
-          //quiero que esto haga el logout
-          console.log('hello')
+          const users = useUsers();
+          users.logout()
           }},
       ]
     }

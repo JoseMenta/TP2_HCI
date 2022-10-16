@@ -5,8 +5,8 @@
       <h6 class="white--text mr-1">Eliminar bloque</h6>
       <v-icon v-text="$vuetify.icons.values.delete" :size="15" color="white"/>
     </v-btn>
-    <h3 class="cycle-type-style mt-3 ml-5 font-italic">{{getTypeName}}</h3>
-    <v-card height="80" class="d-flex justify-space-between align-center mx-5" color="#E8F1F6" flat>
+    <h3 class="cycle-type-style ml-5 font-italic">{{getTypeName}}</h3>
+    <v-card class="d-flex justify-space-between align-center mx-5" color="#E8F1F6" flat>
 
       <v-text-field
           :rules="[rules.required]"
@@ -26,7 +26,7 @@
     </v-card>
 
     <div class="mb-5">
-      <v-container>
+      <v-container fluid>
         <v-row>
           <v-col v-for="(cycleExercise, index) in getCycleExercises(cycleId)" :key="'exercise_'+index" cols="6">
             <ExerciseCard :id="cycleExercise.data.id" :order="cycleExercise.data.order"
@@ -34,10 +34,6 @@
                           :editRemove="true" :force="true"
                           @editTouched="editExerciseCard" @deleteTouched="removeExercise"/>
           </v-col>
-<!--          <v-col v-for="i in rest" :key="'rest_'+i" cols="6">-->
-<!--            <ExerciseCard :id="i" :details="false" :edit-remove="true" :rest="true"-->
-<!--                          @editTouched="addRestDialog = true" @deleteTouched="rest&#45;&#45;"/>-->
-<!--          </v-col>-->
           <v-col class="d-flex flex-column align-center justify-space-between"  cols="6">
             <v-dialog persistent v-model="selectExerciseDialog">
               <template v-slot:activator="{on, attrs}">
@@ -167,9 +163,9 @@ export default {
       this.reRenderSelectExercise();
       this.reRenderAddRest();
     },
-    editExerciseCard(exerciseId){
+    editExerciseCard(exerciseId, order, duration, repetitions){
       cycleExercisesStore.setExerciseSelectedId(exerciseId);
-      this.editExerciseData = {toEdit: true, id:exerciseId};
+      this.editExerciseData = {toEdit: true, id:exerciseId, duration: duration, repetitions: repetitions};
       this.reRenderSelectExercise();
       this.reRenderAddRest();
       this.selectExerciseDialog = true;
@@ -178,12 +174,6 @@ export default {
       cycleExercisesStore.setExerciseSelectedIdAsRest();
       this.addRestDialog = true
     },
-    // addRest(){
-    //   this.selectExerciseDialog = false
-    //   // this.rest++
-    //   // this.$emit('newRest')
-    //   this.reRenderAddRest()
-    // },
     reRenderSelectExercise() {
       this.selectExerciseDialog = false;
       this.selectExercisePopUpKey++;

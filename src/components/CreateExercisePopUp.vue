@@ -86,7 +86,7 @@
           <v-row class="mt-n6">
             <v-col :cols="4">
               <!-- TODO: Definir equipamientos posibles para un ejercicio -->
-              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195"  :condition="required && !equipment" errorText="Es necesario el Equipamento"
+              <FilterMenu :id="0" :left-border-radius="4" :right-border-radius="4" :width="195"  :condition="required && !equipment" errorText="Es necesario el equipamento"
                           :placeholder="getEquipmentValue" @menuChanged="inputEquipment" :options="['Con equipamiento','Sin equipamiento']"/>
             </v-col>
             <v-col :cols="4">
@@ -94,7 +94,7 @@
                           :width="195" :placeholder="getMuscleZone" @menuChanged="inputMuscleZone" :options="['Todo el cuerpo','Zona inferior','Zona media','Zona superior']"/>
             </v-col>
             <v-col :cols="4">
-              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :condition="required && !Intensity" errorText="Es necesario la Intensidad"
+              <FilterMenu :id="2" :left-border-radius="4" :right-border-radius="4" :condition="required && !Intensity" errorText="Es necesario la intensidad"
                           :width="195" :placeholder="getIntensity" @menuChanged="inputIntensity" :options="['Baja intensidad','Media intensidad','Alta intensidad']"/>
             </v-col>
           </v-row>
@@ -191,8 +191,7 @@ export default {
       }
     },
     uploadUrl(url){
-      this.metaData.url=url
-      console.log(this.metaData)
+      this.metaData.url = url
       this.mediaDialog = false;
       this.showContent = true;
     },

@@ -2,7 +2,7 @@
   <v-btn-toggle class="btn-toggle-style" mandatory borderless v-model="select" >
     <v-btn v-for="(name, index) in filters" :key="index"
            :width="150"
-           height="36"
+           height="auto"
            :class="format(index)"
            @click="sentSelect(index)">
       <span class="span-style">{{capitalizeText(name)}}</span>
@@ -47,19 +47,20 @@ export default {
 
 .btn-toggle-style {
   border-radius: 4px;
-  border: 2px solid #142850;
+  border: 0 solid #142850;
 }
 
 .v-btn.active-btn-style {
-  background-color: #DAE1E7;
+  background-color: var(--v-green-base);
 }
 
 .v-btn.nonactive-btn-style {
-  background-color: white;
+  background-color: var(--v-green-base);
+  opacity: 50%;
 }
 
 .span-style {
-  color: black;
+  color: white;
   letter-spacing: 0;
   font-size: 12px;
   height: 100%;

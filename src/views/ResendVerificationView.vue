@@ -6,9 +6,9 @@
              class="image-style"
              @click="changeView({name: 'landing'})"/>
     </v-card>
-    <v-sheet class="d-flex center-card-margin flex-column" flat>
+    <v-sheet class="d-flex center-card-margin flex-column " flat>
       <v-card class="d-flex login-card-style justify-center flex-column" height="320" flat>
-        <h1 class="d-flex justify-center mb-7">Reenviar código de verificación</h1>
+        <h1 class="d-flex justify-center mb-7 my-4">Reenviar código de verificación</h1>
         <TextInput class="margin-style" v-model="inputEmail"
                    :required="required" textError="Se requiere un correo electrónico"
                    placeHolder="Ingrese su correo electrónico"></TextInput>
@@ -19,8 +19,8 @@
           <h3 v-show="send" class="margin-style">Verifique su casilla de correo electrónico.</h3>
         </v-sheet>
       </v-card>
-      <v-card class="d-inline-flex justify-center align-center justify-space-around" height="80" flat>
-        <h2 class="d-flex justify-center">¿No tienes cuenta aún?</h2>
+      <v-card class="d-inline-flex justify-center align-center text-truncate justify-center" height="80" flat>
+        <h2 class="d-flex justify-center px-4 mr-2 text-truncate">¿No tienes cuenta aún?</h2>
         <LoginButton :text-size="20" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
       </v-card>
     </v-sheet>

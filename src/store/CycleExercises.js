@@ -36,7 +36,7 @@ export const useCycleExercises = defineStore('cycleExercises', {
         // Devuelve los ejercicios del ciclo con id cycleId
         // Devuelve undefined si no existe
         getCycle(cycleId){
-            return this.cycles.find((cycle) => cycle.id === cycleId).data;
+            return this.cycles.find((cycle) => cycle.id === cycleId).data.content;
         },
         // Devuelve el indice del ejercicio con id exerciseId en el ciclo con id cycleId
         // Devuelve -1 si no existe
@@ -128,10 +128,22 @@ export const useCycleExercises = defineStore('cycleExercises', {
         },
         // OJO: Para evitar problemas, primero se debe limpiar el store con restartStore
         // Agrega los ejercicios del ciclo con id cycleId al store
+        // Devuelve -1 en caso de error, 0 en caso de exito
         async fetchCycleExercises(cycleId){
-            let result;
+            let apiResult, result, page = 0;
             try {
-                result = await ExerciseCycleApi.getExercises(cycleId);
+                do {
+                    apiResult = await ExerciseCycleApi.getExercises(cycleId, page)
+                    if(apiResult === -1){
+                        return -1;
+                    }
+                    if(page === 0){
+                        result = apiResult;
+                    } else {
+                        apiResult.content.forEach((routine) => result.content.push(routine));
+                    }
+                    page++;
+                } while(!apiResult.isLastPage);
             } catch (e) {
                 console.log(e);
                 return -1;

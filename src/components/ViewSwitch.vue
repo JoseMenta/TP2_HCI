@@ -58,6 +58,7 @@ export default {
     // Este metodo lo utilizo para preguntar si el boton que llama al metodo es el que esta seleccionado
     // Si es asi, adopta la clase active-btn-style, sino adopta la clase nonactive-btn-style
     isClicked(index){
+      this.$emit('viewChanged', index);
       return (index === this.selectedItem) ? 'active-btn-style' : 'nonactive-btn-style'
     }
   },

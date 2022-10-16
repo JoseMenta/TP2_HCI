@@ -2,7 +2,7 @@
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
   <v-sheet class="sheet-style d-inline-flex pl-3 pr-1 " :width="componentWidth" :class="styleFunction">
-    <div class="my-1">
+    <div v-if="!readOnly" class="my-1">
       <div class="d-flex">
         <span class="text-style">{{ dataText }}</span>
         <v-icon class="ml-auto black--text" @click="incrementValue" v-text="$vuetify.icons.values.keyboardArrowUp"/>
@@ -13,6 +13,14 @@
                oninput="this.value = (!!this.value && Math.abs(this.value) >= 0) ? Math.abs(this.value) : 0"
                v-model="numberValue">
         <v-icon class="ml-auto black--text" @click="decrementValue" v-text="$vuetify.icons.values.keyboardArrowDown"/>
+      </div>
+    </div>
+    <div v-else class="my-1">
+      <div>
+        <span class="text-style read-only-style">{{ dataText }}</span>
+      </div>
+      <div>
+        <span class="text-style read-only-style"> {{numberValue}} </span>
       </div>
     </div>
   </v-sheet>
@@ -65,6 +73,13 @@ export default {
       required: false,
       default() {
         return 0;
+      }
+    },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default(){
+        return false;
       }
     }
   },
@@ -150,6 +165,11 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.read-only-style{
+  color: var(--v-darkBlue-base);
+  font-weight: bold;
 }
 
 

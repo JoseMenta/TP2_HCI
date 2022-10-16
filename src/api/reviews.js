@@ -3,11 +3,11 @@ import {Api} from "@/api/api";
 export {ReviewApi}
 
 class ReviewApi{
-    static getUrl(routineId){
-        return `${Api.baseUrl}/reviews/${routineId ?`/${routineId}`:''}`
+    static getUrl(routineId,page){
+        return `${Api.baseUrl}/reviews${routineId ?`/${routineId}`:''}${(page === 0 || page) ? `?page=${page}` : ''}`;
     }
-    static async getRoutineReviews(routineId){
-        return await Api.get(ReviewApi.getUrl(routineId),true)
+    static async getRoutineReviews(routineId,page){
+        return await Api.get(ReviewApi.getUrl(routineId,page),true)
     }
 // info:{
 //     score: 10,

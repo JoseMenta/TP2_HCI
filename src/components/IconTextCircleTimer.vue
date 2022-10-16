@@ -29,7 +29,7 @@ export default {
   props: {
     size: {
       type: Number,
-      required: true
+      required:true
     },
     minutes: {
       type: Number,
@@ -41,7 +41,8 @@ export default {
     },
     textSize: {
       type: Number,
-      required: true
+      required: false,
+      default:30
     }
   },
   data(){
@@ -67,6 +68,7 @@ export default {
     this.interval = setInterval(() => {
       // Una vez que se termina el tiempo, destruyo el contador
       if(this.timeLeft <= 0){
+        this.$emit('timerFinished')
         clearTimeout(this.interval)
       }
       this.timeLeft -= 1;

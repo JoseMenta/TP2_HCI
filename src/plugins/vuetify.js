@@ -41,6 +41,7 @@ export default new Vuetify({
             add: 'add',
             arrowBack: 'arrow_back',
             done: 'done',
+            timer:'alarm',
             playCircle: 'play_circle',
             clear: 'clear'
         }

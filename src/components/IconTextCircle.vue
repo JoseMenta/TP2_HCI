@@ -24,7 +24,8 @@ export default {
   props: {
     size: {
       type: Number,
-      required: true
+      required: false,
+      default:120
     },
     icon: {
       type: String,
@@ -32,7 +33,8 @@ export default {
     },
     iconSize: {
       type: Number,
-      required: true
+      required: false,
+      default:30
     },
     text: {
       type: String,
@@ -40,7 +42,8 @@ export default {
     },
     textSize: {
       type: Number,
-      required: true
+      required: false,
+      default:30
     }
   },
   data(){

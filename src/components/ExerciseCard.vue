@@ -22,17 +22,27 @@
     </v-card >
 <!-- Ojo cambiar imagen, es para meterme despues con la meta data-->
     <iframe :src="exerciseData.metadata.url" height="100%" width="auto" class="iframe-class"></iframe>
+
+    <v-dialog persistent width="80%" v-model="showDataDialog">
+      <SelectExerciseConfigPopUp :read-only="true" @goBack="closePopUp"/>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
+import SelectExerciseConfigPopUp from "@/components/SelectExerciseConfigPopUp";
+
 import {useExercises} from "@/store/Exercises";
+
+import {useCycleExercises} from "@/store/CycleExercises";
 
 export default {
   name: "ExerciseCard",
+  components: {SelectExerciseConfigPopUp},
   data() {
     return {
-      url : ''
+      showDataDialog: false,
+      iconTouched: false,
     }
   },
   // --------------------------------------
@@ -67,6 +77,13 @@ export default {
       default() {
         return false;
       }
+    },
+    viewDetails: {
+      type: Boolean,
+      required: false,
+      default(){
+        return true;
+      }
     }
   },
   computed:{
@@ -87,27 +104,30 @@ export default {
   },
   methods:{
     touchEdit(){
+      this.iconTouched = true;
       console.log(`edit touched in ExerciseCard ${this.id}`)
-      this.$emit('editTouched', this.id, this.order)
+      this.$emit('editTouched', this.id, this.order, this.details.duration, this.details.repetitions);
     },
     touchDelete(){
+      this.iconTouched = true;
       console.log(`delete touched in ExerciseCard ${this.id}`)
       this.$emit('deleteTouched', this.id, this.order)
     },
-    touchCard(){
+    async touchCard(){
+      if(this.viewDetails && !this.iconTouched){
+        const cycleExercisesStore = useCycleExercises();
+        await cycleExercisesStore.setExerciseSelectedId(this.id);
+        this.showDataDialog = true;
+      } else {
+        this.iconTouched = false;
+      }
       console.log(`ExerciseCard ${this.id} touched`)
       this.$emit('cardTouched', this.id, this.order)
     },
+    closePopUp(){
+      this.showDataDialog = false;
+    }
   },
-  /*
-  async beforeMount() {
-    const exercises = useExercises()
-    const video = await exercises.getVideo(this.id, 1);
-    console.log(this.id)
-    console.log("lo que recibi")
-    console.log(video)
-    this.url = video.url
-  }*/
 }
 </script>
 
