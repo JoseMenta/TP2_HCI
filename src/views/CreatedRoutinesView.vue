@@ -40,7 +40,6 @@ import {useCategories} from "@/store/Categories";
 const categoriesStore = useCategories();
 import {useRoutines, NEW_ROUTINE_ID} from "@/store/Routines";
 
-import {useRoutines} from "@/store/Routines";
 const routinesStore = useRoutines();
 
 import {useFavourites} from "@/store/Favourites";
@@ -49,7 +48,6 @@ const favouritesStore = useFavourites();
 import {useUsers} from "@/store/User";
 const usersStore = useUsers();
 
-import {NEW_ROUTINE_ID} from "@/api/routine";
 
 export default {
   name: "CreatedRoutinesView",

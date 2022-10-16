@@ -20,8 +20,8 @@
         </v-sheet>
       </v-sheet>
     </v-card >
-<!-- Ojo cambiar imagen, es para meterme despues con la meta data-->
-    <iframe :src="exerciseData.metadata.url" height="100%" width="auto" class="iframe-class"></iframe>
+    <iframe :src="exerciseData.metadata.url" height="auto" width="auto" class="iframe-class" ></iframe>
+
 
     <v-dialog persistent width="80%" v-model="showDataDialog">
       <SelectExerciseConfigPopUp :read-only="true" @goBack="closePopUp"/>

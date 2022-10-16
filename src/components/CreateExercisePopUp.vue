@@ -158,9 +158,8 @@ export default {
       mediaDialog: false,
       details: '',
       detailsIsEmpty: false,
-      showContent: false,
       dataLoaded: false,
-
+      showContent: false,
       rules: {
         required: value => !!value || 'El titulo del ejercicio es requerido.',
         duplicate: value => !this.getExercises.map(exercise => exercise.name).includes(value) || 'Otro ejercicio cuenta con este nombre.',
@@ -336,8 +335,9 @@ export default {
     this.Intensity = this.getBoolean;
     this.muscleZone = this.getBoolean;
     this.equipment = this.getBoolean;
-    this.showContent = this.getBoolean;
-    console.log(this.metaData.url)
+    console.log(this.metaData.url);
+    this.showContent =  this.metaData.url !== ''
+    console.log(this.showContent);
   },
   async beforeCreate(){
     const usersStore = useUsers();
