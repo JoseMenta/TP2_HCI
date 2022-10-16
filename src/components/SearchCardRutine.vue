@@ -2,21 +2,21 @@
   <v-sheet class="d-inline-flex" height="50">
     <v-sheet width="120" class="mr-5" elevation="0">
       <v-img
-          :src="srcImg"
+          :src="routineData.metaData.image"
           max-height="80"
           class="img_rutine elevation-1"
           @click="changeView({name: 'routineDetails'})"
       ></v-img>
     </v-sheet>
     <v-sheet>
-      <h3 class="text-truncate">{{name}}</h3>
+      <h3 class="text-truncate">{{routineData.name}}</h3>
       <v-rating
           background-color="black"
           color="black"
           :empty-icon="$vuetify.icons.values.starEmpty"
           :full-icon="$vuetify.icons.values.starFull"
           length="5"
-          :value="ranking"
+          :value="routineData.ranking"
           readonly
           size="20"
       ></v-rating>
@@ -29,17 +29,9 @@
 export default {
   name: "SearchCardRutine",
   props:{
-    name:{
-      type: String,
+    routineData: {
+      type: Object,
       required: true
-    },
-    ranking: {
-      type: Number,
-      required: true
-    },
-    srcImg: {
-      type: String,
-      require: true
     }
   },
   methods: {

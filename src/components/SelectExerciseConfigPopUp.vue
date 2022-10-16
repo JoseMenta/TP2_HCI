@@ -16,10 +16,8 @@
                   @click="confirmExercise"/>
         </v-col>
       </v-row>
-      <v-row class="img-style">
-        <v-col :cols="12">
-          <iframe :src="imageSrc" height="100%" width="auto" class="iframe-class"></iframe>
-        </v-col>
+      <v-row class="img-style align-center">
+          <iframe :src="imageSrc" height="100%" width="100%" class="iframe-class"></iframe>
       </v-row>
       <v-row class="align-center mr-2">
         <v-col :cols="8">

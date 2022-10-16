@@ -9,10 +9,10 @@
           <v-divider vertical class="divider-style"/>
         </template>
       </RoutineFilter>
+    </v-sheet>
       <div class="mt-12">
         <RoutineCardList v-if="dataLoaded" :routines="this.getRutinesFilter"/>
       </div>
-    </v-sheet>
   </div>
 </template>
 
@@ -87,20 +87,20 @@ export default {
       console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
     },
-    ...mapState(useRoutines, {userCreatedRoutines: "getRoutinesFromCurrentUser"}),
+    ...mapState(useRoutines, {getRoutines: "getRoutines"}),
     //filters: { Puntuacion : '',  Dificultad : '', Categoria : '', OrderFilter : '', OrderBool: '' }
     getRutinesFilter(){
       let Rutines = null;
       if(this.textSearch !== ' '){
         if(this.binaryCategories[this.indexCategorie] === 'Nombre de Rutina'){
-          Rutines =  this.userCreatedRoutines.filter(rutine => rutine.name.startsWith(this.textSearch))
+          Rutines =  this.getRoutines.filter(rutine => rutine.name.startsWith(this.textSearch))
         }
         else{
-          Rutines =  this.userCreatedRoutines.filter(rutine => rutine.user.username.startsWith(this.textSearch))
+          Rutines =  this.getRoutines.filter(rutine => rutine.user.username.startsWith(this.textSearch))
         }
       }
       else{
-        Rutines =  this.userCreatedRoutines;
+        Rutines =  this.getRoutines;
       }
       Rutines =  Rutines.filter(rutine => (this.filter.Puntuacion === -1 || this.filter.Puntuacion===rutine.score) &&
           (this.filter.Dificultad=== 'x' || this.filter.Dificultad===rutine.difficulty) &&

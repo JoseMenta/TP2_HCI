@@ -39,7 +39,6 @@ import {mapState} from "pinia";
 import {useCategories} from "@/store/Categories";
 const categoriesStore = useCategories();
 import {useRoutines, NEW_ROUTINE_ID} from "@/store/Routines";
-
 const routinesStore = useRoutines();
 
 import {useFavourites} from "@/store/Favourites";
@@ -65,9 +64,6 @@ export default {
     }
   },
   methods: {
-    // getText(componentText){
-    //   return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
-    // },
     changeView(view) {
       this.$router.push(view)
     },

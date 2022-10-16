@@ -73,7 +73,7 @@ export default {
           to:route.path
         }
       })
-    }
+    },
   },
   async created() {
     const users = useUsers();
