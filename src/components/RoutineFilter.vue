@@ -4,22 +4,22 @@
     <div class="div-filter-style mr-9">
       <slot name="firstFilter"></slot>
       <FilterMenu :id="1"
-                  :options="['⭐⭐⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐', '⭐⭐', '⭐']"
+                  :options="iconsScore"
                   :width="150"
-                  :placeholder="'Puntuación'"
+                  :placeholder="this.filters.Puntuacion===-1? 'Puntuación' : iconsScore[5 -filters.Puntuacion]"
                   :left-border-radius="4" :right-border-radius="4"
                   @menuChanged="getPuntuacionFilter"/>
       <FilterMenu :id="2"
-                  :options="['⚡⚡⚡⚡⚡', '⚡⚡⚡⚡', '⚡⚡⚡', '⚡⚡', '⚡']"
+                  :options="iconsLevels"
                   :width="150"
-                  :placeholder="'Dificultad'"
+                  :placeholder="this.filters.Dificultad==='x'? 'Dificultad' : iconsLevels[levels.indexOf(filters.Dificultad)]"
                   :left-border-radius="4" :right-border-radius="4"
                   @menuChanged="getDificultadFilter"/>
       <!-- TODO: Ver qué va en Categoria -->
       <FilterMenu :id="3"
                   :options="getCategoryNames"
                   :width="150"
-                  :placeholder="'Categoría'"
+                  :placeholder="this.filters.Categoria===-1? 'Categoría' : getCategoryNames[filters.Categoria]"
                   :left-border-radius="4" :right-border-radius="4"
                   @menuChanged="getCategoriaFilter"/>
     </div>
@@ -52,7 +52,16 @@ export default {
   },
   data() {
     return {
-      filters: { Puntuacion : '',  Dificultad : '', Categoria : '', OrderFilter : 'Puntuación', Order: 1 }
+      filters: this.prevValues,
+      levels : ['expert', 'advanced',  'intermediate', 'beginner', 'rookie'],
+      iconsLevels: ['⚡⚡⚡⚡⚡', '⚡⚡⚡⚡', '⚡⚡⚡', '⚡⚡', '⚡'],
+      iconsScore: ['⭐⭐⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐', '⭐⭐', '⭐']
+    }
+  },
+  props:{
+    prevValues:{
+      type: Object,
+      require: true
     }
   },
   methods: {
@@ -63,17 +72,12 @@ export default {
     },
     getDificultadFilter(id){
       console.log(id);
-      const aux = ['expert', 'advanced',  'intermediate', 'beginner', 'rookie']
-      this.filters.Dificultad = aux[id];
+      this.filters.Dificultad = this.levels[id];
       this.emitSignal();
     },
     getCategoriaFilter(id){
       console.log(id);
-      const aux = [{ id: 0, name: 'Cuerpo completo', detail: 'Cuerpo completo' },
-        { id: 0, name: 'Tren superior', detail: 'Tren superior' },
-        { id: 0, name: 'Tren inferior', detail: 'Tren inferior' },
-        { id: 0, name: 'Tren medio', detail: 'Tren medio' }]
-      this.filters.Categoria = aux[id];
+      this.filters.Categoria = id;
       this.emitSignal();
     },
     getOrderFilter(id, value){
@@ -94,6 +98,7 @@ export default {
   computed: {
     ...mapState(useCategories, {getCategories: 'getCategories'}),
     getCategoryNames() {
+      console.log(this.filters)
       return this.getCategories.map((category) => category.name);
     }
   }

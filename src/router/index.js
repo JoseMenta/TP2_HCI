@@ -93,10 +93,15 @@ const routes = [
     meta:{requiresAuth:false}
   },
   {
-    path: '/search/:textSearch',
+    path: '/search/:textSearch/:binary&:puntuacion&:dificultad&:categoria',
     name: 'search',
     component:() => import(/* webpackChunkName: "search" */ '@/views/SearchResultsView'),
-    props(route) { return {textSearch : route.params.textSearch}},
+    props(route) { return {textSearch : route.params.textSearch,
+      binary : parseInt(route.params.binary),
+      puntuacion : parseInt(route.params.puntuacion),
+      dificultad : route.params.dificultad,
+      categoria : parseInt(route.params.categoria),
+    }},
     meta:{
       requiresAuth:true,
       displayName:'Busqueda'

@@ -1,6 +1,6 @@
 <!-- Componente para indicar por qué se busca: Rutina o creador -->
 <template>
-  <BinaryFilter :filters="getArrayTexts(searchNameFilterMenu)" @sentSelect="sentSelect"/>
+  <BinaryFilter :filters="getArrayTexts(searchNameFilterMenu)" @sentSelect="sentSelect" :prevValue="this.prevValue"/>
 </template>
 
 <script>
@@ -19,6 +19,10 @@ export default {
         return ['es', 'en'].includes(value)
       }
     },
+    prevValue: {
+      type: String,
+      required: true,
+    }
   },
   data() {
     return {

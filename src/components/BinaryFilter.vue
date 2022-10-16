@@ -17,11 +17,15 @@ export default {
     filters:{
       type:Array[String],
       required:true,
+    },
+    prevValue:{
+      type: Number,
+      required: true
     }
   },
   data(){
     return {
-      select: 0
+      select: this.prevValue
     }
   },
   methods: {

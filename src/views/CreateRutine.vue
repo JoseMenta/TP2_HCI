@@ -206,6 +206,7 @@ export default {
     },
     updateRoutineCategory(filterId, categoryName){
       this.routineData.category = categoriesStore.getCategoryByName(categoryName);
+      console.log(this.routineData.category)
     },
     getWarmUpAndExerciseCycles(cycles){
       return cycles.filter((cycle) => cycle.type !== CycleTypes.COOLDOWN);
@@ -215,7 +216,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useRoutines, {routineData: 'editingRoutine'}),
+    ...mapState(useRoutines, {  routineData: 'editingRoutine'}),
     showImageEditIcon(){
       return (this.imageHover) ? 'image-hover-style' : ''
     },

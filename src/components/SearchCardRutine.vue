@@ -9,7 +9,7 @@
       ></v-img>
     </v-sheet>
     <v-sheet>
-      <h3>{{name}}</h3>
+      <h3 class="text-truncate">{{name}}</h3>
       <v-rating
           background-color="black"
           color="black"

@@ -21,34 +21,38 @@
     </v-sheet>
 
     <v-expand-transition>
-      <v-card :width="searchWidth" :height="400" flat v-show="expand" v-if="filters">
+      <v-card :width="searchWidth" :height="400" class="elevation-8 border-radius" v-show="expand" v-if="filters">
         <v-card class="d-inline-flex mb-10 mt-10 included align-center" width="100%" flat>
           <v-sheet width="25%">
             <h3 class="ml-5">Buscar por</h3>
           </v-sheet>
-          <BinaryFilter v-bind:filters="['Nombre Creador', 'Nombre de Rutina']"></BinaryFilter>
+          <BinaryFilter v-bind:filters="['Nombre de Rutina', 'Nombre Creador']" @sentSelect="getSelect" :prevValue=0 :key="version"></BinaryFilter>
         </v-card>
         <v-sheet class="d-inline-flex included" width="100%" flat>
           <v-sheet width="25%">
             <h3 class="ml-5">Filtrar por</h3>
           </v-sheet>
           <v-sheet class="d-inline-flex justify-space-between align-center mr-5" width="75%">
-            <FilterMenu :id="1" @menuChanged="avoidClose = true"
+            <FilterMenu :id="1" @menuChanged="getPuntuacion"
                         :options="['⭐⭐⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐', '⭐⭐', '⭐']"
                         :width="150"
+                        :key="version"
                         :placeholder="getText(this.ratingText)"
                         :left-border-radius="4" :right-border-radius="4"/>
-            <FilterMenu :id="2" @menuChanged="avoidClose = true"
+            <FilterMenu :id="2" @menuChanged="getDificultad"
                         :options="['⚡⚡⚡⚡⚡', '⚡⚡⚡⚡', '⚡⚡⚡', '⚡⚡', '⚡']"
                         :width="150"
+                        :key="version"
                         :placeholder="getText(this.levelText)"
                         :left-border-radius="4" :right-border-radius="4"/>
             <!-- TODO: Ver qué va en Categoria -->
-            <FilterMenu :id="3" @menuChanged="avoidClose = true"
-                        :options="getArrayTexts(this.categoryOptionsText)"
+            <FilterMenu :id="3"
+                        :options="getCategoryNames"
                         :width="150"
-                        :placeholder="getText(this.categoryText)"
-                        :left-border-radius="4" :right-border-radius="4"/>
+                        :key="version"
+                        :placeholder="'Categoría'"
+                        :left-border-radius="4" :right-border-radius="4"
+                        @menuChanged="getCategoriaFilter"/>
           </v-sheet>
         </v-sheet>
         <v-container>
@@ -69,6 +73,8 @@
 import BinaryFilter from "@/components/BinaryFilter";
 import FilterMenu from "@/components/FilterMenu";
 import SearchCardRutine from "@/components/SearchCardRutine";
+import {mapState} from "pinia";
+import {useCategories} from "@/store/Categories";
 export default {
   name: "SearchBox",
   components: {SearchCardRutine, FilterMenu, BinaryFilter},
@@ -136,19 +142,52 @@ export default {
         {elements: ['High zone', 'Mid zone', 'Low zone'], lang: 'en'}
       ],
       RutinesRecomended: [
-        {name: 'primera', ranking: 3, srcImg: 'placeholder.jpg'},
-        {name: 'segunda', ranking: 4, srcImg: 'lionel-messi.webp'},
-        {name: 'tercera', ranking: 1, srcImg: 'placeholder.jpg'},
-        {name: 'cuarta', ranking: 2, srcImg: 'placeholder.jpg'}
+        {name: 'Futbol', ranking: 5, srcImg: 'lionel-messi.webp'},
+        {name: 'Estiramientos', ranking: 5, srcImg: 'estiramiento.png'},
+        {name: 'Rutina de sofi', ranking: 4, srcImg: 'Burpee.jpg'},
+        {name: 'Full body', ranking: 4, srcImg: 'placeholder.jpg'},
       ],
+      puntuacion: -1,
+      dificultad: 'x',
+      categoria: -1,
+      binary: 0,
+      version: 0
     }
   },
   methods: {
+    getCategoriaFilter(id){
+      console.log(id);
+      this.avoidClose = true
+      this.categoria=id;
+    },
+    getSelect(index){
+      this.binary = index
+    },
+    getPuntuacion(id){
+      this.avoidClose = true
+      this.puntuacion = 5-id
+    },
+    getDificultad(id){
+      this.avoidClose = true
+      const aux = ['expert', 'advanced',  'intermediate', 'beginner', 'rookie']
+      this.dificultad = aux[id]
+    },
+    getCategoria(id){
+      this.avoidClose = true
+      this.categoria = id
+    },
     searchMethod(){
-      this.retractBox()
-      this.$router.push('/search/' + this.inputSearch)
+      if(this.inputSearch==='')
+        this.inputSearch=' '
+      this.$router.push('/search/' + this.inputSearch + '/' + this.binary + '&' + this.puntuacion + '&' + this.dificultad + '&' + this.categoria)
+      this.retractBox();
+      this.puntuacion= -1;
+      this.dificultad= 'x';
+      this.categoria= -1;
+      this.binary= 0;
     },
     expandBox(){
+      this.version++;
       this.searchWidth = this.searchBoxWidth + 300;
       this.expand = true;
     },
@@ -162,6 +201,7 @@ export default {
       if(!this.avoidClose){
         this.searchWidth = this.searchBoxWidth;
         this.expand = false;
+        this.inputSearch=''
       } else {
         this.avoidClose = false
       }
@@ -171,10 +211,14 @@ export default {
     }
   },
   computed: {
+    ...mapState(useCategories, {getCategories: 'getCategories'}),
+    getCategoryNames() {
+      return this.getCategories.map((category) => category.name);
+    },
     getPlaceholderText() {
       return this.placeholder[this.placeholder.map(e => e.lang).indexOf(this.language)].text;
     }
-  }
+  },
 }
 </script>
 
@@ -198,6 +242,10 @@ export default {
 
 .card-search{
   background-color: white;
+}
+
+.border-radius{
+  border-radius: 12px;
 }
 
 </style>

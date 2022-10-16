@@ -2,11 +2,14 @@
 <template>
   <div class="ml-7">
     <h1 class="title-style my-5">Rutinas creadas</h1>
-    <RoutineFilter @getFilters="getFilter">
-      <template v-slot:firstFilter>
-        <RoutineFilterSearch @FilterSearch="getFilterSearch"/>
-      </template>
-    </RoutineFilter>
+    <v-sheet width="70%">
+      <RoutineFilter @getFilters="getFilter" :prev-values="filter">
+        <template v-slot:firstFilter>
+          <RoutineFilterSearch @FilterSearch="getFilterSearch"/>
+        </template>
+      </RoutineFilter>
+    </v-sheet>
+
 
     <div class="mt-12">
       <!-- TODO: Corregir User.js -->
@@ -30,7 +33,8 @@ import RoutineFilter from "@/components/RoutineFilter";
 import RoutineFilterSearch from "@/components/RoutineFilterSearch";
 
 import {mapState} from "pinia";
-
+import {useCategories} from "@/store/Categories";
+const categoriesStore = useCategories();
 import {useRoutines, NEW_ROUTINE_ID} from "@/store/Routines";
 const routinesStore = useRoutines();
 
@@ -52,7 +56,7 @@ export default {
       dataLoaded: false,
       filterSearch: 'Nombre de la rutina',
       textSearch: '',
-      filter : { Puntuacion : '',  Dificultad : '', Categoria : '', OrderFilter : 'Fecha de creación' , Order: -1 }
+      filter : { Puntuacion : -1,  Dificultad : 'x', Categoria : -1, OrderFilter : 'Fecha de creación' , Order: -1 }
     }
   },
   methods: {
@@ -75,6 +79,11 @@ export default {
     }
   },
   computed:{
+    ...mapState(useCategories, {getCategories: 'getCategories', categoriesLoaded: "categoriesLoaded"}),
+    getCategoryNames(){
+      console.log(this.getCategories)
+      return this.getCategories.map((category) => category.name);
+    },
     ...mapState(useRoutines, {userCreatedRoutines: "getRoutinesFromCurrentUser"}),
     //filters: { Puntuacion : '',  Dificultad : '', Categoria : '', OrderFilter : '', OrderBool: '' }
     getRoutinesFilter(){
@@ -83,9 +92,10 @@ export default {
         routines = this.userCreatedRoutines.filter(routine => routine.name.startsWith(this.textSearch))
       else
         routines = this.userCreatedRoutines.filter(routine => routine.user.username.startsWith(this.textSearch))
-      routines =  routines.filter(rutine => (this.filter.Puntuacion === '' || this.filter.Puntuacion===rutine.score) &&
-          (this.filter.Dificultad=== '' || this.filter.Dificultad===rutine.difficulty) &&
-          (this.filter.Categoria==='' || this.filter.Categoria===rutine.category));
+      const aux = ['expert', 'advanced',  'intermediate', 'beginner', 'rookie']
+      routines =  routines.filter(rutine => (this.filter.Puntuacion === -1 || this.filter.Puntuacion===rutine.score) &&
+          (this.filter.Dificultad=== 'x' || this.filter.Dificultad===rutine.difficulty) &&
+          (this.filter.Categoria===-1 || categoriesStore.getCategoryByName(this.getCategoryNames[this.filter.Categoria]).name===rutine.category.name));
       switch (this.filter.OrderFilter) {
         case 'Fecha de creación':
           return routines.sort((a,b) => this.filter.Order * (a.date - b.date))
@@ -96,9 +106,9 @@ export default {
           return routines
         }
         case 'Dificultad':
-          return routines.sort((a,b) => this.filter.Order * (a.difficulty - b.difficulty))
+          return routines.sort((a,b) => this.filter.Order * (aux.indexOf(a.difficulty) - aux.indexOf(b.difficulty)))
         case 'Categoría':
-          return routines.sort((a,b) => this.filter.Order * (a.category - b.category))
+          return routines.sort((a,b) => this.filter.Order * a.category.name.localeCompare(b.category.name))
       }
       return routines
     },
