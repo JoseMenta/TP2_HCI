@@ -3,8 +3,8 @@
   <v-col>
     <v-row class="justify-space-between px-8 py-6">
       <h1>Vista detallada</h1>
-<!--      <ViewSwitch :items="['Detalle','Lista']" :text-size="24" :border-radius="12" @viewChanged="changePresentation"/>-->
-      <BinaryFilter :filters="['Detalle','Lista']" @sentSelect="changePresentation"></BinaryFilter>
+      <ViewSwitch :items="['Detalle','Lista']" :text-size="24" :border-radius="12" @viewChanged="changePresentation"/>
+<!--      <BinaryFilter :filters="['Detalle','Lista']" @sentSelect="changePresentation"></BinaryFilter>-->
     </v-row>
     <v-carousel v-model="index" hide-delimiters hide-delimiter-background :show-arrows="false" height="auto">
       <v-carousel-item>
@@ -101,15 +101,26 @@
   </v-col>
 </div>
   <div v-else class="d-flex align-center justify-center div-loading-style mt-10">
+    <v-dialog width="50%" persistent v-model="errorDialog">
+      <AlertPopUp :title="errorTitle" :text="errorText">
+        <template v-slot:actions>
+          <v-btn :color="$vuetify.theme.themes.light.green" @click="cancel">
+            <span class="white--text">Cerrar</span>
+          </v-btn>
+        </template>
+      </AlertPopUp>
+    </v-dialog>
     <v-progress-circular size="200" indeterminate :width="20" :color="$vuetify.theme.themes.light.blue"/>
   </div>
 </template>
 
 <script>
-import BinaryFilter from "@/components/BinaryFilter";
+// import BinaryFilter from "@/components/BinaryFilter";
 import ControlsRutine from "@/components/ControlsRutine";
 import IconTextCircle from "@/components/IconTextCircle";
 import ExerciseDetail from "@/components/ExerciseDetail";
+import ViewSwitch from "@/components/ViewSwitch";
+import AlertPopUp from "@/components/AlertPopUp";
 
 import {useRoutineCycles} from "@/store/RoutineCycles";
 const routineCyclesStore = useRoutineCycles();
@@ -121,11 +132,13 @@ import {useExercises} from "@/store/Exercises";
 const exercisesStore = useExercises();
 
 import {useExecutions} from "@/store/Executions";
-const executionsStore = useExecutions()
+const executionsStore = useExecutions();
+
+import {NEW_ROUTINE_ID} from "@/api/routine";
 
 export default {
   name: "MakeRoutine",
-   components: { IconTextCircle, ControlsRutine, BinaryFilter, ExerciseDetail},
+  components: { IconTextCircle, ControlsRutine, ViewSwitch, ExerciseDetail, AlertPopUp},
   data(){
     return{
       dataLoaded: false,
@@ -140,7 +153,11 @@ export default {
       cycleIndex:0,
       exerciseIndex:0,
       cycleRep:0,
-      cycles: []
+      cycles: [],
+
+      errorText: '',
+      errorTitle: 'ERROR',
+      errorDialog: false,
     }
   },
   methods:{
@@ -255,6 +272,12 @@ export default {
     // Funcion para dar formato al contador mm:ss
     getTime(){
       return this.getMinutesLeft().toString().padStart(2, '0') + ':' + this.getSecondsLeft().toString().padStart(2, '0')
+    },
+    changeView(nameView) {
+      this.$router.push(nameView)
+    },
+    cancel(){
+      this.changeView({name: 'createdRoutines'});
     }
   },
   computed: {
@@ -281,6 +304,11 @@ export default {
   },
   async created(){
     await routinesStore.fetchRoutines();
+    if(this.routineId <= NEW_ROUTINE_ID || routinesStore.getRoutineById(this.routineId) === -1){
+      this.errorText = 'No existe una rutina con el ID: ' + this.routineId
+      this.errorDialog = true;
+      return;
+    }
     await routinesStore.getRoutineData(this.routineId);
     await exercisesStore.initialize()
     await executionsStore.startExecution()//seteamos el timer para la ejecucion

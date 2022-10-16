@@ -16,9 +16,10 @@
     <v-btn v-for="(item, i) in items" :key="i"
            width="auto"
            height="auto"
+           @click="clicked(i)"
            ripple
            :class="isClicked(i)">
-      <span class="text-capitalize my-2 mx-5 btn-text-style">{{item.text}}</span>
+      <span class="text-capitalize my-2 mx-5 btn-text-style">{{item}}</span>
     </v-btn>
   </v-btn-toggle>
 </template>
@@ -58,10 +59,13 @@ export default {
     // Este metodo lo utilizo para preguntar si el boton que llama al metodo es el que esta seleccionado
     // Si es asi, adopta la clase active-btn-style, sino adopta la clase nonactive-btn-style
     isClicked(index){
-      this.$emit('viewChanged', index);
       return (index === this.selectedItem) ? 'active-btn-style' : 'nonactive-btn-style'
+    },
+    clicked(index){
+      this.selectedItem = index;
+      this.$emit('viewChanged', index);
     }
-  },
+  }
 }
 </script>
 
