@@ -141,6 +141,7 @@ const routes = [
   {
     path: '/*',
     name:'pageNotFound',
+    component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/PageNotFoundView'),
     meta: {requiresAuth: false},
   }
 ]

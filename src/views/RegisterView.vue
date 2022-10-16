@@ -1,11 +1,6 @@
 <template>
   <div>
-  <v-card height="100" flat color="#27496D" class="d-flex justify-center mb-5 top_card">
-    <v-img src="@/assets/fiti-logo.png"
-           contain
-           class="image-style"
-           @click="changeView('landing')"/>
-  </v-card>
+    <TopBarLogo/>
   <v-sheet class="d-flex center-card-margin flex-column" flat>
     <v-card class="d-flex login-card-style justify-center flex-column" flat>
       <h1 class="d-flex justify-center mb-7 mt-8">Registro</h1>
@@ -82,9 +77,11 @@ import TextInput from "@/components/TextInput";
 import PasswordInput from "@/components/PasswordInput";
 import {mapActions, mapState} from "pinia";
 import {useUsers} from "@/store/User";
+import TopBarLogo from "@/components/TopBarLogo";
 export default {
   name: "RegisterView",
   components: {
+    TopBarLogo,
     TextInput,
     LoginButton,
     PasswordInput
@@ -209,15 +206,7 @@ export default {
 </script>
 
 <style scoped>
-.top_card{
-  border-radius: 0;
-}
 
-.image-style{
-  margin-bottom: auto;
-  margin-top: auto;
-  height: 70px;
-}
 button.v-btn[disbled]{
   opacity: 0.6;
 }
@@ -245,9 +234,6 @@ button.v-btn[disbled]{
   margin-left: 15%;
   margin-right: 15%;
 }
-/*.v-date-picker-header {*/
-/*  display: none*/
-/*}*/
 
 .date-picker{
   width: 100%;
