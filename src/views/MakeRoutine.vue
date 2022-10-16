@@ -3,8 +3,8 @@
   <v-col>
     <v-row class="justify-space-between px-8 py-6">
       <h1>Vista detallada</h1>
-      <ViewSwitch :items="['Detalle','Lista']" :text-size="24" :border-radius="12" @viewChanged="changePresentation"/>
-<!--      <BinaryFilter :filters="['Detalle','Lista']" @sentSelect="changePresentation"></BinaryFilter>-->
+<!--      <ViewSwitch :items="['Detalle','Lista']" :text-size="24" :border-radius="12" @viewChanged="changePresentation"/>-->
+      <ChangeView :filters="['Detalle','Lista']" @sentSelect="changePresentation"></ChangeView>
     </v-row>
     <v-carousel v-model="index" hide-delimiters hide-delimiter-background :show-arrows="false" height="auto">
       <v-carousel-item>
@@ -12,8 +12,7 @@
         <v-container fluid>
           <v-row class="ma-0" >
             <v-col cols="7">
-              <v-img :src="getImgSrc" class="image-style" :aspect-ratio="16/9">
-              </v-img>
+              <iframe :src="getImgSrc" class="image-style"></iframe>
             </v-col>
             <v-col cols="5">
               <ExerciseDetail :read-only="true" :textarea-value="getDescription" :title-size="0" :textarea-border-radius="12" :textarea-size="20"/>
@@ -115,11 +114,10 @@
 </template>
 
 <script>
-// import BinaryFilter from "@/components/BinaryFilter";
+import ChangeView from "@/components/ChangeView";
 import ControlsRutine from "@/components/ControlsRutine";
 import IconTextCircle from "@/components/IconTextCircle";
 import ExerciseDetail from "@/components/ExerciseDetail";
-import ViewSwitch from "@/components/ViewSwitch";
 import AlertPopUp from "@/components/AlertPopUp";
 
 import {useRoutineCycles} from "@/store/RoutineCycles";
@@ -138,7 +136,7 @@ import {NEW_ROUTINE_ID} from "@/api/routine";
 
 export default {
   name: "MakeRoutine",
-  components: { IconTextCircle, ControlsRutine, ViewSwitch, ExerciseDetail, AlertPopUp},
+  components: { IconTextCircle,ChangeView, ControlsRutine, ExerciseDetail, AlertPopUp},
   data(){
     return{
       dataLoaded: false,
@@ -283,10 +281,7 @@ export default {
   computed: {
     getImgSrc(){
       const routineData = exercisesStore.getExerciseByIdFromStore(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id)
-      if(!routineData.metadata){
-        return require('@/assets/placeholder.jpg');
-      }
-      return (routineData.metadata.url) ? routineData.metadata.url : require('@/assets/placeholder.jpg');
+      return routineData.metadata.url
     },
     getDescription(){
       return exercisesStore.getExerciseByIdFromStore(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).detail
@@ -328,6 +323,7 @@ export default {
   crop: auto;
   border-radius: 20px;
   border: 2px solid black;
+  aspect-ratio: 16/9;
 }
 .active-style{
   border: 4px solid var(--v-green-base);

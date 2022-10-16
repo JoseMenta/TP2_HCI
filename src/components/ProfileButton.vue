@@ -1,30 +1,42 @@
 <!-- Componente para el visualizador del perfil en la navegacion persistente -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <v-btn class="d-flex btn-style text-capitalize pa-0"
-         width="auto" :height="btnHeight"
-         @click="profileMethod">
-    <v-row class="d-inline-flex py-2 px-1 row-style">
-      <v-col :cols="8" class="pr-0">
-        <span class="font-weight-bold text-style">{{`${user.firstName} ${user.lastName}`}}</span>
-      </v-col>
-      <v-col :cols="4">
-        <v-img :src="user.avatarUrl"
-               contain :height="imgSize" :width="imgSize"
-               class="image-style ml-auto mr-2"/>
-      </v-col>
+  <v-dialog v-model="showProfileDialog">
+    <template v-slot:activator="{on, attrs}">
+      <v-btn class="d-flex btn-style text-capitalize pa-0"
+             width="auto" :height="btnHeight" v-on="on" v-bind="attrs"
+             @click="showProfile">
+        <v-row class="d-inline-flex py-2 px-1 row-style">
+          <v-col :cols="8" class="pr-0">
+            <span class="font-weight-bold text-style">{{`${user.firstName} ${user.lastName}`}}</span>
+          </v-col>
+          <v-col :cols="4">
+            <v-img :src="user.avatarUrl"
+                   contain :height="imgSize" :width="imgSize"
+                   class="image-style ml-auto mr-2"/>
+          </v-col>
 
 
-    </v-row>
-  </v-btn>
+        </v-row>
+      </v-btn>
+    </template>
+    <ProfilePopUp ref="ProfilePopUp" :key="popUpKey" @goBack="closeWindow"></ProfilePopUp>
+  </v-dialog>
+
 </template>
 
 <script>
+import ProfilePopUp from "@/components/ProfilePopUp";
+
 import {useUsers} from "@/store/User";
 import {mapState} from "pinia";
 
+
 export default {
   name: "ProfileButton",
+  components: {
+    ProfilePopUp
+  },
   // --------------------------------------------
   // Function profileMethod: Funcion que se debe ejecutar al clickear el perfil
   // Number btnHeight: Altura del componente (en px)
@@ -36,10 +48,6 @@ export default {
   // Number textSize: Tamaño del texto (en px)
   // --------------------------------------------
   props: {
-   profileMethod: {
-      type: Function,
-      required: true
-    },
     btnHeight: {
       type: Number,
       required: true
@@ -75,10 +83,22 @@ export default {
       textSizeCSS: this.textSize + 'px',
       btnBorderRadiusCSS: this.btnBorderRadius + 'px',
       imgBorderRadiusCSS: this.imgBorderRadius + 'px',
+
+      showProfileDialog: false,
+      popUpKey: 0
     }
   },
   computed:{
     ...mapState(useUsers,{user:'getUser'})
+  },
+  methods: {
+    showProfile(){
+      this.showProfileDialog = true;
+    },
+    closeWindow(){
+      this.showProfileDialog = false;
+      this.popUpKey++;
+    }
   },
   async created() {
     const userStore = useUsers()

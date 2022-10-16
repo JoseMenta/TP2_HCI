@@ -21,7 +21,7 @@
     </v-sheet>
 
     <v-expand-transition>
-      <v-card :width="searchWidth" :height="400" class="elevation-8 border-radius" v-show="expand" v-if="filters">
+      <v-card :width="searchWidth" :height="200" class="elevation-8 border-radius" v-show="expand" v-if="filters">
         <v-card class="d-inline-flex mb-10 mt-10 included align-center" width="100%" flat>
           <v-sheet width="25%">
             <h3 class="ml-5">Buscar por</h3>
@@ -55,16 +55,17 @@
                         @menuChanged="getCategoriaFilter"/>
           </v-sheet>
         </v-sheet>
+        <!--
         <v-container>
           <v-row>
             <slot name="header"></slot>
-            <v-col v-for="(i, index) in RutinesRecomended" :key="index" cols="6" >
-              <SearchCardRutine :name="i.name" v-bind:ranking="i.ranking" @click.native="retractBox" :srcImg="require('@/assets/' + i.srcImg + '')"
-                                ></SearchCardRutine>
+            <v-col v-for="i in getBestFour" :key="i" cols="6" >
+              <SearchCardRutine :routineData="i" ></SearchCardRutine>
             </v-col>
           </v-row>
         </v-container>
-        </v-card>
+        -->
+      </v-card>
     </v-expand-transition>
   </v-col>
 </template>
@@ -72,12 +73,13 @@
 <script>
 import BinaryFilter from "@/components/BinaryFilter";
 import FilterMenu from "@/components/FilterMenu";
-import SearchCardRutine from "@/components/SearchCardRutine";
-import {mapState} from "pinia";
-import {useCategories} from "@/store/Categories";
+//import SearchCardRutine from "@/components/SearchCardRutine";
+
+
+
 export default {
   name: "SearchBox",
-  components: {SearchCardRutine, FilterMenu, BinaryFilter},
+  components: {FilterMenu, BinaryFilter},
   // --------------------------------------------
   // String language: Indica el lenguaje en que se debe mostrar el contenido estatico (Valores aceptados: 'es' y 'en')
   // Function searchMethod: Funcion que se debe ejecutar al clickear la lupa
@@ -121,6 +123,7 @@ export default {
   },
   data(){
     return {
+      dataLoaded: false,
       inputSearch: '',
       expand: false,
       avoidClose: false,
@@ -140,12 +143,6 @@ export default {
       categoryOptionsText: [
         {elements: ['Zona alta', 'Zona media', 'Zona baja'], lang: 'es'},
         {elements: ['High zone', 'Mid zone', 'Low zone'], lang: 'en'}
-      ],
-      RutinesRecomended: [
-        {name: 'Futbol', ranking: 5, srcImg: 'lionel-messi.webp'},
-        {name: 'Estiramientos', ranking: 5, srcImg: 'estiramiento.png'},
-        {name: 'Rutina de sofi', ranking: 4, srcImg: 'Burpee.jpg'},
-        {name: 'Full body', ranking: 4, srcImg: 'placeholder.jpg'},
       ],
       puntuacion: -1,
       dificultad: 'x',
@@ -206,19 +203,15 @@ export default {
         this.avoidClose = false
       }
     },
-    include () {
-      return [document.querySelector('.included')]
-    }
   },
+  /*
   computed: {
-    ...mapState(useCategories, {getCategories: 'getCategories'}),
-    getCategoryNames() {
-      return this.getCategories.map((category) => category.name);
+    getRoutinesFilter(){
+      const routinesStore = useRoutines();
+      let Rutines =  routinesStore.routines;
+      return Rutines.sort((a,b) => this.filter.Order * (a.score - b.score)).slice(0, 4);
     },
-    getPlaceholderText() {
-      return this.placeholder[this.placeholder.map(e => e.lang).indexOf(this.language)].text;
-    }
-  },
+  }*/
 }
 </script>
 

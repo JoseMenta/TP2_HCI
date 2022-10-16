@@ -79,7 +79,7 @@ export default {
           to:route.path
         }
       })
-    }
+    },
   },
   created() {
     window.addEventListener('online',()=>this.online = true)

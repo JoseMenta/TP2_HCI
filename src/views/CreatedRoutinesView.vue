@@ -39,9 +39,6 @@ import {mapState} from "pinia";
 import {useCategories} from "@/store/Categories";
 const categoriesStore = useCategories();
 import {useRoutines} from "@/store/Routines";
-
-import {NEW_ROUTINE_ID} from "@/api/routine";
-
 const routinesStore = useRoutines();
 
 import {useFavourites} from "@/store/Favourites";
@@ -50,6 +47,7 @@ const favouritesStore = useFavourites();
 import {useUsers} from "@/store/User";
 const usersStore = useUsers();
 
+import {NEW_ROUTINE_ID} from "@/api/routine";
 
 export default {
   name: "CreatedRoutinesView",
@@ -67,9 +65,6 @@ export default {
     }
   },
   methods: {
-    // getText(componentText){
-    //   return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
-    // },
     changeView(view) {
       this.$router.push(view)
     },

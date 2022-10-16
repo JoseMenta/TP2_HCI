@@ -1,94 +1,92 @@
 <template>
-  <v-dialog persistent v-model="show" max-width="80%">
-    <v-card>
-      <v-app-bar height="40">
-        <v-row class="d-flex justify-space-between px-4 py-4" width="100%">
-          <v-icon color="black" v-text="$vuetify.icons.values.arrowBack" @click="touchBack" ></v-icon>
-          <v-icon color="black" @click="changeIcon" >{{icon}}</v-icon>
-        </v-row>
-      </v-app-bar>
-      <div>
-        <v-text-field flat class="profile mt-4"
-                      v-model="userName"
-                      solo
-                      :disabled="!edit"/>
-        <div class="d-inline-flex ml-12 topStyle mb-5">
-          <v-list-item v-for="info in infoRutines"
-                       :key="info.text" >
-            <div align="center">
-              <v-list-item-title class="profile-items">{{info.number}}</v-list-item-title>
-              <v-list-item-title class="profile-items">{{info.text.split(' ')[0]}}</v-list-item-title>
-              <v-list-item-title class="profile-items">{{info.text.split(' ')[1]}}</v-list-item-title>
-            </div>
-          </v-list-item>
-          <v-dialog width="50%" persistent v-model="imageDialog">
-            <template v-slot:activator="{ on, attrs }">
-              <v-img
-                  :src="getImageSrc"
-                  height="50%" max-width="40%"
-                  @mouseover="imageHover = edit" @mouseleave="imageHover = false"
-                  class="image-style elevation-5 d-flex justify-center align-center"
-              >
-                <v-icon v-text="$vuetify.icons.values.edit" :size="60" color="black"
-                        class="d-flex mx-auto " :class="showImageEditIcon"
-                        @click="changeImage" v-on="on" v-bind="attrs"/>
-              </v-img>
-            </template>
-            <UploadUrl title="Cargar contenido (URL)"
-                       text="Colocar el url de una imagen o video, preferentemente que no sea de youtube"
-                       @closeWarning="imageDialog = false" @subir="uploadUrl"/>
-          </v-dialog>
+  <v-card>
+    <v-app-bar height="40">
+      <v-row class="d-flex justify-space-between px-4 py-4" width="100%">
+        <v-icon color="black" v-text="$vuetify.icons.values.arrowBack" @click="touchBack" ></v-icon>
+        <v-icon color="black" @click="changeIcon" >{{icon}}</v-icon>
+      </v-row>
+    </v-app-bar>
+    <div>
+      <v-text-field flat class="profile mt-4"
+                    v-model="userName"
+                    solo
+                    :disabled="!edit"/>
+      <div class="d-inline-flex ml-12 topStyle mb-5">
+        <v-list-item v-for="info in infoRutines"
+                     :key="info.text" >
+          <div align="center">
+            <v-list-item-title class="profile-items">{{info.number}}</v-list-item-title>
+            <v-list-item-title class="profile-items">{{info.text.split(' ')[0]}}</v-list-item-title>
+            <v-list-item-title class="profile-items">{{info.text.split(' ')[1]}}</v-list-item-title>
+          </div>
+        </v-list-item>
+        <v-dialog width="50%" persistent v-model="imageDialog">
+          <template v-slot:activator="{ on, attrs }">
+            <v-img
+                :src="getImageSrc"
+                height="50%" max-width="40%"
+                @mouseover="imageHover = edit" @mouseleave="imageHover = false"
+                class="image-style elevation-5 d-flex justify-center align-center"
+            >
+              <v-icon v-text="$vuetify.icons.values.edit" :size="60" color="black"
+                      class="d-flex mx-auto " :class="showImageEditIcon"
+                      @click="changeImage" v-on="on" v-bind="attrs"/>
+            </v-img>
+          </template>
+          <UploadUrl title="Cargar contenido (URL)"
+                     text="Colocar el url de una imagen o video, preferentemente que no sea de youtube"
+                     @closeWarning="imageDialog = false" @subir="uploadUrl"/>
+        </v-dialog>
 
-        </div>
       </div>
-      <div class="pt-3 background font-color pb-5" >
-        <span class="profile d-block " >Datos personales:</span>
-        <div class="ml-12 align-content-center profile-bot-items pt-1 pb-3" >
-          <span>Email: </span>
-          <span class="white--text">{{this.userEmail}}</span>
-        </div>
-        <v-sheet flat class="d-inline-flex ml-12 profile-bot-items flex-row align-center mb-5" color="#27496D" height="30">
+    </div>
+    <div class="pt-3 background font-color pb-5" >
+      <span class="profile d-block " >Datos personales:</span>
+      <div class="ml-12 align-content-center profile-bot-items pt-1 pb-3" >
+        <span>Email: </span>
+        <span class="white--text">{{this.userEmail}}</span>
+      </div>
+      <v-sheet flat class="d-inline-flex ml-12 profile-bot-items flex-row align-center mb-5" color="#27496D" height="30">
         <span class="white--text">Fecha de nacimiento: </span>
-          <v-menu
-              ref="menu"
-              v-model="menu"
-              :close-on-content-click="false"
-              transition="scale-transition">
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                  v-model="inputDate"
-                  placeholder="Fecha de Nacimiento"
-                  background-color="#27496D"
-                  readonly
-                  :disabled="!edit"
-                  flat
-                  solo
-                  class="style-text-input"
-                  top
-                  v-bind="attrs"
-                  v-on="on"
-                  hide-details
-              ></v-text-field>
-            </template>
-            <v-date-picker
-                color="black"
-                no-title
+        <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            transition="scale-transition">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
                 v-model="inputDate"
-                :active-picker.sync="activePicker"
-                :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
-                min="1950-01-01"
-                @change="save"
-                class="date-picker"
-            ></v-date-picker>
-          </v-menu>
-        </v-sheet>
-        <div class="ml-12 align-content-center profile-bot-items mb-5">
-          <span>Fecha de registro: </span>
-          <span>{{userDate}}</span>
-        </div>
+                placeholder="Fecha de Nacimiento"
+                background-color="#27496D"
+                readonly
+                :disabled="!edit"
+                flat
+                solo
+                class="style-text-input"
+                top
+                v-bind="attrs"
+                v-on="on"
+                hide-details
+            ></v-text-field>
+          </template>
+          <v-date-picker
+              color="black"
+              no-title
+              v-model="inputDate"
+              :active-picker.sync="activePicker"
+              :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
+              min="1950-01-01"
+              @change="save"
+              class="date-picker"
+          ></v-date-picker>
+        </v-menu>
+      </v-sheet>
+      <div class="ml-12 align-content-center profile-bot-items mb-5">
+        <span>Fecha de registro: </span>
+        <span>{{userDate}}</span>
       </div>
-    </v-card>
-  </v-dialog>
+    </div>
+  </v-card>
 </template>
 
 <script>
@@ -105,10 +103,6 @@ export default {
     UploadUrl
   },
   props:{
-    dialog: {
-      type: Boolean,
-      required:true
-    },
     // user: {
     //   type: Object,
     //   required: true
@@ -160,7 +154,7 @@ export default {
     //   return `${day}/${month}/${year}`
     // },
     touchBack(){
-      this.show = false
+      this.$emit('goBack');
     },
     changeIcon() {
       this.edit=!this.edit
