@@ -111,6 +111,20 @@ const routes = [
     meta:{requiresAuth:false}
   },
   {
+    path:'/make_routine',
+    name:'makeRoutine',
+    component:()=> import(/* webpackChunkName: "makeRoutine" */ '@/views/MakeRoutine'),
+    meta: {requiresAuth: true},
+    props: (route)=>({routineId:parseInt(route.query.routineId)})
+  },
+  {
+    path:'/review_routine',
+    name:'reviewRoutine',
+    component:()=> import(/* webpackChunkName: "makeRoutine" */ '@/views/RateRoutineView'),
+    meta: {requiresAuth: true},
+    props: (route)=>({routineId:parseInt(route.query.routineId)})
+  },
+  {
     path: '/created_exercises',
     name: 'createdExercises',
     component:() => import(/* webpackChunkName: "createdExercises" */ '@/views/ExercisesCreated'),
@@ -119,6 +133,11 @@ const routes = [
       displayName: 'Ejercicios creados'
     }
   },
+  {
+    path: '/*',
+    name:'pageNotFound',
+    meta: {requiresAuth: false},
+  }
 ]
 
 const router = new VueRouter({

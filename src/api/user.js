@@ -3,8 +3,8 @@ import {Api} from "@/api/api";
 export {UserApi, Credentials}
 
 class UserApi{
-    static getUrl(slug){
-        return `${Api.baseUrl}/users${slug? `/${slug}`:''}`
+    static getUrl(slug,page){
+        return `${Api.baseUrl}/users${slug? `/${slug}`:''}${(page === 0 || page) ? `?page=${page}` : ''}`
     }
     // body:{
 //     username: "johndoe",
@@ -73,8 +73,8 @@ class UserApi{
     static async getOtherUserRoutines(userId){
         return await Api.get(UserApi.getUrl(`${userId}/routines`),true)
     }
-    static async getCurrentExecutions(){
-        return await Api.get(UserApi.getUrl('current/executions'),true)
+    static async getCurrentExecutions(page){
+        return await Api.get(UserApi.getUrl('current/executions',page),true)
     }
     //Obtiene las reviews de un usuario con la informacion de la rutina que valoro
     static async getCurrentReviews(){

@@ -42,7 +42,7 @@ export default {
   },
   data: () => ({
     routes:[],
-    loginViews:['landing', 'register1', 'register2', 'register','login', 'resendVerification', 'verification'],
+    loginViews:['landing','pageNotFound', 'register1', 'register2', 'register','login', 'resendVerification', 'verification'],
     // dataLoaded: false
   }),
   methods:{

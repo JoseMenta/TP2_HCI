@@ -5,7 +5,7 @@
       <h6 class="white--text mr-1">Eliminar bloque</h6>
       <v-icon v-text="$vuetify.icons.values.delete" :size="15" color="white"/>
     </v-btn>
-    <h3 class="cycle-type-style mt-3 ml-5 font-italic">{{getTypeName}}</h3>
+    <h3 class="cycle-type-style ml-5 font-italic">{{getTypeName}}</h3>
     <v-card class="d-flex justify-space-between align-center mx-5" color="#E8F1F6" flat>
 
       <v-text-field

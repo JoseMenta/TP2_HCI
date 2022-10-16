@@ -43,7 +43,7 @@
                  ripple
                  width="100%"
                  height="auto"
-                 @click="changeView({name: 'createdRoutines'})">
+                 @click="changeView({name: 'makeRoutine',query:{routineId:routineId}})">
             <v-icon medium color="white">play_arrow</v-icon>
             <span class="white--text my-3 mx-3 text-style">Empezar</span>
           </v-btn>

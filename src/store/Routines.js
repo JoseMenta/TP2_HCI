@@ -10,7 +10,7 @@ import {useCycleExercises} from "@/store/CycleExercises";
 
 import {Cycle, CycleTypes} from "@/api/cycles";
 import {CycleExercise} from "@/api/exercise";
-
+import {ReviewApi} from "@/api/reviews";
 
 // Rutinas:
 //      - id: Identificador de la rutina
@@ -604,6 +604,38 @@ export const useRoutines = defineStore('routines', {
             routineCyclesStore.cycles = {
                 content: cycles
             }
+        },
+        async getReviewsFromApi(routineId,page){
+            let result;
+            try {
+                result = await ReviewApi.getRoutineReviews(routineId,page);
+            } catch(e) {
+                console.log(e);
+                return -1;
+            }
+            return result;
+        },
+        async getAllReviews(routineId){
+            let apiReviews;
+            let result;
+            let page = 0;
+            do {
+                apiReviews = await this.getReviewsFromApi(routineId,page);
+                if(apiReviews === -1){
+                    return -1;
+                }
+                if(page === 0){
+                    result = apiReviews;
+                } else {
+                    apiReviews.content.forEach((routine) => result.content.push(routine));
+                }
+                page++;
+            } while(!apiReviews.isLastPage);
+            return result
+        },
+        async getReviewsScore(routineId){
+            const result = await this.getAllReviews(routineId)
+            return result.content.reduce((prev,curr)=>prev+curr.score,0)/result.totalCount;
         }
     }
 })

@@ -10,6 +10,7 @@
     <v-btn
         :color="prev?  '#00909E' : 'rgb(0, 144, 158, 0.2)'"
         min-height="40"
+        :disabled="!prev"
         max-width="40"
         x-small
         class="align-self-center"
@@ -19,15 +20,17 @@
     </v-btn>
     <v-btn
         :color="play? '#00909E' : 'rgb(0, 144, 158, 0.2)'"
-        min-height="54"
-        max-width="54"
+        :disabled="!play"
+        height="80"
+        width="40%"
         x-small
         @click="clickPlay"
     >
-      <v-icon color="#FFFFFF" x-large>play_arrow</v-icon>
+      <v-icon color="#FFFFFF" x-large>{{ this.paused?'play_arrow':'pause' }}</v-icon>
     </v-btn>
     <v-btn
         :color="next? '#00909E' : 'rgb(0, 144, 158, 0.2)'"
+        :disabled = "!next"
         min-height="40"
         max-width="40"
         x-small
@@ -43,28 +46,37 @@
 <script>
 export default {
   name: "ControlsRutine",
+  props:{
+    prev:{
+      type:Boolean,
+      required:true,
+    },
+    play:{
+      type:Boolean,
+      required:true,
+    },
+    paused:{
+      type:Boolean,
+      required:true,
+    },
+    next:{
+      type:Boolean,
+      required:true,
+    },
+  },
   data() {
     return {
-      prev:true,
-      play:true,
-      next:true,
     }
   },
   methods:{
     clickPrev(){
-      this.prev = !this.prev;
-      console.log(`Click in prev`)
-      this.$emit(`${this.select}`)
+      this.$emit('prev')
     },
     clickPlay(){
-      this.play = !this.play;
-      console.log(`Click in play`)
-      this.$emit(`${this.select}`)
+      this.$emit('play')
     },
     clickNext(){
-      this.next = !this.next;
-      console.log(`Click in next`)
-      this.$emit(`${this.select}`)
+      this.$emit('next')
     }
   }
 }
