@@ -2,11 +2,14 @@
 <template>
   <div class="ml-7 main-div-style">
     <h1 class="title-style my-5">Favoritos</h1>
-    <RoutineFilter  @getFilters="getFilter" :prev-values="filter">
-      <template v-slot:firstFilter>
-        <RoutineFilterSearch/>
-      </template>
-    </RoutineFilter>
+    <v-sheet width="100%">
+      <RoutineFilter  @getFilters="getFilter" :prev-values="filter">
+        <template v-slot:firstFilter>
+          <RoutineFilterSearch/>
+        </template>
+      </RoutineFilter>
+    </v-sheet>
+
 
     <div v-if="dataLoaded" class="mt-12">
       <RoutineCardList v-if="dataLoaded" :routines="getRoutinesFilter"/>

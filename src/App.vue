@@ -1,18 +1,18 @@
 <template>
 
   <v-app>
-    <div v-if="online">
+
     <!-- <NavigationDrawer/>  ya tiene en su interior la estructura necesaria
     <v-navigation-drawer app>
     </v-navigation-drawer>
     -->
-    <NavigationDrawer v-if="needNavigation()"/>
+    <NavigationDrawer v-if="online && needNavigation()"/>
 
-    <v-app-bar v-if="needNavigation()" app color="white" prominent dense>
+    <v-app-bar v-if="online && needNavigation()" app color="white" prominent dense>
       <TopBarMenu/>
     </v-app-bar>
     <!-- Sizes your content based upon application components -->
-    <v-main>
+    <v-main v-if="online">
 <!--      <div v-if="needNavigation()">-->
 <!--        <TopBreadcrums :items="this.getRoutes"-->
 <!--                       class="ml-7 py-3"/>-->
@@ -23,11 +23,11 @@
         <!-- If using vue-router -->
         <router-view :key="$route.path"></router-view>
     </v-main>
-    </div>
-    <div v-else>
+    <div v-else class="main-div">
       <LostConnectionView></LostConnectionView>
     </div>
   </v-app>
+
 </template>
 
 <script>
@@ -109,6 +109,8 @@ export default {
 </script>
 
 <style>
-
+.main-div{
+  height: 100%;
+}
 
 </style>

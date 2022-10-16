@@ -99,6 +99,7 @@ export default {
     ...mapState(useCategories, {getCategories: 'getCategories'}),
     getCategoryNames() {
       console.log(this.filters)
+      console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
     }
   }

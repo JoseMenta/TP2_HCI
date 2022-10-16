@@ -16,7 +16,7 @@
       </v-card>
       <v-card class="d-inline-flex justify-center align-center text-truncate justify-center" height="80" flat>
         <h2 class="d-flex justify-center px-4 mr-2 text-truncate">¿No tienes cuenta aún?</h2>
-        <LoginButton :text-size="20" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register1'})"/>
+        <LoginButton :text-size="20" text="Registrarse" :border-radius="12" @click.native="changeView({name: 'register'})"/>
       </v-card>
     </v-sheet>
   </div>
@@ -67,8 +67,7 @@ export default {
           this.loading = false
           return
         case -1:
-          this.$router.push({name:'verification',
-          query:{email:this.inputEmail}})
+          this.$router.push({name:'verification', query:{email:this.inputEmail}})
       }
 
     },
@@ -110,6 +109,10 @@ export default {
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+.margin-style:deep(input){
+  padding-left: 10px;
 }
 
 .center-card-margin{

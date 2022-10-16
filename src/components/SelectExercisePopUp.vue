@@ -7,41 +7,13 @@
           <v-icon v-text="$vuetify.icons.values.clear"
                   color="#1C1B1F"
                   :size="50" @click="closeWindow"/>
-          <SearchBox placeholder="Buscar ejercicios"
-                     :search-method="search"
-                     :search-box-width="445"
-                     :icon-size="30"
-                     :btn-border-radius="12"
-                     :text-size="20" class="mx-auto mt-3" language="es" :filters="false"/>
         </v-app-bar>
         <v-container fluid>
           <v-row class="mt-5 mx-16">
             <v-col cols="12" class="d-inline-flex justify-space-around">
-              <FilterMenu :id="0"
-                          :options="['Propio', 'Otros', 'Indistinto']"
-                          :width="180"
-                          :placeholder="'Autor'"
-                          :right-border-radius="4"
-                          :left-border-radius="4"/>
-              <FilterMenu :id="0"
-                          :options="['Zona inferior', 'Zona media', 'Zona superior']"
-                          :width="180"
-                          :placeholder="'Zona'"
-                          :right-border-radius="4"
-                          :left-border-radius="4"/>
-              <FilterMenu :id="0"
-                          :options="['Sin equipamiento', 'Colchoneta', 'Mancuernas', 'Biciclete fija']"
-                          :width="180"
-                          :placeholder="'Equipamiento'"
-                          :right-border-radius="4"
-                          :left-border-radius="4"/>
-              <FilterMenu :id="0"
-                          :options="['Intensidad baja', 'Intensidad media', 'Intensidad alta']"
-                          :width="180"
-                          :placeholder="'Intensidad'"
-                          :right-border-radius="4"
-                          :left-border-radius="4"/>
-
+              <FilterMenu :id="1" placeholder='Equipamiento' v-bind:options="['Con equipamiento','Sin equipamiento']"  :width="150" @menuChanged="getEquipment" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+              <FilterMenu :id="1" placeholder='Zona Muscular' v-bind:options="['Todo el cuerpo', 'Zona inferior','Zona media','Zona superior']"  :width="150" @menuChanged="getMuscleZone" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+              <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja intensidad','Media intensidad','Alta intensidad']"  :width="150" @menuChanged="getIntensity" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
             </v-col>
           </v-row>
           <v-row class="mt-10">
@@ -58,7 +30,6 @@
 </template>
 
 <script>
-import SearchBox from "@/components/SearchBox";
 import FilterMenu from "@/components/FilterMenu";
 import ExerciseCardList from "@/components/ExerciseCardList";
 import SelectExerciseConfigPopUp from "@/components/SelectExerciseConfigPopUp";
@@ -81,16 +52,27 @@ export default {
       }
     }
   },
-  components: {SelectExerciseConfigPopUp, ExerciseCardList, FilterMenu, SearchBox},
+  components: {SelectExerciseConfigPopUp, ExerciseCardList, FilterMenu},
   data() {
     return {
       step: 0,
       dataLoaded: false,
-
+      FilterIntensity: '',
+      FilterMuscleZone: '',
+      FilterEquipment: '',
       exerciseData: undefined
     }
   },
   methods: {
+    getIntensity(id, value){
+      this.FilterIntensity = value;
+    },
+    getMuscleZone(id, value){
+      this.FilterMuscleZone = value;
+    },
+    getEquipment(id, value){
+      this.FilterEquipment = value;
+    },
     search(){
       alert("Searching...")
     },
@@ -114,7 +96,9 @@ export default {
   computed: {
     ...mapState(useExercises, {getExercises: "getNonRestExercises"}),
     getExercisesIds(){
-      return this.getExercises.map((exercise) => exercise.id);
+      return this.getExercises.filter(exercise => (this.FilterIntensity === '' || this.FilterIntensity===exercise.metadata.Intensity) &&
+          (this.FilterEquipment=== '' || this.FilterEquipment===exercise.metadata.equipment) &&
+          (this.FilterMuscleZone==='' || this.FilterMuscleZone===exercise.metadata.muscleZone)).map(exercise => exercise.id)
     }
   },
   async beforeMount(){

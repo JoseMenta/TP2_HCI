@@ -280,14 +280,14 @@ export default {
   },
   computed: {
     getImgSrc(){
-      const routineData = exercisesStore.getExerciseByIdFromStore(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id)
-      return routineData.metadata.url
+      const routineData = exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id)
+      return (!routineData.metadata.url || !routineData.metadata) ? require('@/assets/placeholder.jpg') : routineData.metadata.url;
     },
     getDescription(){
-      return exercisesStore.getExerciseByIdFromStore(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).detail
+      return exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).detail
     },
     getName(){
-      return exercisesStore.getExerciseByIdFromStore(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).name
+      return exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).name
     },
 
   },

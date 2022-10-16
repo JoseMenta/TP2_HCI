@@ -124,7 +124,7 @@ export default {
       await routinesStore.fetchRoutines();
       await categoriesStore.fetchCategories();
       await exercisesStore.fetchExercises();
-      // Verifica que exista una rutina con dicho nombre
+      // Verifica que exista una rutina con dicho id
       if(routinesStore.getRoutineById(this.routineId) === -1){
         this.errorText = 'No existe una rutina con el ID: ' + this.routineId
         this.errorDialog = true;

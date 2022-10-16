@@ -20,7 +20,7 @@
       </v-text-field>
     </v-sheet>
 
-    <v-expand-transition>
+    <v-expand-transition v-if="dataLoaded">
       <v-card :width="searchWidth" :height="200" class="elevation-8 border-radius" v-show="expand" v-if="filters">
         <v-card class="d-inline-flex mb-10 mt-10 included align-center" width="100%" flat>
           <v-sheet width="25%">
@@ -36,21 +36,21 @@
             <FilterMenu :id="1" @menuChanged="getPuntuacion"
                         :options="['⭐⭐⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐', '⭐⭐', '⭐']"
                         :width="150"
-                        :key="version"
+                        :key="version + '1'"
                         :placeholder="getText(this.ratingText)"
                         :left-border-radius="4" :right-border-radius="4"/>
             <FilterMenu :id="2" @menuChanged="getDificultad"
                         :options="['⚡⚡⚡⚡⚡', '⚡⚡⚡⚡', '⚡⚡⚡', '⚡⚡', '⚡']"
                         :width="150"
-                        :key="version"
+                        :key="version + '2'"
                         :placeholder="getText(this.levelText)"
                         :left-border-radius="4" :right-border-radius="4"/>
             <!-- TODO: Ver qué va en Categoria -->
             <FilterMenu :id="3"
                         :options="getCategoryNames"
                         :width="150"
-                        :key="version"
                         :placeholder="'Categoría'"
+                        :key="version + '3'"
                         :left-border-radius="4" :right-border-radius="4"
                         @menuChanged="getCategoriaFilter"/>
           </v-sheet>
@@ -73,9 +73,11 @@
 <script>
 import BinaryFilter from "@/components/BinaryFilter";
 import FilterMenu from "@/components/FilterMenu";
+import {useCategories} from "@/store/Categories";
+import {mapState} from "pinia";
+
+
 //import SearchCardRutine from "@/components/SearchCardRutine";
-
-
 
 export default {
   name: "SearchBox",
@@ -152,66 +154,71 @@ export default {
     }
   },
   methods: {
-    getCategoriaFilter(id){
+    getCategoriaFilter(id) {
       console.log(id);
       this.avoidClose = true
-      this.categoria=id;
+      this.categoria = id;
     },
-    getSelect(index){
+    getSelect(index) {
       this.binary = index
     },
-    getPuntuacion(id){
+    getPuntuacion(id) {
       this.avoidClose = true
-      this.puntuacion = 5-id
+      this.puntuacion = 5 - id
     },
-    getDificultad(id){
+    getDificultad(id) {
       this.avoidClose = true
-      const aux = ['expert', 'advanced',  'intermediate', 'beginner', 'rookie']
+      const aux = ['expert', 'advanced', 'intermediate', 'beginner', 'rookie']
       this.dificultad = aux[id]
     },
-    getCategoria(id){
+    getCategoria(id) {
       this.avoidClose = true
       this.categoria = id
     },
-    searchMethod(){
-      if(this.inputSearch==='')
-        this.inputSearch=' '
+    searchMethod() {
+      if (this.inputSearch === '')
+        this.inputSearch = ' '
       this.$router.push('/search/' + this.inputSearch + '/' + this.binary + '&' + this.puntuacion + '&' + this.dificultad + '&' + this.categoria)
       this.retractBox();
-      this.puntuacion= -1;
-      this.dificultad= 'x';
-      this.categoria= -1;
-      this.binary= 0;
+      this.puntuacion = -1;
+      this.dificultad = 'x';
+      this.categoria = -1;
+      this.binary = 0;
     },
-    expandBox(){
+    expandBox() {
       this.version++;
       this.searchWidth = this.searchBoxWidth + 300;
       this.expand = true;
     },
-    getText(componentText){
+    getText(componentText) {
       return componentText[componentText.map(e => e.lang).indexOf(this.language)].text
     },
-    getArrayTexts(componentArrayText){
+    getArrayTexts(componentArrayText) {
       return componentArrayText[componentArrayText.map(e => e.lang).indexOf(this.language)].elements
     },
-    retractBox(){
-      if(!this.avoidClose){
+    retractBox() {
+      if (!this.avoidClose) {
         this.searchWidth = this.searchBoxWidth;
         this.expand = false;
-        this.inputSearch=''
+        this.inputSearch = ''
       } else {
         this.avoidClose = false
       }
     },
   },
-  /*
   computed: {
-    getRoutinesFilter(){
-      const routinesStore = useRoutines();
-      let Rutines =  routinesStore.routines;
-      return Rutines.sort((a,b) => this.filter.Order * (a.score - b.score)).slice(0, 4);
+    ...mapState(useCategories, {getCategories: 'getCategories'}),
+    getCategoryNames() {
+      console.log('HOLA')
+      console.log(this.getCategories)
+      return this.getCategories.map((category) => category.name);
     },
-  }*/
+  },
+  async created(){
+    const categoriesStore = useCategories();
+    await categoriesStore.initialize();
+    this.dataLoaded= true;
+  }
 }
 </script>
 

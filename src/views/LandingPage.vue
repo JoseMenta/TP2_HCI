@@ -15,7 +15,7 @@
             plain
             @click="changeView({name: 'register'})"
         >
-          Registrarte
+          Registrarse
         </v-btn>
         <v-btn
             class="mx-4"
@@ -29,7 +29,7 @@
     </v-sheet>
     <div class="fixed_text">
       <h1>FITI</h1>
-      <h2>Una nueva experiencia de Entrenamiento</h2>
+      <h2>Una nueva experiencia de entrenamiento</h2>
     </div>
     <div class="d-flex fixed_landing align-end">
       <v-img

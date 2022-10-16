@@ -1,27 +1,26 @@
 <!-- Componente para el visualizador del perfil en la navegacion persistente -->
 <!-- TODO: Setear los colores theme, estan puestos a mano -->
 <template>
-  <v-dialog v-model="showProfileDialog">
-    <template v-slot:activator="{on, attrs}">
-      <v-btn class="d-flex btn-style text-capitalize pa-0"
-             width="auto" :height="btnHeight" v-on="on" v-bind="attrs"
-             @click="showProfile">
-        <v-row class="d-inline-flex py-2 px-1 row-style">
-          <v-col :cols="8" class="pr-0">
-            <span class="font-weight-bold text-style">{{`${user.firstName} ${user.lastName}`}}</span>
-          </v-col>
-          <v-col :cols="4">
-            <v-img :src="user.avatarUrl"
-                   contain :height="imgSize" :width="imgSize"
-                   class="image-style ml-auto mr-2"/>
-          </v-col>
+  <div>
+    <v-btn class="d-flex btn-style text-capitalize pa-0"
+           width="auto" :height="btnHeight"
+           @click="showProfile">
+      <v-row class="d-inline-flex py-2 px-1 row-style">
+        <v-col :cols="8" class="pr-0">
+          <span class="font-weight-bold text-style">{{`${user.firstName} ${user.lastName}`}}</span>
+        </v-col>
+        <v-col :cols="4">
+          <v-img :src="user.avatarUrl"
+                 contain :height="imgSize" :width="imgSize"
+                 class="image-style ml-auto mr-2"/>
+        </v-col>
+      </v-row>
+    </v-btn>
+    <v-dialog persistent width="90%" v-model="showProfileDialog">
+      <ProfilePopUp ref="ProfilePopUp" :key="popUpKey" @goBack="closeWindow"/>
+    </v-dialog>
+  </div>
 
-
-        </v-row>
-      </v-btn>
-    </template>
-    <ProfilePopUp ref="ProfilePopUp" :key="popUpKey" @goBack="closeWindow"></ProfilePopUp>
-  </v-dialog>
 
 </template>
 
@@ -53,10 +52,6 @@ export default {
       required: true
     },
     userName: {
-      type: String,
-      required: true
-    },
-    userNameImg: {
       type: String,
       required: true
     },

@@ -2,7 +2,7 @@
 <template>
   <div class="ml-7 mt-10">
     <h1 class="title-style my-5">Resultados: {{textSearch}}</h1>
-    <v-sheet width="70%">
+    <v-sheet width="100%">
       <RoutineFilter language="es" @getFilters="getFilter" :prevValues="filter">
         <template v-slot:firstFilter>
           <RoutineFilterSwitch language="es" @sentSelect="getSelect" :prevValue="indexCategorie"/>

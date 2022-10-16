@@ -1,5 +1,5 @@
 <template>
-  <v-card class="d-inline-flex flex-row main_card justify-space-between" outlined hover width="100%" @click="touchCard">
+  <v-card v-if="dataLoaded" class="d-inline-flex flex-row main_card justify-space-between" outlined hover width="100%" @click="touchCard">
     <v-card class="d-inline-flex flex-column pa-1" flat width="60%" >
       <v-card class="d-inline-flex align-center" flat>
         <h2 class="text-truncate" >{{exerciseData.name}}</h2>
@@ -20,7 +20,11 @@
         </v-sheet>
       </v-sheet>
     </v-card >
-    <iframe :src="exerciseData.metadata.url" height="auto" width="auto" class="iframe-class" ></iframe>
+    <v-sheet height="20" width="20">
+      <v-img :src="exerciseData.metadata.url === '' ? require('@/assets/placeholder.jpg') : exerciseData.metadata.url" class="iframe-class"></v-img>
+    </v-sheet>
+
+
 
 
     <v-dialog persistent width="80%" v-model="showDataDialog">
@@ -43,6 +47,8 @@ export default {
     return {
       showDataDialog: false,
       iconTouched: false,
+      exerciseData: {},
+      dataLoaded: false
     }
   },
   // --------------------------------------
@@ -87,10 +93,6 @@ export default {
     }
   },
   computed:{
-    exerciseData(){
-      const exercises = useExercises()
-      return exercises.getExerciseByIdFromStore(this.id)
-    },
     isRest(){
       return (this.exerciseData.type === "rest");
     },
@@ -128,6 +130,11 @@ export default {
       this.showDataDialog = false;
     }
   },
+  async created(){
+    const exercises = useExercises()
+    this.exerciseData = await exercises.getExerciseFromApi(this.id)
+    this.dataLoaded = true;
+  }
 }
 </script>
 

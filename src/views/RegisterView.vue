@@ -229,6 +229,10 @@ button.v-btn[disbled]{
   margin-bottom: 5px;
 }
 
+.margin-style:deep(input){
+  padding-left: 10px;
+}
+
 
 .center-card-margin{
   margin-left: 15%;

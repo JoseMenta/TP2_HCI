@@ -13,7 +13,7 @@
             class="margin-style"
         ></v-otp-input>
         <h3 v-if="incorrect" class="red--text d-flex justify-center text- mb-2">{{errorMessage}}</h3>
-        <LoginButton :disabled="otp.length===0" :loading="buttonLoading" class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive" :waiting="waiting">
+        <LoginButton :disabled="otp.length!==6" :loading="buttonLoading" class="d-flex margin-btn-style" @click.native="verify" :text-size="20" text="Ingresar" :border-radius="12" block :status="!isActive" :waiting="waiting">
         </LoginButton>
         <a class="d-inline-flex text-decoration-underline justify-center mt-5 text-h6" @click="changeView({name: 'resendVerification'})"
         >Reenviar el código de verificación</a>

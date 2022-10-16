@@ -1,10 +1,10 @@
 <template>
   <div class="mx-7 mt-7 main-div-style">
     <h1 class="title-style my-5">Ejercicios Creados</h1>
-    <v-sheet class="d-flex justify-space-between mr-3" width="40%">
-      <FilterMenu :id="1" placeholder='Equipamiento' v-bind:options="['Con Equipamiento','Sin Equipamiento']"  :width="150" @menuChanged="getEquipment" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
-      <FilterMenu :id="1" placeholder='Zona Muscular' v-bind:options="['Zona Inferior','Zona Media','Zona Superior']"  :width="150" @menuChanged="getMuscleZone" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
-      <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja Intensidad','Media Intensidad','Alta Intensidad']"  :width="150" @menuChanged="getIntensity" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+    <v-sheet class="d-flex justify-space-between mr-3" width="60%">
+      <FilterMenu :id="1" placeholder='Equipamiento' v-bind:options="['Con equipamiento','Sin equipamiento']"  :width="150" @menuChanged="getEquipment" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+      <FilterMenu :id="1" placeholder='Zona Muscular' v-bind:options="['Todo el cuerpo', 'Zona inferior','Zona media','Zona superior']"  :width="150" @menuChanged="getMuscleZone" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+      <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja intensidad','Media intensidad','Alta intensidad']"  :width="150" @menuChanged="getIntensity" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
     </v-sheet>
     <v-sheet v-if="dataLoaded">
       <div class="mt-12">

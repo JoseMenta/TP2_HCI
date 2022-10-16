@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 import {Exercise, ExerciseApi} from "@/api/exercise";
 
-const restCard = new Exercise("Descanso", "Tomate un descanso", "rest", {equipment : 'Sin Equipamiento', muscleZone : 'Zona Media', Intensity : 'Baja Intensidad', url: require('@/assets/rest.png')})
+const restCard = new Exercise("Descanso", "Tomate un descanso", "rest", {equipment : 'Sin equipamiento', muscleZone : 'Todo el cuerpo', Intensity : 'Baja intensidad', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Man_Tired_After_Workout_Cartoon.svg/2560px-Man_Tired_After_Workout_Cartoon.svg.png'})
 
 export const useExercises = defineStore('exercises', {
     state:() => ({

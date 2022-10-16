@@ -2,7 +2,7 @@
 <template>
   <div class="ml-7 main-div-style">
     <h1 class="title-style my-5">Rutinas creadas</h1>
-    <v-sheet width="70%">
+    <v-sheet width="100%">
       <RoutineFilter @getFilters="getFilter" :prev-values="filter">
         <template v-slot:firstFilter>
           <RoutineFilterSearch @FilterSearch="getFilterSearch"/>
@@ -116,6 +116,8 @@ export default {
     },
   },
   async beforeCreate(){
+    // Obtengo las categorias disponibles
+    await categoriesStore.initialize();
     // Busca las rutinas almacenadas en la api y las almacena en el store
     await routinesStore.fetchRoutines();
     // Busca las rutinas favoritas del usuario
