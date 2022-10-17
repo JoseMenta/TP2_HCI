@@ -1,24 +1,18 @@
 # tp2-hci
 
-## Project setup
+## Configuración del proyecto
+#### Ejecutar el siguiente comando para instalar las dependencias
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+#### Luego, ejecutar el siguiente comando para levantar el servidor con la aplicación web
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
+#### Finalmente, dirigirse a la siguiente _url_ para utilizar el proyecto
 ```
-npm run build
+http://localhost:8081/
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Configuración de la API
+#### Para funcionar correctamente, e
