@@ -42,7 +42,7 @@
               </v-img>
             </template>
             <UploadUrl title="Cargar contenido (URL)"
-                        text="Colocar el url de una imagen o video, preferentemente que no sea de youtube"
+                        text="Colocar el url de una imagen indicativa del ejercicio"
                         @closeWarning="mediaDialog = false" @subir="uploadUrl"/>
           </v-dialog>
 
