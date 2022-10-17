@@ -2,7 +2,11 @@
   <div v-if="dataLoaded" class="mx-7 mt-7">
     <v-sheet class="d-inline-flex justify-space-around mb-10" flat width="100%">
       <v-sheet class="d-flex flex-column" width="70%" flat>
-        <h1>{{routineData.name}}</h1>
+        <v-row>
+          <h1 class="d-inline-flex px-3">{{routineData.name}}</h1>
+          <v-icon color="black" class="px-4 pb-2" @click="copyLink">share</v-icon>
+        </v-row>
+
         <v-sheet class="d-inline-flex my-5" flat tile>
           <h2 class="text-truncate mr-2">Categoría: </h2>
           <span class="category-style align-self-end">{{routineData.category.name}}</span>
@@ -19,7 +23,7 @@
               readonly
           ></v-rating>
 <!--          Esto no deberia estar aca-->
-          <h2> ( {{routineData.metadata.votes}} )</h2>
+          <h2> ( {{routineReviews}} )</h2>
         </v-card>
 <!--        TODO: cambiar esto por lo del store-->
         <v-card class="d-inline-flex mb-5" flat tile>
@@ -94,7 +98,7 @@ export default {
   data(){
     return{
       routineId: NEW_ROUTINE_ID,
-
+      routineReviews:0,
       errorText: '',
       errorTitle: 'ERROR',
       errorDialog: false,
@@ -110,6 +114,10 @@ export default {
   methods: {
     setColorLevel(i){
       return i>this.routineData.difficulty.value ? "grey" : "black";
+    },
+    async copyLink(){
+      await navigator.clipboard.writeText(`http://localhost:8081/routine_details?id=${this.routineId}`)
+      return
     },
     changeView(nameView) {
       this.$router.push(nameView)
@@ -129,6 +137,7 @@ export default {
         this.errorText = 'No existe una rutina con el ID: ' + this.routineId
         this.errorDialog = true;
       } else {
+        this.routineReviews = await routinesStore.getReviewsAmount(this.routineId)
         await routinesStore.editRoutine(this.routineId);
       }
     } else {

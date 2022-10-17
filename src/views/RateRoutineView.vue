@@ -38,6 +38,15 @@
               <span class="white--text my-3 mx-3 text-style text-truncate">Ahora no</span>
             </v-btn>
           </v-row>
+          <v-row>
+            <h3 class="px-4 py-4">Podes compartir la rutina utilizando el siguiente link</h3>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field class="link-style text-center px-4 d-inline-flex" solo readonly :value="`http://localhost:8081/routine_details?id=${this.routineId}`"></v-text-field>
+              <v-icon @click="saveToClipboard" >content_copy</v-icon>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-col>
@@ -82,12 +91,16 @@ export default {
   },
   methods:{
     async saveReview(){
+      console.log(`http://localhost:8081/routine_details?id=${this.routineId}`)
       console.log(this.score)
       await ReviewApi.addReview(this.routineId,{
         score:this.score,
         review:''
       })
       this.goToMain()
+    },
+    async saveToClipboard(){
+      await navigator.clipboard.writeText(`http://localhost:8081/routine_details?id=${this.routineId}`)
     },
     goToMain(){
       this.$router.push({name:'default'})
@@ -126,7 +139,9 @@ export default {
 .row-style{
   height: 100%;
 }
-
+.link-style{
+  width: 80%;
+}
 .div-loading-style {
   height: 100%;
 }

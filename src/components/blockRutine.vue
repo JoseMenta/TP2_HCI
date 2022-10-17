@@ -204,7 +204,7 @@ export default {
         case CycleTypes.COOLDOWN:
           return 'Elongación'
         default:
-          return 'Ejercitamiento'
+          return 'Ejercitación'
       }
     },
     getRepetitions(){

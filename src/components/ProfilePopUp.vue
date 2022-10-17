@@ -131,7 +131,7 @@ export default {
       textField: true,
       imageHover: false,
       infoRutines: [
-        {text: 'Horas entrenando', number: ''},
+        {text: 'Minutos entrenando', number: ''},
         {text: 'Rutinas creadas', number: ''},
       ],
       imageDialog: false
@@ -145,14 +145,6 @@ export default {
     save (date) {
        this.$refs.menu.save(date)
     },
-    // getDatepicker(){
-    //   return (new Date((new Date(this.user.birthdate)) - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-    // },
-    // formatDate () {
-    //   if (!this.computedDateFormatted) return null
-    //   const [year, month, day] = this.computedDateFormatted.split('-')
-    //   return `${day}/${month}/${year}`
-    // },
     touchBack(){
       this.$emit('goBack');
     },
@@ -214,7 +206,7 @@ export default {
     console.log(this.getCurrentUser.date)
     console.log('segundos entrenando')
     console.log(await this.getExecutedSeconds())
-    this.infoRutines[0].number = await this.getExecutedSeconds()/3600
+    this.infoRutines[0].number = Math.round(await this.getExecutedSeconds()/60)
     this.infoRutines[1].number = (await userStore.getCurrentUserRoutines()).totalCount;
   },
 
