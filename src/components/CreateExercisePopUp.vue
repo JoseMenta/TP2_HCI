@@ -183,8 +183,8 @@ export default {
         this.updateTitleIsEmpty()
         this.required=true;
         this.$vuetify.goTo(this.target, this.options)
-        console.log(this.required)
-        console.log(this.Intensity)
+        // console.log(this.required)
+        // console.log(this.Intensity)
       } else {
         this.exerciseSaved()
       }
@@ -214,7 +214,7 @@ export default {
           this.exercise = await this.$modifyExercise(this.exerciseId, exerciseCreated);
         }
         this.setResult(this.exercise)
-        console.log(this.exercise)
+        // console.log(this.exercise)
       } catch (e) {
         console.log(e)
       }
@@ -334,9 +334,9 @@ export default {
     this.Intensity = this.getBoolean;
     this.muscleZone = this.getBoolean;
     this.equipment = this.getBoolean;
-    console.log(this.metaData.url);
+    // console.log(this.metaData.url);
     this.showContent =  this.metaData.url !== ''
-    console.log(this.showContent);
+    // console.log(this.showContent);
   },
   async beforeCreate(){
     const usersStore = useUsers();

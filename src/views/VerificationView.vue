@@ -73,10 +73,10 @@ export default {
       const users = useUsers();
       const result = await users.verifyEmail(this.email,this.otp);
       this.buttonLoading = false
-      console.log(result)
+      // console.log(result)
       switch(result){
         case 0:
-          console.log('Error crítico.');
+          // console.log('Error crítico.');
           this.errorMessage = 'Error desconocido';
           this.incorrect = true
           return;
@@ -89,12 +89,12 @@ export default {
           this.incorrect = true;
           return;
         case 1:
-          console.log('El código es incorrecto.');
+          // console.log('El código es incorrecto.');
           this.errorMessage = 'El código ingresado no es correcto, intente nuevamente';
           this.incorrect = true
           return;
         case -1:
-          console.log('Codigo correcto, cuenta verificada');
+          // console.log('Codigo correcto, cuenta verificada');
           this.changeView({name: 'login'});
       }
 

@@ -91,8 +91,8 @@ export default {
   },
   methods:{
     async saveReview(){
-      console.log(`http://localhost:8081/routine_details?id=${this.routineId}`)
-      console.log(this.score)
+      // console.log(`http://localhost:8081/routine_details?id=${this.routineId}`)
+      // console.log(this.score)
       await ReviewApi.addReview(this.routineId,{
         score:this.score,
         review:''
@@ -127,7 +127,7 @@ export default {
     }
     this.routine = await routinesStore.getRoutineById(this.routineId);
     this.dataLoaded = true;
-    console.log(this.routine)
+    // console.log(this.routine)
   }
 }
 </script>

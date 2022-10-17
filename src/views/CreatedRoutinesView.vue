@@ -74,7 +74,7 @@ export default {
     },
     getFilter(value){
       this.filter = value;
-      console.log(this.filter)
+      // console.log(this.filter)
     },
     newRoutine(){
       this.changeView({name: 'createRoutine', query: {id: NEW_ROUTINE_ID}})
@@ -83,7 +83,7 @@ export default {
   computed:{
     ...mapState(useCategories, {getCategories: 'getCategories', categoriesLoaded: "categoriesLoaded"}),
     getCategoryNames(){
-      console.log(this.getCategories)
+      // console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
     },
     ...mapState(useRoutines, {userCreatedRoutines: "getRoutinesFromCurrentUser"}),
@@ -102,9 +102,9 @@ export default {
         case 'Fecha de creación':
           return routines.sort((a,b) => this.filter.Order * (a.date - b.date))
         case 'Puntuación': {
-          console.log(routines);
+          // console.log(routines);
           routines.sort((a,b) => this.filter.Order* (a.score - b.score));
-          console.log(routines);
+          // console.log(routines);
           return routines
         }
         case 'Dificultad':

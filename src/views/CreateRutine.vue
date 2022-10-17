@@ -254,7 +254,7 @@ export default {
     },
     updateRoutineCategory(filterId, categoryName){
       this.routineData.category = categoriesStore.getCategoryByName(categoryName);
-      console.log(this.routineData.category)
+      // console.log(this.routineData.category)
     },
     getWarmUpAndExerciseCycles(cycles){
       return cycles.filter((cycle) => cycle.type !== CycleTypes.COOLDOWN);

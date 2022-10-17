@@ -81,17 +81,17 @@ export default {
       this.emitSignal();
     },
     getPuntuacionFilter(id) {
-      console.log(id);
+      // console.log(id);
       this.filters.Puntuacion = 5-id;
       this.emitSignal();
     },
     getDificultadFilter(id){
-      console.log(id);
+      // console.log(id);
       this.filters.Dificultad = this.levels[id];
       this.emitSignal();
     },
     getCategoriaFilter(id){
-      console.log(id);
+      // console.log(id);
       this.filters.Categoria = id;
       this.emitSignal();
     },
@@ -113,8 +113,8 @@ export default {
   computed: {
     ...mapState(useCategories, {getCategories: 'getCategories'}),
     getCategoryNames() {
-      console.log(this.filters)
-      console.log(this.getCategories)
+      // console.log(this.filters)
+      // console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
     }
   }

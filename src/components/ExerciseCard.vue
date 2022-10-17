@@ -102,12 +102,12 @@ export default {
   methods:{
     touchEdit(){
       this.iconTouched = true;
-      console.log(`edit touched in ExerciseCard ${this.id}`)
+      // console.log(`edit touched in ExerciseCard ${this.id}`)
       this.$emit('editTouched', this.id, this.order, this.details.duration, this.details.repetitions);
     },
     touchDelete(){
       this.iconTouched = true;
-      console.log(`delete touched in ExerciseCard ${this.id}`)
+      // console.log(`delete touched in ExerciseCard ${this.id}`)
       this.$emit('deleteTouched', this.id, this.order)
     },
     async touchCard(){

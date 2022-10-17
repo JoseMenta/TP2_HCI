@@ -11,7 +11,7 @@ export const useNewStore = defineStore("prueba", {
             this.items.push(item)
         },
         printState(){
-            console.log(this.items)
+            // console.log(this.items)
         }
     },
 });

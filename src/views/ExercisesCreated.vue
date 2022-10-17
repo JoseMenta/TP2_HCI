@@ -83,16 +83,16 @@ export default {
       this.createExerciseDialog = false
       this.popUpKey++;
       this.popUpId = -1;
-      console.log("Despues de la carga como esta el API")
+      // console.log("Despues de la carga como esta el API")
     },
     reRenderExerciseCard(){
       this.version++;
-      console.log("refresh")
+      // console.log("refresh")
       this.reRenderPopUp();
     },
     editExercise(exerciseId){
       this.popUpId = exerciseId;
-      console.log(this.popUpId);
+      // console.log(this.popUpId);
       this.popUpKey++;
       this.createExerciseDialog = true;
     },

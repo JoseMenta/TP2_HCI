@@ -102,7 +102,7 @@ export const useExercises = defineStore('exercises', {
                 return -1;
             }
             this.exercises.content[index] = exercise;
-            console.log(this.exercises.content[index])
+            // console.log(this.exercises.content[index])
             return 0;
         },
         // Devuelve -1 si index es invalido, 0 en caso de exito
@@ -115,8 +115,8 @@ export const useExercises = defineStore('exercises', {
             }
              this.exercises.content.splice(index, 1);
             //delete(this.exercises.content.index)
-             console.log("ejercicios:")
-             console.log(this.exercises.content)
+            //  console.log("ejercicios:")
+            //  console.log(this.exercises.content)
 
             return 0;
         },
@@ -138,8 +138,8 @@ export const useExercises = defineStore('exercises', {
         async addExerciseToApi(exercise) {
             try{
                 const result = await ExerciseApi.addExercise(exercise);
-                console.log("addExercise > addExerciceToApi")
-                console.log(result)
+                // console.log("addExercise > addExerciceToApi")
+                // console.log(result)
                 return result;
             } catch (e) {
                 console.log(e);
@@ -161,8 +161,8 @@ export const useExercises = defineStore('exercises', {
         async modifyExerciseInApi(id, exercise) {
             let result;
             try {
-                console.log(id)
-                console.log(exercise)
+                // console.log(id)
+                // console.log(exercise)
                 result = await ExerciseApi.modifyExercise(id, exercise);
             } catch (e){
                 console.log(e);

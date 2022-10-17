@@ -103,7 +103,7 @@ export default {
   },
   async beforeMount(){
     await exercisesStore.fetchExercises();
-    console.log(this.editExercise)
+    // console.log(this.editExercise)
     if(this.editExercise.toEdit){
       if(this.editExercise.duration || this.editExercise.repetitions){
         this.exerciseData = {duration: this.editExercise.duration, repetitions: this.editExercise.repetitions};

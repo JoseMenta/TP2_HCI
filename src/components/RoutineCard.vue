@@ -112,7 +112,7 @@ export default {
   },
   methods:{
     async touchFavorite() {
-      console.log(`Favorite set to ${this.favourite} in RoutineCard ${this.routine.id}`)
+      // console.log(`Favorite set to ${this.favourite} in RoutineCard ${this.routine.id}`)
       // Se hace el manejo de favoritos (si se setea, se agrega, si se apaga, se elimina)
       if(this.favourite){
         await favouritesStore.removeFavourite(this.routine);
@@ -130,7 +130,7 @@ export default {
     },
     async touchDelete(){
       await routinesStore.deleteRoutine(this.routine);
-      console.log(`Delete touched in RoutineCard ${this.routine.id}`)
+      // console.log(`Delete touched in RoutineCard ${this.routine.id}`)
       this.$emit('deleteTouched',this.routine.id)
     },
     // touchCard(){

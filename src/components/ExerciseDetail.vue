@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     updateIsEmpty() {
-      console.log(this.textAreaData)
+      // console.log(this.textAreaData)
       this.IsEmpty = (this.textAreaData === '')
       this.$emit('input', !this.IsEmpty, this.textAreaData)
     }

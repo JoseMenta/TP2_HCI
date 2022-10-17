@@ -73,18 +73,18 @@ export default {
       this.$router.push(nameView)
     },
     getSelect(filter){
-      console.log(filter)
+      // console.log(filter)
       this.indexCategorie=filter
     },
     getFilter(value){
       this.filter = value;
-      console.log(this.filter)
+      // console.log(this.filter)
     }
   },
   computed:{
     ...mapState(useCategories, {getCategories: 'getCategories', categoriesLoaded: "categoriesLoaded"}),
     getCategoryNames(){
-      console.log(this.getCategories)
+      // console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
     },
     ...mapState(useRoutines, {getRoutines: "getRoutines"}),
@@ -105,17 +105,17 @@ export default {
       Rutines =  Rutines.filter(rutine => (this.filter.Puntuacion === -1 || this.filter.Puntuacion===rutine.score) &&
           (this.filter.Dificultad=== 'x' || this.filter.Dificultad===rutine.difficulty) &&
           (this.filter.Categoria=== -1 || categoriesStore.getCategoryByName(this.getCategoryNames[this.filter.Categoria]).name===rutine.category.name));
-      console.log(this.filter.Categoria)
+      // console.log(this.filter.Categoria)
       if(this.filter.Categoria!== -1){
-        console.log("inside")
-        console.log(categoriesStore.getCategoryByName(this.getCategoryNames[this.filter.Categoria]).name)
-        console.log(this.filter)
+        // console.log("inside")
+        // console.log(categoriesStore.getCategoryByName(this.getCategoryNames[this.filter.Categoria]).name)
+        // console.log(this.filter)
       }
       else{
-        console.log("outside")
+        // console.log("outside")
       }
-      console.log(Rutines)
-      console.log("categoria")
+      // console.log(Rutines)
+      // console.log("categoria")
       const aux = ['expert', 'advanced',  'intermediate', 'beginner', 'rookie']
       switch (this.filter.OrderFilter) {
         case 'Fecha de creación':
@@ -129,7 +129,7 @@ export default {
         case 'Categoría':
           return Rutines.sort((a,b) => this.filter.Order * a.category.name.localeCompare(b.category.name))
       }
-      console.log(Rutines)
+      // console.log(Rutines)
       return Rutines
     },
   },

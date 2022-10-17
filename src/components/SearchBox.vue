@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     getCategoriaFilter(id) {
-      console.log(id);
+      // console.log(id);
       this.avoidClose = true
       this.categoria = id;
     },
@@ -209,8 +209,8 @@ export default {
   computed: {
     ...mapState(useCategories, {getCategories: 'getCategories'}),
     getCategoryNames() {
-      console.log('HOLA')
-      console.log(this.getCategories)
+      // console.log('HOLA')
+      // console.log(this.getCategories)
       return this.getCategories.map((category) => category.name);
     },
   },

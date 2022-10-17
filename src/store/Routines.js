@@ -375,7 +375,7 @@ export const useRoutines = defineStore('routines', {
 
             let result = 0, routineAction, routine;
             for(let action of this.actions){
-                console.log(action)
+                // console.log(action)
                 if(action.type === TYPES.ROUTINE){
                     action.data.difficulty = action.data.difficulty.name;
                     action.data.detail = action.data.name;
@@ -442,7 +442,7 @@ export const useRoutines = defineStore('routines', {
             // Por seguridad, borramos los datos
             this.discardChanges();
             await this.fetchRoutines();
-            console.log(this.routines)
+            // console.log(this.routines)
             return 0;
         },
 

@@ -73,7 +73,7 @@ export default {
       this.$router.push(nameView);
     },
     async logIn(){
-      console.log(this.rememberMe)
+      // console.log(this.rememberMe)
       if(!this.inputEmail || !this.inputPassword){
         this.required = true;
         return;

@@ -77,7 +77,7 @@ export const useUsers = defineStore("users", {
             try {
                 const result = await UserApi.login(credentials);
                 await this.getCurrentUser();
-                console.log(result.token);
+                // console.log(result.token);
                 this.updateToken(result.token, rememberMe);
             } catch(e){
                 console.log(e)

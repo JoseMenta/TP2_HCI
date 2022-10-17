@@ -151,7 +151,7 @@ export default {
       if((!this.seriesCheckbox && !this.timeCheckbox) || (this.series === 0 && this.time === 0) ||
           (this.series === 0 && !this.timeCheckbox) || (this.time === 0 && !this.seriesCheckbox)){
         this.noOptionSelected = true
-        console.log(this.noOptionSelected)
+        // console.log(this.noOptionSelected)
       } else {
         this.time = (this.timeCheckbox) ? this.time : 0;
         this.series = (this.seriesCheckbox) ? this.series : 0;
