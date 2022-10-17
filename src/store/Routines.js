@@ -636,6 +636,10 @@ export const useRoutines = defineStore('routines', {
         async getReviewsScore(routineId){
             const result = await this.getAllReviews(routineId)
             return result.content.reduce((prev,curr)=>prev+curr.score,0)/result.totalCount;
+        },
+        async getReviewsAmount(routineId){
+            const result = await this.getReviewsFromApi(routineId,0);
+            return result.totalCount
         }
     }
 })

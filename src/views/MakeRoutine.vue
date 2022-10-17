@@ -2,9 +2,9 @@
 <div v-if="dataLoaded">
   <v-col>
     <v-row class="justify-space-between px-8 py-6">
-      <h1>Vista detallada</h1>
+      <h1>{{this.routine.name}}</h1>
 <!--      <ViewSwitch :items="['Detalle','Lista']" :text-size="24" :border-radius="12" @viewChanged="changePresentation"/>-->
-      <ChangeView :filters="['Detalle','Lista']" @sentSelect="changePresentation"></ChangeView>
+<!--      <ChangeView :filters="['Detalle','Lista']" @sentSelect="changePresentation"></ChangeView>-->
     </v-row>
     <v-carousel v-model="index" hide-delimiters hide-delimiter-background :show-arrows="false" height="auto">
       <v-carousel-item>
@@ -51,51 +51,6 @@
         </v-col>
         </v-container>
       </v-carousel-item>
-<!--      <v-carousel-item>-->
-<!--        <v-slide-group>-->
-<!--          <v-slide-item v-for="cycle in cycles" :key="cycle.name">-->
-<!--            <v-card flat tile class="d-flex rounded-lg justify-space-between pt-2 mx-4 flex-column" color="lightBlue"-->
-<!--            >-->
-<!--              <v-row flat tile class="justify-space-around py-4 px-4">-->
-<!--              <h2 class="px-4">{{cycle.name}}</h2>-->
-<!--                <v-row class="align-content-center">-->
-<!--                  <v-icon v-text="$vuetify.icons.values.replay"></v-icon>-->
-<!--                  <h2>{{cycle.repetitions}}</h2>-->
-<!--                </v-row>-->
-<!--              </v-row>-->
-<!--            <v-slide-group>-->
-<!--              <v-slide-item v-for="exercise in exercises" :key="exercise.name" class="mx-4 my-4"-->
-<!--              v-slot="{active,toggle}">-->
-<!--                <v-card width="180"-->
-<!--                        :class="active?'active-style':''"-->
-<!--                @click="clickExercise()"-->
-<!--                >-->
-<!--                  <v-col>-->
-<!--                    <v-row>-->
-<!--                      <h2 class="text-truncate">{{exercise.name}}</h2>-->
-<!--                    </v-row>-->
-<!--                    <v-row>-->
-<!--                      <v-img :src="require('@/assets/Burpee.jpg')" class="" :aspect-ratio="16/9" width="100" height="120">-->
-<!--                      </v-img>-->
-<!--                    </v-row>-->
-<!--                    <v-row class="justify-space-around ">-->
-<!--                      <v-card flat tile class="flex-row px-4 align-content-center" v-show="exercise.repetitions">-->
-<!--                        <v-icon color="black" v-text="$vuetify.icons.values.replay"></v-icon>-->
-<!--                        <h4>{{exercise.repetitions}}</h4>-->
-<!--                      </v-card>-->
-<!--                      <v-card flat tile class="flex-column px-4" v-show="exercise.time">-->
-<!--                        <v-icon color="black" v-text="$vuetify.icons.values.timer"></v-icon>-->
-<!--                        <h4>{{`${exercise.time/60>=1?exercise.time/60:'0'}:${exercise.time%60}`}}</h4>-->
-<!--                      </v-card>-->
-<!--                    </v-row>-->
-<!--                  </v-col>-->
-<!--                </v-card>-->
-<!--              </v-slide-item>-->
-<!--            </v-slide-group>-->
-<!--            </v-card>-->
-<!--          </v-slide-item>-->
-<!--        </v-slide-group>-->
-<!--      </v-carousel-item>-->
     </v-carousel>
   </v-col>
 </div>
@@ -114,7 +69,6 @@
 </template>
 
 <script>
-import ChangeView from "@/components/ChangeView";
 import ControlsRutine from "@/components/ControlsRutine";
 import IconTextCircle from "@/components/IconTextCircle";
 import ExerciseDetail from "@/components/ExerciseDetail";
@@ -136,9 +90,10 @@ import {NEW_ROUTINE_ID} from "@/api/routine";
 
 export default {
   name: "MakeRoutine",
-  components: { IconTextCircle,ChangeView, ControlsRutine, ExerciseDetail, AlertPopUp},
+  components: { IconTextCircle, ControlsRutine, ExerciseDetail, AlertPopUp},
   data(){
     return{
+      routine:{},
       dataLoaded: false,
       index:0,
       prev:true,
@@ -152,7 +107,7 @@ export default {
       exerciseIndex:0,
       cycleRep:0,
       cycles: [],
-
+      exerciseData:{},
       errorText: '',
       errorTitle: 'ERROR',
       errorDialog: false,
@@ -162,7 +117,7 @@ export default {
     changePresentation(index){
       this.index = index
     },
-    previousExercise(){
+    async previousExercise(){
       console.log(this.cycleRep)
       if(this.exerciseIndex===0){
         if(this.cycleRep===this.cycles[this.cycleIndex].repetitions) {
@@ -183,6 +138,9 @@ export default {
         this.exerciseIndex--;
       }
       this.setTimer()
+      this.dataLoaded = false;
+      await this.getExerciseData();
+      this.dataLoaded = true
     },
     clickPlay(){
       if(this.paused){
@@ -209,7 +167,6 @@ export default {
                 routineId: this.routineId
               }
             })
-
             return
           } else {
             this.cycleRep = this.cycles[this.cycleIndex].repetitions
@@ -224,12 +181,16 @@ export default {
         this.exerciseIndex++;
       }
       this.setTimer()
+      this.dataLoaded = false
+      await this.getExerciseData()
+      this.dataLoaded = true
     },
     pauseTimer(){
       clearTimeout(this.interval)
     },
     resumeTimer(){
       // setInterval permite ejecutar una funcion cada x milisegundos hasta destruirse
+      this.paused = false
       this.interval = setInterval(() => {
         // Una vez que se termina el tiempo, destruyo el contador
         if (this.timeLeft <= 0) {
@@ -249,17 +210,21 @@ export default {
         this.initialTime = this.cycles[this.cycleIndex].exercises[this.exerciseIndex].duration
         this.timeLeft = this.initialTime
         // setInterval permite ejecutar una funcion cada x milisegundos hasta destruirse
-        this.interval = setInterval(() => {
+        this.interval = setInterval(async () => {
           // Una vez que se termina el tiempo, destruyo el contador
           if (this.timeLeft <= 0) {
-            this.nextExercise()
             clearTimeout(this.interval)
+            await this.nextExercise()
+            return
           }
           this.timeLeft -= 1;
           this.value = (this.timeLeft / this.initialTime) * 100
           this.$emit("secondPassed")
         }, 1000)
       }
+    },
+    async getExerciseData(){
+      this.exerciseData = await exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id);
     },
     getSecondsLeft(){
       return ((this.timeLeft % 60) > 0 ? parseInt(this.timeLeft % 60) : 0)
@@ -280,14 +245,16 @@ export default {
   },
   computed: {
     getImgSrc(){
-      const routineData = exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id)
-      return (!routineData.metadata.url || !routineData.metadata) ? require('@/assets/placeholder.jpg') : routineData.metadata.url;
+      // const routineData = exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id)
+      return (!this.exerciseData.metadata.url || !this.exerciseData.metadata) ? require('@/assets/placeholder.jpg') : this.exerciseData.metadata.url;
     },
     getDescription(){
-      return exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).detail
+      return this.exerciseData.detail
+      // return exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).detail
     },
     getName(){
-      return exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).name
+      return this.exerciseData.name
+      // return exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id).name
     },
 
   },
@@ -307,8 +274,13 @@ export default {
     await routinesStore.getRoutineData(this.routineId);
     await exercisesStore.initialize()
     await executionsStore.startExecution()//seteamos el timer para la ejecucion
+    this.routine = await routinesStore.getRoutineById(this.routineId);
     this.cycles = routineCyclesStore.getCycles;
     this.cycleRep = this.cycles[this.cycleIndex].repetitions
+    // this.exerciseData = await exercisesStore.getExerciseFromApi(this.cycles[this.cycleIndex].exercises[this.exerciseIndex].data.id)
+    await this.getExerciseData()
+    console.log('Datos del ejercicio:')
+    console.log(this.exerciseData)
     console.log('ciclos')
     console.log(this.cycles)
     this.dataLoaded = true;

@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="dataLoaded" class="d-flex flex-column rounded" :width="width" hover @click="touchCard">
+    <v-card v-if="dataLoaded" class="d-flex flex-column rounded" :width="width" hover >
       <v-card class="d-flex rounded-t" flat tile>
         <v-img :src="routine.metadata.image" :width="width" :alt="routine.name" :height="100" @click="changeView({name: 'routine_details', query: {id: routineData.id}})"/>
       </v-card>
@@ -133,10 +133,10 @@ export default {
       console.log(`Delete touched in RoutineCard ${this.routine.id}`)
       this.$emit('deleteTouched',this.routine.id)
     },
-    touchCard(){
-      console.log(`RoutineCard ${this.routine.id} touched`)
-      this.$emit('cardTouched',this.id)
-    },
+    // touchCard(){
+    //   console.log(`RoutineCard ${this.routine.id} touched`)
+    //   this.$emit('cardTouched',this.id)
+    // },
     changeView(view){
       this.$router.push(view)
     },
