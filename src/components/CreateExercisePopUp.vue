@@ -31,9 +31,9 @@
         <v-col :cols="12">
           <v-dialog persistent v-model="mediaDialog">
             <template v-slot:activator="{ on, attrs }">
-              <iframe v-if="showContent" :src="getSrc" height="100%" width="100%" class="iframe-class"></iframe>
-              <v-img v-else :src="require('@/assets/placeholder.jpg')" class="d-flex justify-center align-center">
-                <v-icon v-text="$vuetify.icons.values.playCircle"
+              <v-img :src="getSrc === '' ? require('@/assets/placeholder.jpg') : getSrc"
+                     class="d-flex justify-center align-center" @mouseover="imageHover = true" @mouseleave="imageHover = false">
+                <v-icon v-if="imageHover" v-text="$vuetify.icons.values.edit"
                         color="#1C1B1F"
                         :size="83"
                         class="play-button-style"
@@ -117,7 +117,6 @@ import AlertPopUp from "@/components/AlertPopUp";
 import {useExercises} from "@/store/Exercises";
 import {mapActions, mapState} from "pinia";
 import {Exercise} from "@/api/exercise";
-import {Video} from "@/api/exercise";
 
 import {useUsers} from "@/store/User";
 import UploadUrl from "@/components/UploadUrl";
@@ -148,6 +147,7 @@ export default {
 //     type: "exercise",
 //     metadata: null
 // }
+      imageHover: false,
       result: null,
       exercise: null,
       exerciseName: '',
@@ -195,7 +195,7 @@ export default {
       this.showContent = true;
     },
     updateTitleIsEmpty(){
-      this.titleIsEmpty = (this.exerciseName === '')
+      this.titleIsEmpty = (this.exerciseName === '');
       if(this.getExercises.map(exercise => exercise.name).includes(this.exerciseName))
         this.duplicateName = true;
       else
@@ -209,13 +209,12 @@ export default {
       try {
         if(this.exerciseId === -1){
           this.exercise = await this.$addExercise(exerciseCreated);
-          const videoCreated = new Video(1, this.url);
-          await this.$uploadVideo(this.exercise.id, videoCreated);
         }
         else{
           this.exercise = await this.$modifyExercise(this.exerciseId, exerciseCreated);
         }
         this.setResult(this.exercise)
+        console.log(this.exercise)
       } catch (e) {
         console.log(e)
       }

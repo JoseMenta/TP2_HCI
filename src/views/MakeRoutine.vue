@@ -12,7 +12,7 @@
         <v-container fluid>
           <v-row class="ma-0" >
             <v-col cols="7">
-              <iframe :src="getImgSrc" class="image-style"></iframe>
+              <v-img :src="getImgSrc" class="image-style"></v-img>
             </v-col>
             <v-col cols="5">
               <ExerciseDetail :read-only="true" :textarea-value="getDescription" :title-size="0" :textarea-border-radius="12" :textarea-size="20"/>

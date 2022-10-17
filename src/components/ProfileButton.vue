@@ -10,7 +10,7 @@
           <span class="font-weight-bold text-style">{{`${user.firstName} ${user.lastName}`}}</span>
         </v-col>
         <v-col :cols="4">
-          <v-img :src="user.avatarUrl"
+          <v-img :src="!user.avatarUrl? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' : user.avatarUrl "
                  contain :height="imgSize" :width="imgSize"
                  class="image-style ml-auto mr-2"/>
         </v-col>

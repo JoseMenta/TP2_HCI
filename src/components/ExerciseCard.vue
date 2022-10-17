@@ -20,12 +20,7 @@
         </v-sheet>
       </v-sheet>
     </v-card >
-    <v-sheet height="20" width="20">
-      <v-img :src="exerciseData.metadata.url === '' ? require('@/assets/placeholder.jpg') : exerciseData.metadata.url" class="iframe-class"></v-img>
-    </v-sheet>
-
-
-
+    <v-img :src="exerciseData.metadata.url === '' ? require('@/assets/placeholder.jpg')  : exerciseData.metadata.url" height="100%" width="30%"  class="iframe-class"></v-img>
 
     <v-dialog persistent width="80%" v-model="showDataDialog">
       <SelectExerciseConfigPopUp :read-only="true" @goBack="closePopUp"/>
@@ -123,7 +118,6 @@ export default {
       } else {
         this.iconTouched = false;
       }
-      console.log(`ExerciseCard ${this.id} touched`)
       this.$emit('cardTouched', this.id, this.order)
     },
     closePopUp(){
@@ -169,8 +163,10 @@ p{
 }
 
 .iframe-class{
-  border: 0 white;
-  border-radius: 0;
+  z-index: 0;
+  border: 10pt black;
+  border-bottom-right-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 </style>

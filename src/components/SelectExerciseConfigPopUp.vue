@@ -17,7 +17,7 @@
         </v-col>
       </v-row>
       <v-row class="img-style align-center">
-          <iframe :src="imageSrc" height="100%" width="100%" class="iframe-class"></iframe>
+          <v-img :src="imageSrc" height="242" class="iframe-class"></v-img>
       </v-row>
       <v-row class="align-center mr-2">
         <v-col :cols="8">

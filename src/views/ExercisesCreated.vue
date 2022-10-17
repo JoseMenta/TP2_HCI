@@ -2,9 +2,13 @@
   <div class="mx-7 mt-7 main-div-style">
     <h1 class="title-style my-5">Ejercicios Creados</h1>
     <v-sheet class="d-flex justify-space-between mr-3" width="60%">
-      <FilterMenu :id="1" placeholder='Equipamiento' v-bind:options="['Con equipamiento','Sin equipamiento']"  :width="150" @menuChanged="getEquipment" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
-      <FilterMenu :id="1" placeholder='Zona Muscular' v-bind:options="['Todo el cuerpo', 'Zona inferior','Zona media','Zona superior']"  :width="150" @menuChanged="getMuscleZone" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
-      <FilterMenu :id="1" placeholder='Intensidad' v-bind:options="['Baja intensidad','Media intensidad','Alta intensidad']"  :width="150" @menuChanged="getIntensity" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+      <FilterMenu :id="1" placeholder='Equipamiento' :key="version + '1'" v-bind:options="['Con equipamiento','Sin equipamiento']"  :width="150" @menuChanged="getEquipment" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+      <FilterMenu :id="1" placeholder='Zona Muscular' :key="version + '2'" v-bind:options="['Todo el cuerpo', 'Zona inferior','Zona media','Zona superior']"  :width="150" @menuChanged="getMuscleZone" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+      <FilterMenu :id="1" placeholder='Intensidad' :key="version + '3'" v-bind:options="['Baja intensidad','Media intensidad','Alta intensidad']"  :width="150" @menuChanged="getIntensity" :left-border-radius="4" :right-border-radius="4"></FilterMenu>
+      <v-sheet class="d-inline-flex align-center">
+        <h3>Limpiar Filtros</h3>
+        <v-icon class="mr-2" color="black" @click="resetFilters">filter_alt_off</v-icon>
+      </v-sheet>
     </v-sheet>
     <v-sheet v-if="dataLoaded">
       <div class="mt-12">
@@ -64,6 +68,13 @@ export default {
     }
   },
   methods: {
+    resetFilters(){
+      this.FilterIntensity= '';
+      this.FilterMuscleZone= '';
+      this.FilterEquipment= '';
+      this.version++;
+      this.emitSignal();
+    },
     changeMenu(menuId,newValue){
       console.log(menuId)
       console.log(newValue)

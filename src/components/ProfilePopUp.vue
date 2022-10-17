@@ -7,7 +7,7 @@
       </v-row>
     </v-app-bar>
     <div>
-      <v-text-field flat class="profile mt-4"
+      <v-text-field flat class="profile mt-4 black--text"
                     v-model="userName"
                     solo
                     :disabled="!edit"/>
